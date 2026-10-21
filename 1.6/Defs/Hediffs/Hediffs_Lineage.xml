@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <HediffDef>
+    <defName>Bloodfiends_Lineage</defName>
+    <label>bloodfiend</label>
+    <description>TODO</description>
+    <hediffClass>Bloodfiends.Family.Hediff_BloodfiendLineage</hediffClass>
+    <defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
+    <isBad>false</isBad>
+    <everCurableByItem>false</everCurableByItem>
+    <initialSeverity>1</initialSeverity>
+    <maxSeverity>99</maxSeverity>
+    <stages>
+      <li>
+        <minSeverity>1</minSeverity>
+        <label>First Kindred</label>
+      </li>
+      <li>
+        <minSeverity>2</minSeverity>
+        <label>Second Kindred</label>
+      </li>
+      <li>
+        <minSeverity>3</minSeverity>
+        <label>Third Kindred</label>
+      </li>
+      <li>
+        <minSeverity>4</minSeverity>
+        <label>Fourth Kindred</label>
+      </li>
+      <li>
+        <minSeverity>5</minSeverity>
+        <label>Fifth Kindred</label>
+      </li>
+      <li>
+        <minSeverity>6</minSeverity>
+        <label>Sixth Kindred</label>
+      </li>
+      <li>
+        <minSeverity>7</minSeverity>
+        <label>Seventh Kindred</label>
+      </li>
+    </stages>
+  </HediffDef>
+</Defs>

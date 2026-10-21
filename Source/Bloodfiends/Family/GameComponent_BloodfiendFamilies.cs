@@ -129,19 +129,6 @@ namespace Bloodfiends.Family
         public BloodfiendFamilyNode CreateKindredNode(BloodfiendFamilyNode embracerNode, Pawn kindredPawn)
         {
             if (!CanEmbraceKindred(embracerNode)) return null;
-
-            BloodfiendFamilyNode kindredNode = new BloodfiendFamilyNode
-            {
-                nodeId = nextNodeId++,
-                familyId = embracerNode.familyId,
-                generationNumber = embracerNode.generationNumber + 1,
-                bloodfiendPawn = kindredPawn,
-                embracerNodeId = embracerNode.nodeId
-            };
-
-            RegisterNode(kindredNode);
-            embracerNode.embracedNodeIds.Add(kindredNode.nodeId);
-            embracerNode.kindredCreatedCount++;
             return CreateNodeUnder(embracerNode, embracerNode.familyId, embracerNode.generationNumber + 1, kindredPawn);
         }
 
@@ -253,6 +240,18 @@ namespace Bloodfiends.Family
                     if (ancestorNode.HasLivingPawn) playerAncestorPawnsCache.Add(ancestorNode.bloodfiendPawn);
                     ancestorNode = GetNode(ancestorNode.embracerNodeId);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Updates the tier hediff on every living pawn among the promoted nodes.
+        /// </summary>
+        public static void SyncPromotedPawns(List<BloodfiendFamilyNode> promotedNodes)
+        {
+            foreach (BloodfiendFamilyNode promotedNode in promotedNodes)
+            {
+                if (!promotedNode.HasLivingPawn) continue;
+                promotedNode.bloodfiendPawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.SyncFromNode();
             }
         }
 

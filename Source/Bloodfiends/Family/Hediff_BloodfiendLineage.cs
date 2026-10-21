@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,24 @@ namespace Bloodfiends.Family
         public void SyncFromNode()
         {
             BloodfiendFamilyNode node = Node;
-            if (node != null) Severity = node.generationNumber;
+            if (node == null) return;
+
+            Severity = node.generationNumber;
+            RefreshTierAbilities(node);
+        }
+
+        private void RefreshTierAbilities(BloodfiendFamilyNode node)
+        {
+            if (pawn.abilities == null) return;
+
+            AbilityDef coagulateDef = BloodfiendsDefOf.Bloodfiends_CoagulateAndMeltAway;
+            int maximumCasterGeneration = coagulateDef.comps.OfType<CompProperties_AbilityCoagulateAndMeltAway>().FirstOrDefault()?.maximumCasterGeneration ?? 2;
+
+            bool hasAbility = pawn.abilities.GetAbility(coagulateDef) != null;
+            bool shouldHaveAbility = node.generationNumber <= maximumCasterGeneration;
+
+            if (shouldHaveAbility && !hasAbility) pawn.abilities.GainAbility(coagulateDef);
+            else if (!shouldHaveAbility && hasAbility) pawn.abilities.RemoveAbility(coagulateDef);
         }
 
         public override void ExposeData()

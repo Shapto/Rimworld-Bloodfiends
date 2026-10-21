@@ -41,6 +41,7 @@
     </Reference>
     <Reference Include="ShinAndMang">
       <HintPath>..\..\..\Shin and Mang\1.6\Assemblies\ShinAndMang.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="SingularityFramework">
       <HintPath>..\..\..\Singularity Framework\1.6\Assemblies\SingularityFramework.dll</HintPath>
@@ -74,8 +75,11 @@
   <ItemGroup>
     <Compile Include="BloodfiendsDefOf.cs" />
     <Compile Include="BloodfiendsMod.cs" />
+    <Compile Include="Family\BloodfiendDebugActions.cs" />
     <Compile Include="Family\BloodfiendFamilyNode.cs" />
     <Compile Include="Family\BloodfiendStartingTierExtension.cs" />
+    <Compile Include="Family\CompAbilityEffect_CoagulateAndMeltAway.cs" />
+    <Compile Include="Family\CompAbilityEffect_EmbraceKindred.cs" />
     <Compile Include="Family\GameComponent_BloodfiendFamilies.cs" />
     <Compile Include="Family\Gene_Bloodfiend.cs" />
     <Compile Include="Family\Hediff_BloodfiendLineage.cs" />

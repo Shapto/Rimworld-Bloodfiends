@@ -8,7 +8,7 @@ using Verse;
 
 namespace Bloodfiends.Family
 {
-    public class Gene_Bloodfiend : Gene
+    public class Gene_Bloodfiend : Gene_Bloodfeeder
     {
         public Hediff_BloodfiendLineage LineageHediff => pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>();
 
@@ -60,12 +60,7 @@ namespace Bloodfiends.Family
             BloodfiendFamilyNode node = LineageHediff?.Node;
             if (registry == null || node == null) return;
 
-            List<BloodfiendFamilyNode> promotedNodes = registry.Notify_BloodfiendDied(node);
-            foreach (BloodfiendFamilyNode promotedNode in promotedNodes)
-            {
-                if (!promotedNode.HasLivingPawn) continue;
-                promotedNode.bloodfiendPawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.SyncFromNode();
-            }
+            GameComponent_BloodfiendFamilies.SyncPromotedPawns(registry.Notify_BloodfiendDied(node));
         }
     }
 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<AbilityCategoryDef>
+		<defName>Bloodfiends_Bloodfiend</defName>
+		<displayOrder>110</displayOrder>
+	</AbilityCategoryDef>
+
+	<GeneCategoryDef>
+		<defName>Bloodfiends_Bloodfiend</defName>
+		<label>bloodfiend</label>
+		<displayPriorityInXenotype>990</displayPriorityInXenotype>
+	</GeneCategoryDef>
+</Defs>

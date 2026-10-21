@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<GeneDef>
+		<defName>Bloodfiends_Bloodfiend</defName>
+		<label>bloodfiend</label>
+		<description>TODO</description>
+		<geneClass>Bloodfiends.Family.Gene_Bloodfiend</geneClass>
+		<iconPath>TODO</iconPath>
+		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
+		<prerequisite>Hemogenic</prerequisite>
+		<abilities>
+			<li>Bloodfeed</li>
+		</abilities>
+		<descriptionHyperlinks>
+			<AbilityDef>Bloodfeed</AbilityDef>
+		</descriptionHyperlinks>
+		<modExtensions>
+			<li Class="Bloodfiends.Family.BloodfiendStartingTierExtension">
+				<joinPlayerFamilyChance>0.1</joinPlayerFamilyChance>
+				<tierWeights>
+					<li>
+						<tier>3</tier>
+						<weight>20</weight>
+					</li>
+					<li>
+						<tier>4</tier>
+						<weight>35</weight>
+					</li>
+					<li>
+						<tier>5</tier>
+						<weight>30</weight>
+					</li>
+					<li>
+						<tier>6</tier>
+						<weight>10</weight>
+					</li>
+					<li>
+						<tier>7</tier>
+						<weight>5</weight>
+					</li>
+				</tierWeights>
+			</li>
+		</modExtensions>
+	</GeneDef>
+
+	<GeneDef>
+		<defName>Bloodfiends_PropagatingBite</defName>
+		<label>propagating bite</label>
+		<description>TODO</description>
+		<iconPath>TODO</iconPath>
+		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
+		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
+		<biostatCpx>1</biostatCpx>
+		<abilities>
+			<li>Bloodfiends_EmbraceKindred</li>
+		</abilities>
+		<descriptionHyperlinks>
+			<AbilityDef>Bloodfiends_EmbraceKindred</AbilityDef>
+		</descriptionHyperlinks>
+	</GeneDef>
+</Defs>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<XenotypeDef>
+		<defName>Bloodfiends_Bloodfiend</defName>
+		<label>bloodfiend</label>
+		<description>TODO</description>
+		<descriptionShort>TODO</descriptionShort>
+		<iconPath>UI/Icons/Xenotypes/Sanguophage</iconPath>
+		<inheritable>false</inheritable>
+		<genes>
+			<li>Ageless</li>
+			<li>ArchiteMetabolism</li>
+			<li>DiseaseFree</li>
+			<li>PerfectImmunity</li>
+			<li>TotalHealing</li>
+			<li>Hemogenic</li>
+			<li>HemogenDrain</li>
+			<li>Bloodfiends_Bloodfiend</li>
+			<li>Bloodfiends_PropagatingBite</li>
+			<li>LongjumpLegs</li>
+			<li>WoundHealing_SuperFast</li>
+			<li>PsychicAbility_Enhanced</li>
+			<li>MoveSpeed_Quick</li>
+			<li>ToxResist_Total</li>
+			<li>UVSensitivity_Mild</li>
+			<li>FireWeakness</li>
+			<li>Aggression_Aggressive</li>
+			<li>MeleeDamage_Strong</li>
+			<li>LowSleep</li>
+			<li>Robust</li>
+			<li>Beauty_Pretty</li>
+			<li>DarkVision</li>
+			<li>AptitudeStrong_Melee</li>
+			<li>AptitudeStrong_Social</li>
+			<li>AptitudeStrong_Intellectual</li>
+		</genes>
+	</XenotypeDef>
+</Defs>
