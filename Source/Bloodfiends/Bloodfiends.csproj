@@ -73,10 +73,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BloodfiendsMod.cs" />
+    <Compile Include="Family\BloodfiendFamilyNode.cs" />
+    <Compile Include="Family\GameComponent_BloodfiendFamilies.cs" />
+    <Compile Include="Family\Patch_WorldPawnGC_KeepBloodfiendAncestors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -21,6 +21,11 @@ namespace Bloodfiends.Family
         private List<int> nodeIdsWorkingList;
         private List<BloodfiendFamilyNode> nodesWorkingList;
 
+        private Dictionary<Pawn, int> nodeIdsByPawn = new Dictionary<Pawn, int>();
+        private readonly HashSet<Pawn> playerAncestorPawnsCache = new HashSet<Pawn>();
+        private int playerAncestorCacheTick = -1;
+
+        public BloodfiendFamilyNode GetNodeForPawn(Pawn pawn) => pawn != null && nodeIdsByPawn.TryGetValue(pawn, out int nodeId) ? GetNode(nodeId) : null;
         public static GameComponent_BloodfiendFamilies Instance => Current.Game?.GetComponent<GameComponent_BloodfiendFamilies>();
 
         /// <summary>
@@ -45,7 +50,7 @@ namespace Bloodfiends.Family
                 bloodfiendPawn = founderPawn
             };
 
-            nodesById.Add(rootNode.nodeId, rootNode);
+            RegisterNode(rootNode);
             return rootNode;
         }
 
@@ -68,7 +73,7 @@ namespace Bloodfiends.Family
                 embracerNodeId = embracerNode.nodeId
             };
 
-            nodesById.Add(kindredNode.nodeId, kindredNode);
+            RegisterNode(kindredNode);
             embracerNode.embracedNodeIds.Add(kindredNode.nodeId);
             embracerNode.kindredCreatedCount++;
             return kindredNode;
@@ -89,6 +94,8 @@ namespace Bloodfiends.Family
 
             ReparentEmbracedKindreds(deadNode);
             nodesById.Remove(deadNode.nodeId);
+            if (deadNode.bloodfiendPawn != null) nodeIdsByPawn.Remove(deadNode.bloodfiendPawn);
+            playerAncestorCacheTick = -1;
             return promotedNodes;
         }
 
@@ -137,15 +144,50 @@ namespace Bloodfiends.Family
             }
         }
 
+        /// <summary>
+        /// Adds a node to both lookups. Every node creation goes through here.
+        /// </summary>
+        private void RegisterNode(BloodfiendFamilyNode node)
+        {
+            nodesById.Add(node.nodeId, node);
+            if (node.bloodfiendPawn != null) nodeIdsByPawn[node.bloodfiendPawn] = node.nodeId;
+            playerAncestorCacheTick = -1;
+        }
+
+        /// <summary>
+        /// True if a living Bloodfiend of the player's faction descends from this pawn,
+        /// so this pawn's death would promote one of the player's own Kindreds.
+        /// </summary>
         public bool IsAncestorOfPlayerBloodfiend(Pawn pawn)
         {
             if (pawn == null || pawn.Dead) return false;
 
-            BloodfiendFamilyNode pawnNode = nodesById.Values.FirstOrDefault(node => node.bloodfiendPawn == pawn);
-            if (pawnNode == null) return false;
+            int currentTick = Find.TickManager.TicksGame;
+            if (playerAncestorCacheTick != currentTick) RebuildPlayerAncestorCache(currentTick);
+            return playerAncestorPawnsCache.Contains(pawn);
+        }
 
-            return GetDescendants(pawnNode)
-                .Any(descendantNode => descendantNode.HasLivingPawn && descendantNode.bloodfiendPawn.Faction == Faction.OfPlayer);
+        /// <summary>
+        /// Walks up from every player Bloodfiend and collects their living ancestors.
+        /// The shared visited set stops a walk as soon as it reaches a line that was already collected.
+        /// </summary>
+        private void RebuildPlayerAncestorCache(int currentTick)
+        {
+            playerAncestorPawnsCache.Clear();
+            playerAncestorCacheTick = currentTick;
+            HashSet<int> visitedNodeIds = new HashSet<int>();
+
+            foreach (BloodfiendFamilyNode node in nodesById.Values)
+            {
+                if (!node.HasLivingPawn || node.bloodfiendPawn.Faction != Faction.OfPlayer) continue;
+
+                BloodfiendFamilyNode ancestorNode = GetNode(node.embracerNodeId);
+                while (ancestorNode != null && visitedNodeIds.Add(ancestorNode.nodeId))
+                {
+                    if (ancestorNode.HasLivingPawn) playerAncestorPawnsCache.Add(ancestorNode.bloodfiendPawn);
+                    ancestorNode = GetNode(ancestorNode.embracerNodeId);
+                }
+            }
         }
 
         public override void ExposeData()
@@ -155,7 +197,16 @@ namespace Bloodfiends.Family
             Scribe_Values.Look(ref nextNodeId, "nextNodeId", 1);
             Scribe_Values.Look(ref nextFamilyId, "nextFamilyId", 1);
 
-            if (Scribe.mode == LoadSaveMode.PostLoadInit && nodesById == null) nodesById = new Dictionary<int, BloodfiendFamilyNode>();
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                if (nodesById == null) nodesById = new Dictionary<int, BloodfiendFamilyNode>();
+
+                nodeIdsByPawn = new Dictionary<Pawn, int>();
+                foreach (BloodfiendFamilyNode node in nodesById.Values)
+                {
+                    if (node.bloodfiendPawn != null) nodeIdsByPawn[node.bloodfiendPawn] = node.nodeId;
+                }
+            }
         }
     }
 }
