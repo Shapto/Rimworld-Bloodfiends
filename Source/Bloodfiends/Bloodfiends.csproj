@@ -78,6 +78,7 @@
     <Compile Include="Aquaphobia\MentalBreakWorker_AquaTerror.cs" />
     <Compile Include="Aquaphobia\MentalState_PanicFleeWater.cs" />
     <Compile Include="Aquaphobia\ThoughtWorker_Aquaphobia.cs" />
+    <Compile Include="BloodCommand\MapComponent_BloodCommand.cs" />
     <Compile Include="BloodfiendsDefOf.cs" />
     <Compile Include="BloodfiendsMod.cs" />
     <Compile Include="Family\BloodfiendDebugActions.cs" />

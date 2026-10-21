@@ -8,6 +8,7 @@
 		<iconPath>TODO</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Hemogenic</prerequisite>
+		<biostatArc>1</biostatArc>
 		<abilities>
 			<li>Bloodfeed</li>
 		</abilities>
@@ -40,6 +41,17 @@
 					</li>
 				</tierWeights>
 			</li>
+			<li Class="Bloodfiends.BloodCommand.BloodCommandExtension">
+				<absorbIntervalTicks>60</absorbIntervalTicks>
+				<hemogenPerFilthThickness>0.01</hemogenPerFilthThickness>
+				<hemogenPerCorpseBodySize>0.3</hemogenPerCorpseBodySize>
+				<radiusByGeneration>
+					<points>
+						<li>(1, 18)</li>
+						<li>(7, 9)</li>
+					</points>
+				</radiusByGeneration>
+			</li>
 		</modExtensions>
 	</GeneDef>
 
@@ -50,7 +62,7 @@
 		<iconPath>TODO</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
-		<biostatCpx>1</biostatCpx>
+		<biostatArc>1</biostatArc>
 		<abilities>
 			<li>Bloodfiends_EmbraceKindred</li>
 		</abilities>
