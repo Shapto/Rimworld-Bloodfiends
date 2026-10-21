@@ -73,6 +73,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aquaphobia\Gene_Aquaphobia.cs" />
+    <Compile Include="Aquaphobia\JobGiver_FleeWater.cs" />
+    <Compile Include="Aquaphobia\MentalBreakWorker_AquaTerror.cs" />
+    <Compile Include="Aquaphobia\MentalState_PanicFleeWater.cs" />
+    <Compile Include="Aquaphobia\ThoughtWorker_Aquaphobia.cs" />
     <Compile Include="BloodfiendsDefOf.cs" />
     <Compile Include="BloodfiendsMod.cs" />
     <Compile Include="Family\BloodfiendDebugActions.cs" />

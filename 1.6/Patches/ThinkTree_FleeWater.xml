@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationInsert">
+    <xpath>Defs/ThinkTreeDef//li[@Class="ThinkNode_ConditionalMentalState" and state="PanicFleeFire"]</xpath>
+    <order>Append</order>
+    <value>
+      <li Class="ThinkNode_ConditionalMentalState">
+        <state>Bloodfiends_PanicFleeWater</state>
+        <subNodes>
+          <li Class="Bloodfiends.Aquaphobia.JobGiver_FleeWater" />
+          <li Class="JobGiver_WanderAnywhere">
+            <maxDanger>Some</maxDanger>
+            <locomotionUrgency>Jog</locomotionUrgency>
+          </li>
+        </subNodes>
+      </li>
+    </value>
+  </Operation>
+</Patch>

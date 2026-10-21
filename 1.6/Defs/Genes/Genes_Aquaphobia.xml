@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<GeneDef>
+		<defName>Bloodfiends_Aquaphobia</defName>
+		<label>aquaphobia</label>
+		<labelShortAdj>aquaphobic</labelShortAdj>
+		<description>TODO</description>
+		<geneClass>Bloodfiends.Aquaphobia.Gene_Aquaphobia</geneClass>
+		<customEffectDescriptions>
+			<li>TODO</li>
+		</customEffectDescriptions>
+		<displayCategory>ResistanceAndWeakness</displayCategory>
+		<displayOrderInCategory>81</displayOrderInCategory>
+		<iconPath>UI/Icons/Bloodfiends/TODO</iconPath>
+		<mentalBreakMtbDays>0.1</mentalBreakMtbDays>
+		<mentalBreakDef>Bloodfiends_AquaTerror</mentalBreakDef>
+		<biostatMet>4</biostatMet>
+		<modExtensions>
+			<li Class="Bloodfiends.Aquaphobia.AquaphobiaExtension">
+				<weakTerrains>
+					<li>Marsh</li>
+					<li>Mud</li>
+				</weakTerrains>
+			</li>
+		</modExtensions>
+	</GeneDef>
+
+	<ThoughtDef>
+		<defName>Bloodfiends_Aquaphobia</defName>
+		<workerClass>Bloodfiends.Aquaphobia.ThoughtWorker_Aquaphobia</workerClass>
+		<developmentalStageFilter>Baby, Child, Adult</developmentalStageFilter>
+		<stages>
+			<li>
+				<label>uneasy around water</label>
+				<description>TODO</description>
+				<baseMoodEffect>-4</baseMoodEffect>
+			</li>
+			<li>
+				<label>afraid of water</label>
+				<description>TODO</description>
+				<baseMoodEffect>-10</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<MentalBreakDef>
+		<defName>Bloodfiends_AquaTerror</defName>
+		<label>water terror</label>
+		<intensity>Minor</intensity>
+		<workerClass>Bloodfiends.Aquaphobia.MentalBreakWorker_AquaTerror</workerClass>
+		<mentalState>Bloodfiends_PanicFleeWater</mentalState>
+		<requiredGene>Bloodfiends_Aquaphobia</requiredGene>
+	</MentalBreakDef>
+
+	<MentalStateDef ParentName="BaseMentalState">
+		<defName>Bloodfiends_PanicFleeWater</defName>
+		<label>panic-fleeing water</label>
+		<stateClass>Bloodfiends.Aquaphobia.MentalState_PanicFleeWater</stateClass>
+		<category>Misc</category>
+		<nameColor>(0.65, 0.9, 0.93)</nameColor>
+		<beginLetterLabel>fleeing water</beginLetterLabel>
+		<beginLetter>{0} is fleeing water.</beginLetter>
+		<recoveryMessage>{0} is no longer fleeing water.</recoveryMessage>
+		<baseInspectLine>Mental state: Fleeing water</baseInspectLine>
+		<blockNormalThoughts>true</blockNormalThoughts>
+		<minTicksBeforeRecovery>60</minTicksBeforeRecovery>
+	</MentalStateDef>
+</Defs>
