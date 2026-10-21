@@ -18,13 +18,15 @@ namespace Bloodfiends.BloodCommand
         public SimpleCurve radiusByGeneration;
 
         public FleckDef absorbFleck;
+
+        public List<ThingDef> extraBloodFilth = new List<ThingDef>();
     }
 
     public class MapComponent_BloodCommand : MapComponent
     {
         private static BloodCommandExtension cachedSettings;
         private readonly List<Pawn> bloodfiendsBuffer = new List<Pawn>();
-
+        private static HashSet<ThingDef> cachedBloodFilthDefs;
         public MapComponent_BloodCommand(Map map) : base(map)
         {
         }
@@ -49,7 +51,6 @@ namespace Bloodfiends.BloodCommand
                 if (GenerationOf(pawn) > 0) bloodfiendsBuffer.Add(pawn);
             }
             if (bloodfiendsBuffer.Count == 0) return;
-
             bloodfiendsBuffer.SortBy(pawn => GenerationOf(pawn), pawn => pawn.thingIDNumber);
             foreach (Pawn bloodfiend in bloodfiendsBuffer)
                 AbsorbAround(bloodfiend, GenerationOf(bloodfiend));
@@ -71,17 +72,20 @@ namespace Bloodfiends.BloodCommand
             float radius = Settings.radiusByGeneration?.Evaluate(generation) ?? 10f;
             float radiusSquared = radius * radius;
 
-            List<Thing> bloodFilth = map.listerThings.ThingsOfDef(ThingDefOf.Filth_Blood);
-            for (int filthIndex = bloodFilth.Count - 1; filthIndex >= 0; filthIndex--)
+            foreach (ThingDef bloodFilthDef in BloodFilthDefs)
             {
-                if (hemogenGene.Value >= hemogenGene.Max) return;
-                if (!(bloodFilth[filthIndex] is Filth filth) || filth.Destroyed) continue;
-                if ((filth.Position - bloodfiend.Position).LengthHorizontalSquared > radiusSquared) continue;
+                List<Thing> bloodFilth = map.listerThings.ThingsOfDef(bloodFilthDef);
+                for (int filthIndex = bloodFilth.Count - 1; filthIndex >= 0; filthIndex--)
+                {
+                    if (hemogenGene.Value >= hemogenGene.Max) return;
+                    if (!(bloodFilth[filthIndex] is Filth filth) || filth.Destroyed) continue;
+                    if ((filth.Position - bloodfiend.Position).LengthHorizontalSquared > radiusSquared) continue;
 
-                float hemogenGained = filth.thickness * Settings.hemogenPerFilthThickness;
-                ShowAbsorb(filth.Position);
-                filth.Destroy();
-                GeneUtility.OffsetHemogen(bloodfiend, hemogenGained);
+                    float hemogenGained = filth.thickness * Settings.hemogenPerFilthThickness;
+                    ShowAbsorb(filth.Position);
+                    filth.Destroy();
+                    GeneUtility.OffsetHemogen(bloodfiend, hemogenGained);
+                }
             }
 
             foreach (Thing thing in map.listerThings.ThingsInGroup(ThingRequestGroup.Corpse))
@@ -97,10 +101,24 @@ namespace Bloodfiends.BloodCommand
             }
         }
 
+        private static HashSet<ThingDef> BloodFilthDefs
+        {
+            get
+            {
+                if (cachedBloodFilthDefs == null)
+                {
+                    cachedBloodFilthDefs = new HashSet<ThingDef> { ThingDefOf.Filth_Blood };
+                    cachedBloodFilthDefs.AddRange(Settings.extraBloodFilth.Where(filthDef => filthDef != null));
+                }
+                return cachedBloodFilthDefs;
+            }
+        }
+
         private static float DrainCorpse(Corpse corpse)
         {
             Pawn innerPawn = corpse.InnerPawn;
-            if (innerPawn?.RaceProps.BloodDef != ThingDefOf.Filth_Blood) return 0f;
+            if (innerPawn == null || !BloodFilthDefs.Contains(innerPawn.RaceProps.BloodDef)) return 0f;
+            if (innerPawn.RaceProps.FleshType == FleshTypeDefOf.Fleshbeast) return 0f;
 
             Hediff bloodLoss = innerPawn.health.hediffSet.GetFirstHediffOfDef(HediffDefOf.BloodLoss);
             float remainingBlood = 1f - (bloodLoss?.Severity ?? 0f);

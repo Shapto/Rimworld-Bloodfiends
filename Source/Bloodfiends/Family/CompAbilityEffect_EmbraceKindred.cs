@@ -70,7 +70,6 @@ namespace Bloodfiends.Family
             BloodfiendFamilyNode kindredNode = registry.CreateKindredNode(CasterNode, kindredPawn);
             if (kindredNode == null) return;
 
-            // The hediff goes on before the xenotype, so the Bloodfiend gene sees it and doesn't roll a random tier.
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
             lineageHediff.nodeId = kindredNode.nodeId;
             kindredPawn.health.AddHediff(lineageHediff);

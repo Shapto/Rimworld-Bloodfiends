@@ -46,6 +46,14 @@ namespace Bloodfiends.Family
             Log.Message(builder.ToString());
         }
 
+        [DebugAction("Bloodfiends", "Log filth here", actionType = DebugActionType.ToolMap, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static void LogFilthHere()
+        {
+            IntVec3 cell = UI.MouseCell();
+            foreach (Thing thing in cell.GetThingList(Find.CurrentMap).Where(thing => thing is Filth))
+                Log.Message($"[Bloodfiends] Filth at {cell}: {thing.def.defName} (from mod {thing.def.modContentPack?.PackageId})");
+        }
+
         private static void AppendNode(GameComponent_BloodfiendFamilies registry, BloodfiendFamilyNode node, int depth, StringBuilder builder)
         {
             string pawnLabel = node.bloodfiendPawn == null ? "(offscreen)" : node.bloodfiendPawn.LabelShort;
