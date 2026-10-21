@@ -45,12 +45,26 @@
 				<absorbIntervalTicks>60</absorbIntervalTicks>
 				<hemogenPerFilthThickness>0.01</hemogenPerFilthThickness>
 				<hemogenPerCorpseBodySize>0.3</hemogenPerCorpseBodySize>
+				<absorbFleck>Bloodfiends_BloodDroplet</absorbFleck>
 				<radiusByGeneration>
 					<points>
 						<li>(1, 18)</li>
 						<li>(7, 9)</li>
 					</points>
 				</radiusByGeneration>
+				<extraBloodFilth>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_BloodPool</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_BloodSplat</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_ChunkBlood</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_WallStain</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_Footprints</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_GoreChunk</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_Guts</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_Organ</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_Brain</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_Eye</li>
+					<li MayRequire="tiepi.goreperfected">GP_Filth_Bone</li>
+				</extraBloodFilth>
 			</li>
 		</modExtensions>
 	</GeneDef>

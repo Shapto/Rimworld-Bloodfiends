@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Verse;
 
 namespace Bloodfiends.BloodCommand
@@ -14,6 +15,10 @@ namespace Bloodfiends.BloodCommand
         public int absorbIntervalTicks = 60;
         public float hemogenPerFilthThickness = 0.01f;
         public float hemogenPerCorpseBodySize = 0.3f;
+        public int dropletsPerAbsorb = 3;
+        public float dropletSpeed = 8f;
+        public int maximumVisualsPerPass = 15;
+
 
         public SimpleCurve radiusByGeneration;
 
@@ -27,6 +32,7 @@ namespace Bloodfiends.BloodCommand
         private static BloodCommandExtension cachedSettings;
         private readonly List<Pawn> bloodfiendsBuffer = new List<Pawn>();
         private static HashSet<ThingDef> cachedBloodFilthDefs;
+        private int visualsThisPass;
         public MapComponent_BloodCommand(Map map) : base(map)
         {
         }
@@ -46,6 +52,7 @@ namespace Bloodfiends.BloodCommand
             if ((Find.TickManager.TicksGame + map.uniqueID) % Settings.absorbIntervalTicks != 0) return;
 
             bloodfiendsBuffer.Clear();
+            visualsThisPass = 0;
             foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
             {
                 if (GenerationOf(pawn) > 0) bloodfiendsBuffer.Add(pawn);
@@ -82,7 +89,7 @@ namespace Bloodfiends.BloodCommand
                     if ((filth.Position - bloodfiend.Position).LengthHorizontalSquared > radiusSquared) continue;
 
                     float hemogenGained = filth.thickness * Settings.hemogenPerFilthThickness;
-                    ShowAbsorb(filth.Position);
+                    ShowAbsorb(filth.Position, bloodfiend);
                     filth.Destroy();
                     GeneUtility.OffsetHemogen(bloodfiend, hemogenGained);
                 }
@@ -96,7 +103,7 @@ namespace Bloodfiends.BloodCommand
                 float hemogenGained = DrainCorpse(corpse);
                 if (hemogenGained <= 0f) continue;
 
-                ShowAbsorb(corpse.Position);
+                ShowAbsorb(corpse.Position, bloodfiend);
                 GeneUtility.OffsetHemogen(bloodfiend, hemogenGained);
             }
         }
@@ -134,9 +141,29 @@ namespace Bloodfiends.BloodCommand
             return remainingBlood * innerPawn.BodySize * Settings.hemogenPerCorpseBodySize;
         }
 
-        private void ShowAbsorb(IntVec3 sourceCell)
+        private void ShowAbsorb(IntVec3 sourceCell, Pawn bloodfiend)
         {
-            if (Settings.absorbFleck != null) FleckMaker.Static(sourceCell, map, Settings.absorbFleck);
+            FleckDef dropletFleck = Settings.absorbFleck;
+            if (dropletFleck == null || visualsThisPass >= Settings.maximumVisualsPerPass || !sourceCell.ShouldSpawnMotesAt(map)) return;
+            visualsThisPass++;
+
+            Vector3 startPosition = sourceCell.ToVector3Shifted();
+            Vector3 towardsBloodfiend = bloodfiend.DrawPos - startPosition;
+            float distance = towardsBloodfiend.MagnitudeHorizontal();
+            float angleToBloodfiend = towardsBloodfiend.AngleFlat();
+
+            for (int dropletIndex = 0; dropletIndex < Settings.dropletsPerAbsorb; dropletIndex++)
+            {
+                float dropletSpeed = Settings.dropletSpeed * Rand.Range(0.85f, 1.15f);
+                Vector3 jitteredStart = startPosition + new Vector3(Rand.Range(-0.3f, 0.3f), 0f, Rand.Range(-0.3f, 0.3f));
+
+                FleckCreationData dropletData = FleckMaker.GetDataStatic(jitteredStart, map, dropletFleck, Rand.Range(0.2f, 0.35f));
+                dropletData.velocityAngle = angleToBloodfiend + Rand.Range(-6f, 6f);
+                dropletData.velocitySpeed = dropletSpeed;
+                dropletData.solidTimeOverride = distance / dropletSpeed;
+                dropletData.rotation = dropletData.velocityAngle + 180f;
+                map.flecks.CreateFleck(dropletData);
+            }
         }
     }
 }
