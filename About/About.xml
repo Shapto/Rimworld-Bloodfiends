@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>Bloodfiends</name>
+	<author>Shapto</author>
+	<packageId>shapto.bloodfiends</packageId>
+	<supportedVersions>
+		<li>1.6</li>
+	</supportedVersions>
+	<description>
+		Bloodfiends from Limbus Company.
+		Commissioned by kutaro.
+	</description>
+	<modDependencies>
+		<li>
+			<packageId>brrainz.harmony</packageId>
+			<displayName>Harmony</displayName>
+			<steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+			<downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+		</li>
+		<li>
+			<packageId>shapto.singularityframework</packageId>
+			<displayName>Singularity Framework</displayName>
+			<steamWorkshopUrl>steam://url/CommunityFilePage/3816043922</steamWorkshopUrl>
+		</li>
+		<li>
+			<packageId>Ludeon.RimWorld.Biotech</packageId>
+			<displayName>Biotech</displayName>
+		</li>
+	</modDependencies>
+	<loadAfter>
+		<li>brrainz.harmony</li>
+		<li>Ludeon.RimWorld.Biotech</li>
+		<li>shapto.singularityframework</li>
+	</loadAfter>
+</ModMetaData>
