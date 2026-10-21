@@ -26,6 +26,11 @@ namespace Bloodfiends.Family
         private int playerAncestorCacheTick = -1;
 
         public BloodfiendFamilyNode GetNodeForPawn(Pawn pawn) => pawn != null && nodeIdsByPawn.TryGetValue(pawn, out int nodeId) ? GetNode(nodeId) : null;
+
+        private static bool IsPlayerMember(BloodfiendFamilyNode node) => node.HasLivingPawn && node.bloodfiendPawn.Faction == Faction.OfPlayer;
+
+        private static bool IsOutsideMember(BloodfiendFamilyNode node) => node.bloodfiendPawn == null || (!node.bloodfiendPawn.Dead && node.bloodfiendPawn.Faction != Faction.OfPlayer);
+
         public static GameComponent_BloodfiendFamilies Instance => Current.Game?.GetComponent<GameComponent_BloodfiendFamilies>();
 
         /// <summary>
@@ -38,20 +43,81 @@ namespace Bloodfiends.Family
         public BloodfiendFamilyNode GetNode(int nodeId) => nodesById.TryGetValue(nodeId, out BloodfiendFamilyNode node) ? node : null;
 
         /// <summary>
-        /// Starts a brand new Family with this Bloodfiend at its root.
+        /// Starts a new Family for a Bloodfiend who has no embracer, with offscreen ancestors filling every generation above them.
+        /// A First Kindred (Blood of the Primogenitor) gets no ancestors.
         /// </summary>
-        public BloodfiendFamilyNode CreateRootNode(Pawn founderPawn, int startingGeneration)
+        public BloodfiendFamilyNode CreateFamilyFor(Pawn founderPawn, int startingGeneration)
         {
-            BloodfiendFamilyNode rootNode = new BloodfiendFamilyNode
+            int familyId = nextFamilyId++;
+            int founderGeneration = Math.Max(ElderGeneration, startingGeneration);
+
+            BloodfiendFamilyNode embracerNode = null;
+            for (int ancestorGeneration = ElderGeneration; ancestorGeneration < founderGeneration; ancestorGeneration++)
+                embracerNode = CreateNodeUnder(embracerNode, familyId, ancestorGeneration, null);
+
+            return CreateNodeUnder(embracerNode, familyId, founderGeneration, founderPawn);
+        }
+
+        /// <summary>
+        /// Creates a node under its embracer (or as a root when the embracer is null). Used by both new Families and Embrace.
+        /// </summary>
+        private BloodfiendFamilyNode CreateNodeUnder(BloodfiendFamilyNode embracerNode, int familyId, int generationNumber, Pawn bloodfiendPawn)
+        {
+            BloodfiendFamilyNode node = new BloodfiendFamilyNode
             {
                 nodeId = nextNodeId++,
-                familyId = nextFamilyId++,
-                generationNumber = Math.Max(ElderGeneration, startingGeneration),
-                bloodfiendPawn = founderPawn
+                familyId = familyId,
+                generationNumber = generationNumber,
+                bloodfiendPawn = bloodfiendPawn,
+                embracerNodeId = embracerNode?.nodeId ?? -1
             };
+            RegisterNode(node);
 
-            RegisterNode(rootNode);
-            return rootNode;
+            if (embracerNode != null)
+            {
+                embracerNode.embracedNodeIds.Add(node.nodeId);
+                embracerNode.kindredCreatedCount++;
+            }
+            return node;
+        }
+
+        /// <summary>
+        /// Places a newly spawned non-player Bloodfiend into a Family the player is part of, through one of that Family's
+        /// outside members: either taking over an offscreen node, or as a new Kindred of an outside member with a free slot.
+        /// Returns null when no player Family has anyone outside the colony.
+        /// </summary>
+        public BloodfiendFamilyNode TryPlaceInPlayerRelatedFamily(Pawn spawnedPawn)
+        {
+            HashSet<int> playerFamilyIds = new HashSet<int>(nodesById.Values
+                .Where(IsPlayerMember)
+                .Select(node => node.familyId));
+            if (playerFamilyIds.Count == 0) return null;
+
+            List<BloodfiendFamilyNode> outsideNodes = nodesById.Values
+                .Where(node => playerFamilyIds.Contains(node.familyId))
+                .Where(IsOutsideMember)
+                .ToList();
+
+            List<BloodfiendFamilyNode> claimableNodes = outsideNodes
+                .Where(node => node.bloodfiendPawn == null)
+                .ToList();
+            List<BloodfiendFamilyNode> availableEmbracers = outsideNodes
+                .Where(CanEmbraceKindred)
+                .ToList();
+
+            bool claimNode = claimableNodes.Count > 0 && (availableEmbracers.Count == 0 || Rand.Bool);
+            if (claimNode)
+            {
+                BloodfiendFamilyNode claimedNode = claimableNodes.RandomElement();
+                claimedNode.bloodfiendPawn = spawnedPawn;
+                nodeIdsByPawn[spawnedPawn] = claimedNode.nodeId;
+                playerAncestorCacheTick = -1;
+                return claimedNode;
+            }
+
+            if (availableEmbracers.Count == 0) return null;
+            BloodfiendFamilyNode embracerNode = availableEmbracers.RandomElement();
+            return CreateNodeUnder(embracerNode, embracerNode.familyId, embracerNode.generationNumber + 1, spawnedPawn);
         }
 
         public bool CanEmbraceKindred(BloodfiendFamilyNode embracerNode) => embracerNode != null && embracerNode.kindredCreatedCount < MaximumKindredsPerBloodfiend;
@@ -76,7 +142,7 @@ namespace Bloodfiends.Family
             RegisterNode(kindredNode);
             embracerNode.embracedNodeIds.Add(kindredNode.nodeId);
             embracerNode.kindredCreatedCount++;
-            return kindredNode;
+            return CreateNodeUnder(embracerNode, embracerNode.familyId, embracerNode.generationNumber + 1, kindredPawn);
         }
 
         /// <summary>
