@@ -31,6 +31,10 @@ namespace Bloodfiends.Family
 
         private static bool IsOutsideMember(BloodfiendFamilyNode node) => node.bloodfiendPawn == null || (!node.bloodfiendPawn.Dead && node.bloodfiendPawn.Faction != Faction.OfPlayer);
 
+        private Dictionary<int, int> memberCountsByFamilyId = new Dictionary<int, int>();
+
+        public int GetOtherFamilyMemberCount(int familyId) => memberCountsByFamilyId.TryGetValue(familyId, out int memberCount) ? Math.Max(0, memberCount - 1) : 0;
+
         public static GameComponent_BloodfiendFamilies Instance => Current.Game?.GetComponent<GameComponent_BloodfiendFamilies>();
 
         /// <summary>
@@ -56,6 +60,12 @@ namespace Bloodfiends.Family
                 embracerNode = CreateNodeUnder(embracerNode, familyId, ancestorGeneration, null);
 
             return CreateNodeUnder(embracerNode, familyId, founderGeneration, founderPawn);
+        }
+
+        private void ChangeFamilyMemberCount(int familyId, int change)
+        {
+            memberCountsByFamilyId.TryGetValue(familyId, out int memberCount);
+            memberCountsByFamilyId[familyId] = Math.Max(0, memberCount + change);
         }
 
         /// <summary>
@@ -147,6 +157,7 @@ namespace Bloodfiends.Family
 
             ReparentEmbracedKindreds(deadNode);
             nodesById.Remove(deadNode.nodeId);
+            ChangeFamilyMemberCount(deadNode.familyId, -1);
             if (deadNode.bloodfiendPawn != null) nodeIdsByPawn.Remove(deadNode.bloodfiendPawn);
             playerAncestorCacheTick = -1;
             return promotedNodes;
@@ -204,6 +215,7 @@ namespace Bloodfiends.Family
         {
             nodesById.Add(node.nodeId, node);
             if (node.bloodfiendPawn != null) nodeIdsByPawn[node.bloodfiendPawn] = node.nodeId;
+            ChangeFamilyMemberCount(node.familyId, 1);
             playerAncestorCacheTick = -1;
         }
 
@@ -265,6 +277,12 @@ namespace Bloodfiends.Family
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (nodesById == null) nodesById = new Dictionary<int, BloodfiendFamilyNode>();
+
+                memberCountsByFamilyId = new Dictionary<int, int>();
+                foreach (BloodfiendFamilyNode node in nodesById.Values)
+                {
+                    ChangeFamilyMemberCount(node.familyId, 1);
+                }
 
                 nodeIdsByPawn = new Dictionary<Pawn, int>();
                 foreach (BloodfiendFamilyNode node in nodesById.Values)

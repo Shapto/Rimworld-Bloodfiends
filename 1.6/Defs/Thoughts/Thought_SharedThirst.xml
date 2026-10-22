@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<ThoughtDef>
+		<defName>Bloodfiends_BurdenOfTheFamily</defName>
+		<workerClass>Bloodfiends.SharedThirst.ThoughtWorker_BurdenOfTheFamily</workerClass>
+		<developmentalStageFilter>Child, Adult</developmentalStageFilter>
+		<stages>
+			<li>
+				<label>Burden of the Family</label>
+				<description>TODO</description>
+				<baseMoodEffect>-10</baseMoodEffect>
+			</li>
+			<li>
+				<label>Burden of the Family</label>
+				<description>TODO</description>
+				<baseMoodEffect>-7</baseMoodEffect>
+			</li>
+			<li>
+				<label>Burden of the Family</label>
+				<description>TODO</description>
+				<baseMoodEffect>-4</baseMoodEffect>
+			</li>
+			<li>
+				<label>Burden of the Family</label>
+				<description>TODO</description>
+				<baseMoodEffect>-2</baseMoodEffect>
+			</li>
+		</stages>
+		<modExtensions>
+			<li Class="Bloodfiends.SharedThirst.BurdenOfTheFamilyExtension">
+				<stageMaximumOtherMembers>
+					<li>0</li>
+					<li>2</li>
+					<li>4</li>
+					<li>6</li>
+				</stageMaximumOtherMembers>
+			</li>
+		</modExtensions>
+	</ThoughtDef>
+</Defs>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <!-- Embrace: Kindred -->
+  <Bloodfiends_NotInFamily>Not part of a Bloodfiend Family.</Bloodfiends_NotInFamily>
+  <Bloodfiends_NoKindredSlots>No Kindred slots left.</Bloodfiends_NoKindredSlots>
+  <Bloodfiends_EmbraceOnlyLivingHumans>Only living humans can be embraced.</Bloodfiends_EmbraceOnlyLivingHumans>
+  <Bloodfiends_AlreadyBloodfiend>Already a Bloodfiend.</Bloodfiends_AlreadyBloodfiend>
+  <Bloodfiends_EmbraceInvalidTarget>Can only embrace someone who is downed, a prisoner, or one of your own.</Bloodfiends_EmbraceInvalidTarget>
+  <Bloodfiends_Embraced>{CASTER_labelShort} has embraced {KINDRED_labelShort}.</Bloodfiends_Embraced>
+
+  <!-- Coagulate and Melt Away -->
+  <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
+  <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends.</Bloodfiends_OnlyWorksOnBloodfiends>
+  <Bloodfiends_BloodTooStrong>Their blood is too strong to command.</Bloodfiends_BloodTooStrong>
+</LanguageData>

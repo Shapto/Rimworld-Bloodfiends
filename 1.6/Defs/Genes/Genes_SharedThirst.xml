@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<GeneDef>
+		<defName>Bloodfiends_SharedThirst</defName>
+		<label>Shared Thirst</label>
+		<description>TODO</description>
+		<geneClass>Bloodfiends.SharedThirst.Gene_SharedThirst</geneClass>
+		<iconPath>TODO</iconPath>
+		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
+		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
+		<resourceLossPerDay>0.08</resourceLossPerDay>
+		<biostatMet>6</biostatMet>
+		<modExtensions>
+			<li Class="Bloodfiends.SharedThirst.SharedThirstExtension">
+				<drainMultiplierByOtherFamilyMembers>
+					<points>
+						<li>(0, 2.5)</li>
+						<li>(2, 2.0)</li>
+						<li>(4, 1.5)</li>
+						<li>(6, 1.0)</li>
+						<li>(9, 0.85)</li>
+						<li>(12, 0.75)</li>
+					</points>
+				</drainMultiplierByOtherFamilyMembers>
+			</li>
+		</modExtensions>
+	</GeneDef>
+</Defs>

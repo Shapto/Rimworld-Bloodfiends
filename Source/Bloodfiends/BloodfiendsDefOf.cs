@@ -15,6 +15,7 @@ namespace Bloodfiends
 
         public static XenotypeDef Bloodfiends_Bloodfiend;
         public static AbilityDef Bloodfiends_CoagulateAndMeltAway;
+        public static HediffDef Bloodfiends_Feasting;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

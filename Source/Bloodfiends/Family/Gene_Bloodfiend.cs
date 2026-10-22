@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Verse;
 
 namespace Bloodfiends.Family
@@ -12,10 +13,41 @@ namespace Bloodfiends.Family
     {
         public Hediff_BloodfiendLineage LineageHediff => pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>();
 
+        private const int FeastingUpdateIntervalTicks = 60;
+
         public override void PostAdd()
         {
             base.PostAdd();
             if (LineageHediff == null) RegisterAsNewBloodfiend();
+        }
+
+        public override void TickInterval(int delta)
+        {
+            base.TickInterval(delta);
+            if (pawn.IsHashIntervalTick(FeastingUpdateIntervalTicks, delta)) UpdateFeasting();
+        }
+
+        private void UpdateFeasting()
+        {
+            Gene_Hemogen hemogenGene = pawn.genes.GetFirstGeneOfType<Gene_Hemogen>();
+            Hediff feastingHediff = pawn.health.hediffSet.GetFirstHediffOfDef(BloodfiendsDefOf.Bloodfiends_Feasting);
+
+            if (!Active || hemogenGene == null || hemogenGene.Max <= 0f)
+            {
+                if (feastingHediff != null) pawn.health.RemoveHediff(feastingHediff);
+                return;
+            }
+
+            if (feastingHediff == null) feastingHediff = pawn.health.AddHediff(BloodfiendsDefOf.Bloodfiends_Feasting);
+            feastingHediff.Severity = Mathf.Max(0.001f, hemogenGene.Value / hemogenGene.Max);
+        }
+
+        public override void PostRemove()
+        {
+            base.PostRemove();
+
+            Hediff feastingHediff = pawn.health.hediffSet.GetFirstHediffOfDef(BloodfiendsDefOf.Bloodfiends_Feasting);
+            if (feastingHediff != null) pawn.health.RemoveHediff(feastingHediff);
         }
 
         /// <summary>

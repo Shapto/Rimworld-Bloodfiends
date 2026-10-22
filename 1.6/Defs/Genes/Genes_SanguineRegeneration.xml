@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<GeneDef>
+		<defName>Bloodfiends_SanguineRegeneration</defName>
+		<label>Sanguine Regeneration</label>
+		<description>TODO</description>
+		<geneClass>Bloodfiends.SanguineRegeneration.Gene_SanguineRegeneration</geneClass>
+		<iconPath>TODO</iconPath>
+		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
+		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
+		<biostatArc>1</biostatArc>
+		<modExtensions>
+			<li Class="Bloodfiends.SanguineRegeneration.SanguineRegenerationExtension">
+				<regenerationIntervalTicks>60</regenerationIntervalTicks>
+				<hemogenReserveFraction>0.1</hemogenReserveFraction>
+				<healingPerPassByGeneration>
+					<points>
+						<li>(1, 2.0)</li>
+						<li>(7, 0.5)</li>
+					</points>
+				</healingPerPassByGeneration>
+				<hemogenPerHealedPoint>0.002</hemogenPerHealedPoint>
+				<regrowthCostMultiplier>3</regrowthCostMultiplier>
+				<bloodLossHealedPerPass>0.02</bloodLossHealedPerPass>
+				<hemogenPerBloodLossSeverity>0.2</hemogenPerBloodLossSeverity>
+				<mortalStateDrainPerPass>0.01</mortalStateDrainPerPass>
+			</li>
+		</modExtensions>
+	</GeneDef>
+</Defs>

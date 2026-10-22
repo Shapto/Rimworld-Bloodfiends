@@ -91,6 +91,11 @@
     <Compile Include="Family\Hediff_BloodfiendLineage.cs" />
     <Compile Include="Family\Patch_WorldPawnGC_KeepBloodfiendAncestors.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SanguineRegeneration\Gene_SanguineRegeneration.cs" />
+    <Compile Include="SanguineRegeneration\Patch_PawnHealthTracker_ShouldBeDead.cs" />
+    <Compile Include="SharedThirst\Gene_SharedThirst.cs" />
+    <Compile Include="SharedThirst\Hediff_Feasting.cs" />
+    <Compile Include="SharedThirst\ThoughtWorker_BurdenOfTheFamily.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
