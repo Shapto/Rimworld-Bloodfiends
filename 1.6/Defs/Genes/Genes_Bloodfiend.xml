@@ -67,6 +67,47 @@
 					<li MayRequire="tiepi.goreperfected">GP_Filth_Bone</li>
 				</extraBloodFilth>
 			</li>
+			<li Class="Bloodfiends.Hardblood.HardbloodWeaponryExtension">
+				<slotsByGeneration>
+					<points>
+						<li>(1, 4)</li>
+						<li>(2, 3)</li>
+						<li>(3, 2)</li>
+						<li>(4, 2)</li>
+						<li>(5, 1)</li>
+						<li>(7, 1)</li>
+					</points>
+				</slotsByGeneration>
+				<extraSlotCraftingLevels>
+					<li>8</li>
+					<li>15</li>
+				</extraSlotCraftingLevels>
+				<hemogenCostByMarketValue>
+					<points>
+						<li>(0, 5)</li>
+						<li>(300, 10)</li>
+						<li>(1000, 18)</li>
+						<li>(3000, 25)</li>
+					</points>
+				</hemogenCostByMarketValue>
+				<costMultiplierByGeneration>
+					<points>
+						<li>(1, 0.5)</li>
+						<li>(7, 1.2)</li>
+					</points>
+				</costMultiplierByGeneration>
+				<upkeepPerDay>6</upkeepPerDay>
+				<qualityByGeneration>
+					<points>
+						<li>(1, 4)</li>
+						<li>(4, 2)</li>
+						<li>(7, 1)</li>
+					</points>
+				</qualityByGeneration>
+				<craftingLevelsPerQualityStep>10</craftingLevelsPerQualityStep>
+				<maximumQuality>Masterwork</maximumQuality>
+				<formSeconds>3</formSeconds>
+			</li>
 		</modExtensions>
 	</GeneDef>
 

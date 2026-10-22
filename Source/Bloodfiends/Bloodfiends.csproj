@@ -92,10 +92,13 @@
     <Compile Include="Family\Patch_WorldPawnGC_KeepBloodfiendAncestors.cs" />
     <Compile Include="Hardblood\BloodbagGrowth.cs" />
     <Compile Include="Hardblood\GameComponent_HardbloodCoatings.cs" />
+    <Compile Include="Hardblood\GameComponent_HardbloodReplicas.cs" />
     <Compile Include="Hardblood\HardbloodDebugActions.cs" />
     <Compile Include="Hardblood\HardbloodGraphics.cs" />
     <Compile Include="Hardblood\HardbloodGrowthsRendering.cs" />
     <Compile Include="Hardblood\HardbloodMask.cs" />
+    <Compile Include="Hardblood\HardbloodReplicaGraphics.cs" />
+    <Compile Include="Hardblood\HardbloodWeaponry.cs" />
     <Compile Include="Hardblood\HardbloodWeapons.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SanguineRegeneration\Gene_SanguineRegeneration.cs" />

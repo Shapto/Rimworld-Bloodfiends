@@ -13,4 +13,18 @@
   <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends and Bloodbags.</Bloodfiends_OnlyWorksOnBloodfiends>
   <Bloodfiends_OnlyBloodbagsAtYourTier>Only First and Second Kindreds can obliterate Bloodfiends. You can only obliterate Bloodbags.</Bloodfiends_OnlyBloodbagsAtYourTier>
   <Bloodfiends_BloodTooStrong>Their blood is too strong to command.</Bloodfiends_BloodTooStrong>
+
+    <!-- Hardblood Weaponry -->
+  <Bloodfiends_HardbloodWeaponry>Hardblood Weaponry</Bloodfiends_HardbloodWeaponry>
+  <Bloodfiends_HardbloodWeaponryDesc>TODO\n\nRepertoire: {0} / {1}</Bloodfiends_HardbloodWeaponryDesc>
+  <Bloodfiends_WeaponryDowned>{0} is downed.</Bloodfiends_WeaponryDowned>
+  <Bloodfiends_MimicWeapon>Mimic {0}</Bloodfiends_MimicWeapon>
+  <Bloodfiends_AlreadyMimicked>already in repertoire</Bloodfiends_AlreadyMimicked>
+  <Bloodfiends_RepertoireFull>no free slot</Bloodfiends_RepertoireFull>
+  <Bloodfiends_ManifestWeapon>Manifest {0} ({1} hemogen)</Bloodfiends_ManifestWeapon>
+  <Bloodfiends_AlreadyManifested>already held</Bloodfiends_AlreadyManifested>
+  <Bloodfiends_NotEnoughHemogen>not enough hemogen</Bloodfiends_NotEnoughHemogen>
+  <Bloodfiends_DissolveReplica>Dissolve {0}</Bloodfiends_DissolveReplica>
+  <Bloodfiends_ForgetWeapon>Forget {0}</Bloodfiends_ForgetWeapon>
+  <Bloodfiends_NothingToMimic>Hold a weapon to mimic it.</Bloodfiends_NothingToMimic>
 </LanguageData>

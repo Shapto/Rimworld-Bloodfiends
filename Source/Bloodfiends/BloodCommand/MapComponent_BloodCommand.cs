@@ -34,7 +34,7 @@ namespace Bloodfiends.BloodCommand
         private readonly HashSet<Thing> filthBeingPulled = new HashSet<Thing>();   // claimed by a stream, gone once it's pulled in
         private int visualsThisPass;
 
-        public static readonly BrushPalette BloodPalette = new BrushPalette(new Color(1f, 0.16f, 0.16f), new Color(0.75f, 0.03f, 0.055f), new Color(0.43f, 0f, 0.016f));
+        public static readonly BrushPalette BloodPalette = new BrushPalette(new Color(0.62f, 0.06f, 0.06f), new Color(0.45f, 0.02f, 0.03f), new Color(0.26f, 0f, 0.01f));
         public MapComponent_BloodCommand(Map map) : base(map)
         {
         }

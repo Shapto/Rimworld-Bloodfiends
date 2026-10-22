@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Bloodfiends.Hardblood;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace Bloodfiends.Family
         public Hediff_BloodfiendLineage LineageHediff => pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>();
 
         private const int FeastingUpdateIntervalTicks = 60;
+
+        public HardbloodWeaponry weaponry = new HardbloodWeaponry();
 
         public override void PostAdd()
         {
@@ -93,6 +96,20 @@ namespace Bloodfiends.Family
             if (registry == null || node == null) return;
 
             GameComponent_BloodfiendFamilies.SyncPromotedPawns(registry.Notify_BloodfiendDied(node));
+        }
+
+        public override IEnumerable<Gizmo> GetGizmos()
+        {
+            IEnumerable<Gizmo> baseGizmos = base.GetGizmos();
+            if (baseGizmos != null) foreach (Gizmo gizmo in baseGizmos) yield return gizmo;
+            if (Active && pawn.IsColonistPlayerControlled) yield return weaponry.GetGizmo(pawn);
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Deep.Look(ref weaponry, "hardbloodWeaponry");
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && weaponry == null) weaponry = new HardbloodWeaponry();
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Bloodfiends.Hardblood
             for (int index = 0; index < canvas.pixels.Length; index++) if (canvas.pixels[index].a != 0) canvas.arrival[index] = distances[index] / furthest;
         }
 
-        public static KitbashCanvas Replica(Color32[] weaponPixels, int width, int height, List<KitbashPiece> pieces, int seed, int scale, bool pointed)
+        public static KitbashCanvas Replica(Color32[] weaponPixels, int width, int height, List<KitbashPiece> pieces, int seed, int scale, bool pointed, out Vector2 gripEnd, out Vector2 tipEnd)
         {
             var random = new KitbashRandom(seed);
             var profile = new WeaponProfile(WeaponProfile.Visible(weaponPixels, width, height));
@@ -80,7 +80,24 @@ namespace Bloodfiends.Hardblood
             best.CutTo(target);
             KitbashCanvas canvas = space.BackToImage(best);
             canvas.Harden();
+            gripEnd = profile.ToImage(profile.tipSign > 0 ? profile.start : profile.end, 0f);
+            tipEnd = profile.ToImage(profile.tipSign > 0 ? profile.end : profile.start, 0f);
+            RecordGrowthAlong(canvas, gripEnd, tipEnd);
             return canvas;
+        }
+
+        private static void RecordGrowthAlong(KitbashCanvas canvas, Vector2 gripEnd, Vector2 tipEnd)
+        {
+            canvas.EnableGrowth();
+            Vector2 direction = tipEnd - gripEnd;
+            float length = Mathf.Max(1f, direction.magnitude);
+            direction /= length;
+            for (int index = 0; index < canvas.pixels.Length; index++)
+            {
+                if (canvas.pixels[index].a == 0) continue;
+                Vector2 offset = new Vector2(index % canvas.width + 0.5f, index / canvas.width + 0.5f) - gripEnd;
+                canvas.arrival[index] = Mathf.Clamp01(Vector2.Dot(offset, direction) / length);
+            }
         }
 
         private static float BigLength(WeaponSpace space, int scale)
