@@ -4,7 +4,7 @@
 		<defName>Bloodfiends_Feasting</defName>
 		<label>feasting</label>
 		<description>TODO</description>
-		<hediffClass>Bloodfiends.Family.Hediff_Feasting</hediffClass>
+		<hediffClass>Bloodfiends.SharedThirst.Hediff_Feasting</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>false</isBad>
 		<everCurableByItem>false</everCurableByItem>
