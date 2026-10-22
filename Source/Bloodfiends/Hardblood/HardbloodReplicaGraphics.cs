@@ -30,6 +30,7 @@ namespace Bloodfiends.Hardblood
     {
         private const float WeaponPadding = 0.25f;   // room around the weapon, as a share of its size (same as the coating)
         private const int GrowthTicks = 180;         // how long the crystal takes to harden in (3 seconds at normal speed)
+        private const int RetireFrames = 3;          // a dissolved replica's textures live this many frames longer (this frame's gizmos still draw its icon)
 
         // Thing caches its graphic in this field; setting it makes the replica draw as hardblood everywhere
         private static readonly FieldInfo GraphicField = AccessTools.Field(typeof(Thing), "graphicInt");
@@ -41,6 +42,7 @@ namespace Bloodfiends.Hardblood
             public Texture2D texture;
             public Vector2 grip;   // the weapon's ends on its sprite (-0.5 to 0.5), for the blood lines
             public Vector2 tip;
+            public int retiredFrame;
         }
 
         private class ReplicaBuild
@@ -51,17 +53,8 @@ namespace Bloodfiends.Hardblood
         }
 
         private static readonly Dictionary<int, ReplicaEntry> entriesByReplica = new Dictionary<int, ReplicaEntry>();
-        private static Material cachedBlankMaterial;
+        private static readonly List<ReplicaEntry> retired = new List<ReplicaEntry>();
         private static Game cachedForGame;
-
-        private static Material BlankMaterial
-        {
-            get
-            {
-                if (cachedBlankMaterial == null) cachedBlankMaterial = new Material(ShaderDatabase.Cutout) { name = "HardbloodReplica_Blank", mainTexture = BaseContent.ClearTex };
-                return cachedBlankMaterial;
-            }
-        }
 
         /// <summary>
         /// Gives the replica its look if it doesn't have it: after loading a save (generated textures aren't saved), or
@@ -84,7 +77,7 @@ namespace Bloodfiends.Hardblood
         public static Vector2 TipOf(Thing replica) => entriesByReplica.TryGetValue(replica.thingIDNumber, out ReplicaEntry entry) ? entry.tip : new Vector2(0.32f, 0.32f);
 
         /// <summary>
-        /// Makes the replica invisible and starts building its hardblood look, which replaces it when it's done.
+        /// Gives the replica its (still empty) hardblood texture and starts building the crystal into it.
         /// "growsIn": the crystal hardens in from the grip to the tip instead of just being there.
         /// </summary>
         public static void Apply(ThingWithComps replica, bool growsIn)
@@ -95,12 +88,12 @@ namespace Bloodfiends.Hardblood
             entriesByReplica[replica.thingIDNumber] = entry;
 
             Graphic original = replica.def.graphic;
-            Texture texture = original?.MatSingle?.mainTexture;
+            Texture originalTexture = original?.MatSingle?.mainTexture;
             if (GraphicField == null) Log.ErrorOnce("[Bloodfiends] Thing.graphicInt not found: hardblood replicas will look like the weapon they copy.", 51730211);
-            if (texture == null || GraphicField == null) return;
+            if (originalTexture == null || GraphicField == null) return;
             int width = HardbloodGraphics.CanvasSize;
-            int height = Mathf.Max(1, Mathf.RoundToInt(HardbloodGraphics.CanvasSize * texture.height / (float)texture.width));
-            Color32[] pixels = KitbashTextures.ReadPixels(texture, width, height, false);
+            int height = Mathf.Max(1, Mathf.RoundToInt(HardbloodGraphics.CanvasSize * originalTexture.height / (float)originalTexture.width));
+            Color32[] pixels = KitbashTextures.ReadPixels(originalTexture, width, height, false);
 
             int padding = Mathf.RoundToInt(Mathf.Max(width, height) * WeaponPadding);
             int paddedWidth = width + padding * 2;
@@ -108,12 +101,27 @@ namespace Bloodfiends.Hardblood
             var padded = new Color32[paddedWidth * paddedHeight];
             for (int row = 0; row < height; row++) System.Array.Copy(pixels, row * width, padded, (row + padding) * paddedWidth + padding, width);
 
+            // the texture, material and graphic the replica keeps for good: empty now, filled in when the build is done
+            string name = $"HardbloodReplica_{replica.thingIDNumber}";
+            entry.texture = new Texture2D(paddedWidth, paddedHeight, TextureFormat.RGBA32, true)
+            {
+                name = name,
+                filterMode = FilterMode.Trilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            entry.texture.SetPixels32(new Color32[paddedWidth * paddedHeight]);
+            entry.texture.Apply(true, false);
+            entry.material = new Material(ShaderDatabase.Cutout)
+            {
+                name = name,
+                mainTexture = entry.texture,
+                color = Color.white
+            };
             // drawn bigger than the weapon by the padding, so the weapon itself stays the same size
             Vector2 drawSize = new Vector2(original.drawSize.x * paddedWidth / width, original.drawSize.y * paddedHeight / height);
+            entry.graphic = HardbloodReplicaGraphic.Create(entry.material, drawSize, name);
             entry.grip = new Vector2(-0.3f * width / paddedWidth, -0.3f * height / paddedHeight);
             entry.tip = new Vector2(0.32f * width / paddedWidth, 0.32f * height / paddedHeight);
-            string name = $"HardbloodReplica_{replica.thingIDNumber}";
-            entry.graphic = HardbloodReplicaGraphic.Create(BlankMaterial, drawSize, name);
             GraphicField.SetValue(replica, entry.graphic);
 
             List<KitbashPiece> crystals = BloodfiendsDefOf.Bloodfiends_HardbloodCrystals.Pieces;
@@ -129,11 +137,15 @@ namespace Bloodfiends.Hardblood
             {
                 // the replica may have dissolved (or a new game started) while this was building
                 if (!entriesByReplica.TryGetValue(seed, out ReplicaEntry current) || current != entry || replica.Destroyed) return;
-                entry.material = KitbashGraphic.SingleMaterial(build.canvas, name, ShaderDatabase.Cutout, out entry.texture, growsIn ? GrowthTicks : 0);
                 entry.grip = ToSprite(build.grip, paddedWidth, paddedHeight);
                 entry.tip = ToSprite(build.tip, paddedWidth, paddedHeight);
-                entry.graphic = HardbloodReplicaGraphic.Create(entry.material, drawSize, name);
-                GraphicField.SetValue(replica, entry.graphic);
+                if (growsIn && build.canvas.arrival != null)
+                {
+                    KitbashGrowth.Start(new[] { entry.texture }, new[] { build.canvas }, GrowthTicks);
+                    return;
+                }
+                entry.texture.SetPixels32(KitbashTextures.OrientForTexture(build.canvas.pixels, build.canvas.width, build.canvas.height, false));
+                entry.texture.Apply(true, true);
             },
             name);
         }
@@ -161,13 +173,29 @@ namespace Bloodfiends.Hardblood
         }
 
         /// <summary>
-        /// Frees a replica's textures (it dissolved).
+        /// A replica dissolved: its textures are freed a few frames later, since gizmos gathered this frame may still
+        /// draw its icon.
         /// </summary>
         public static void Forget(Thing replica)
         {
             if (!entriesByReplica.TryGetValue(replica.thingIDNumber, out ReplicaEntry entry)) return;
-            Destroy(entry);
             entriesByReplica.Remove(replica.thingIDNumber);
+            if (entry.texture != null) KitbashGrowth.Stop(new[] { entry.texture });
+            entry.retiredFrame = Time.frameCount;
+            retired.Add(entry);
+        }
+
+        /// <summary>
+        /// Frees the textures of replicas that dissolved a few frames ago. Called every frame.
+        /// </summary>
+        public static void FreeRetired()
+        {
+            for (int index = retired.Count - 1; index >= 0; index--)
+            {
+                if (Time.frameCount - retired[index].retiredFrame < RetireFrames) continue;
+                Destroy(retired[index]);
+                retired.RemoveAt(index);
+            }
         }
 
         private static void Destroy(ReplicaEntry entry)
@@ -185,7 +213,9 @@ namespace Bloodfiends.Hardblood
             if (cachedForGame == Current.Game) return;
             cachedForGame = Current.Game;
             foreach (ReplicaEntry entry in entriesByReplica.Values) Destroy(entry);
+            foreach (ReplicaEntry entry in retired) Destroy(entry);
             entriesByReplica.Clear();
+            retired.Clear();
         }
     }
 }

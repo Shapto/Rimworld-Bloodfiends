@@ -78,6 +78,7 @@ namespace Bloodfiends.Hardblood
         /// </summary>
         public override void GameComponentUpdate()
         {
+            HardbloodReplicaGraphics.FreeRetired();
             foreach (Thing replica in replicas)
             {
                 if (replica is ThingWithComps weapon && !weapon.Destroyed) HardbloodReplicaGraphics.EnsureApplied(weapon);
