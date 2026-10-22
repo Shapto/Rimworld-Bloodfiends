@@ -11,8 +11,9 @@ namespace Bloodfiends.Family
 {
     public class CompProperties_AbilityCoagulateAndMeltAway : CompProperties_AbilityEffect
     {
-        public int maximumCasterGeneration = 2;
+        public int maximumGenerationForBloodfiendTargets = 2;
         public int minimumTargetGeneration = 4;
+        public float hemogenPerBodySize = 0.3f;
 
         public EffecterDef goreEffecter;
 
@@ -45,12 +46,21 @@ namespace Bloodfiends.Family
         private string GetRejectionReason(Pawn targetPawn)
         {
             if (targetPawn == null || targetPawn.Dead) return "Bloodfiends_MustTargetLivingBloodfiend".Translate();
+            if (IsBloodbag(targetPawn)) return null;
 
             BloodfiendFamilyNode targetNode = targetPawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node;
             if (targetNode == null) return "Bloodfiends_OnlyWorksOnBloodfiends".Translate();
+
+            int casterGeneration = parent.pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node?.generationNumber ?? int.MaxValue;
+            if (casterGeneration > Props.maximumGenerationForBloodfiendTargets) return "Bloodfiends_OnlyBloodbagsAtYourTier".Translate();
             if (targetNode.generationNumber < Props.minimumTargetGeneration) return "Bloodfiends_BloodTooStrong".Translate();
             return null;
         }
+
+        /// <summary>
+        /// stub
+        /// </summary>
+        private static bool IsBloodbag(Pawn pawn) => false;
 
         public override void Apply(LocalTargetInfo target, LocalTargetInfo dest)
         {
@@ -63,6 +73,8 @@ namespace Bloodfiends.Family
             Map map = targetPawn.MapHeld;
 
             FamilialImpiety.TryApply(parent.pawn, targetPawn);
+            float targetHemogen = targetPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>()?.Value ?? 0f;
+            GeneUtility.OffsetHemogen(parent.pawn, targetHemogen + targetPawn.BodySize * Props.hemogenPerBodySize);
             targetPawn.Strip();
             targetPawn.Kill(new DamageInfo(DamageDefOf.Cut, 99999f, 999f, -1f, parent.pawn));
             targetPawn.Corpse?.Destroy();

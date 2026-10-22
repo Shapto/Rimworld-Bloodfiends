@@ -11,9 +11,11 @@
 		<biostatArc>1</biostatArc>
 		<abilities>
 			<li>Bloodfeed</li>
+			<li>Bloodfiends_CoagulateAndMeltAway</li>
 		</abilities>
 		<descriptionHyperlinks>
 			<AbilityDef>Bloodfeed</AbilityDef>
+			<AbilityDef>Bloodfiends_CoagulateAndMeltAway</AbilityDef>
 		</descriptionHyperlinks>
 		<modExtensions>
 			<li Class="Bloodfiends.Family.BloodfiendStartingTierExtension">

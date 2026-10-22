@@ -10,6 +10,6 @@
 
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
-  <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends.</Bloodfiends_OnlyWorksOnBloodfiends>
-  <Bloodfiends_BloodTooStrong>Their blood is too strong to command.</Bloodfiends_BloodTooStrong>
+  <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends and Bloodbags.</Bloodfiends_OnlyWorksOnBloodfiends>
+  <Bloodfiends_OnlyBloodbagsAtYourTier>Only First and Second Kindreds can obliterate Bloodfiends. You can only obliterate Bloodbags.</Bloodfiends_OnlyBloodbagsAtYourTier>
 </LanguageData>

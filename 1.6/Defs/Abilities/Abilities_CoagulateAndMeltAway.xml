@@ -9,7 +9,7 @@
 		<displayOrder>120</displayOrder>
 		<hostile>true</hostile>
 		<aiCanUse>false</aiCanUse>
-		<cooldownTicksRange>30000</cooldownTicksRange>
+		<cooldownTicksRange>15000</cooldownTicksRange>
 		<verbProperties>
 			<verbClass>Verb_CastAbility</verbClass>
 			<range>24.9</range>
@@ -26,8 +26,9 @@
 				<hemogenCost>0.2</hemogenCost>
 			</li>
 			<li Class="Bloodfiends.Family.CompProperties_AbilityCoagulateAndMeltAway">
-				<maximumCasterGeneration>2</maximumCasterGeneration>
+				<maximumGenerationForBloodfiendTargets>2</maximumGenerationForBloodfiendTargets>
 				<minimumTargetGeneration>4</minimumTargetGeneration>
+				<hemogenPerBodySize>0.3</hemogenPerBodySize>
 				<goreEffecter>MeatExplosion</goreEffecter>
 				<goreRadius>2.9</goreRadius>
 				<goreFilthChancePerCell>0.6</goreFilthChancePerCell>
