@@ -47,7 +47,6 @@
 				<absorbIntervalTicks>60</absorbIntervalTicks>
 				<hemogenPerFilthThickness>0.01</hemogenPerFilthThickness>
 				<hemogenPerCorpseBodySize>0.3</hemogenPerCorpseBodySize>
-				<absorbFleck>Bloodfiends_BloodDroplet</absorbFleck>
 				<radiusByGeneration>
 					<points>
 						<li>(1, 18)</li>

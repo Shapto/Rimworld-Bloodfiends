@@ -1,5 +1,6 @@
 ﻿using Bloodfiends.Family;
 using RimWorld;
+using SingularityFramework.Visuals.Brushlines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,12 @@ namespace Bloodfiends.BloodCommand
         public int absorbIntervalTicks = 60;
         public float hemogenPerFilthThickness = 0.01f;
         public float hemogenPerCorpseBodySize = 0.3f;
-        public int dropletsPerAbsorb = 3;
-        public float dropletSpeed = 8f;
         public int maximumVisualsPerPass = 15;
-
+        public float lineSeconds = 1.4f;        // how long one stream of blood takes to be pulled in
+        public float lineWidth = 0.16f;         // how wide a stream is, in cells
+        public float risingThickness = 2f;      // filth at least this thick (a pool) rises in streaks before it's pulled in
 
         public SimpleCurve radiusByGeneration;
-
-        public FleckDef absorbFleck;
 
         public List<ThingDef> extraBloodFilth = new List<ThingDef>();
     }
@@ -32,7 +31,10 @@ namespace Bloodfiends.BloodCommand
         private static BloodCommandExtension cachedSettings;
         private readonly List<Pawn> bloodfiendsBuffer = new List<Pawn>();
         private static HashSet<ThingDef> cachedBloodFilthDefs;
+        private readonly HashSet<Thing> filthBeingPulled = new HashSet<Thing>();   // claimed by a stream, gone once it's pulled in
         private int visualsThisPass;
+
+        public static readonly BrushPalette BloodPalette = new BrushPalette(new Color(1f, 0.16f, 0.16f), new Color(0.75f, 0.03f, 0.055f), new Color(0.43f, 0f, 0.016f));
         public MapComponent_BloodCommand(Map map) : base(map)
         {
         }
@@ -53,6 +55,7 @@ namespace Bloodfiends.BloodCommand
 
             bloodfiendsBuffer.Clear();
             visualsThisPass = 0;
+            filthBeingPulled.RemoveWhere(filth => filth.Destroyed);
             foreach (Pawn pawn in map.mapPawns.AllPawnsSpawned)
             {
                 if (GenerationOf(pawn) > 0) bloodfiendsBuffer.Add(pawn);
@@ -85,13 +88,23 @@ namespace Bloodfiends.BloodCommand
                 for (int filthIndex = bloodFilth.Count - 1; filthIndex >= 0; filthIndex--)
                 {
                     if (hemogenGene.Value >= hemogenGene.Max) return;
-                    if (!(bloodFilth[filthIndex] is Filth filth) || filth.Destroyed) continue;
+                    if (!(bloodFilth[filthIndex] is Filth filth) || filth.Destroyed || filthBeingPulled.Contains(filth)) continue;
                     if ((filth.Position - bloodfiend.Position).LengthHorizontalSquared > radiusSquared) continue;
 
                     float hemogenGained = filth.thickness * Settings.hemogenPerFilthThickness;
-                    ShowAbsorb(filth.Position, bloodfiend);
-                    filth.Destroy();
                     GeneUtility.OffsetHemogen(bloodfiend, hemogenGained);
+                    if (ShowAbsorb(filth.Position, bloodfiend, filth.thickness >= Settings.risingThickness, out StreamLineEffect stream))
+                    {
+                        filthBeingPulled.Add(filth);
+                        stream.AtMoment(0.6f, () =>
+                        {
+                            if (!filth.Destroyed) filth.Destroy();
+                        });
+                    }
+                    else
+                    {
+                        filth.Destroy();
+                    }
                 }
             }
 
@@ -103,7 +116,7 @@ namespace Bloodfiends.BloodCommand
                 float hemogenGained = DrainCorpse(corpse);
                 if (hemogenGained <= 0f) continue;
 
-                ShowAbsorb(corpse.Position, bloodfiend);
+                ShowAbsorb(corpse.Position, bloodfiend, true, out _);
                 GeneUtility.OffsetHemogen(bloodfiend, hemogenGained);
             }
         }
@@ -141,29 +154,19 @@ namespace Bloodfiends.BloodCommand
             return remainingBlood * innerPawn.BodySize * Settings.hemogenPerCorpseBodySize;
         }
 
-        private void ShowAbsorb(IntVec3 sourceCell, Pawn bloodfiend)
+        /// <summary>
+        /// A stream of blood pulled from the source into the Bloodfiend. False (no stream) when there are already too many
+        /// this pass, or the spot can't show effects.
+        /// </summary>
+        private bool ShowAbsorb(IntVec3 sourceCell, Pawn bloodfiend, bool risesFirst, out StreamLineEffect stream)
         {
-            FleckDef dropletFleck = Settings.absorbFleck;
-            if (dropletFleck == null || visualsThisPass >= Settings.maximumVisualsPerPass || !sourceCell.ShouldSpawnMotesAt(map)) return;
+            stream = null;
+            if (visualsThisPass >= Settings.maximumVisualsPerPass || !sourceCell.ShouldSpawnMotesAt(map)) return false;
             visualsThisPass++;
-
-            Vector3 startPosition = sourceCell.ToVector3Shifted();
-            Vector3 towardsBloodfiend = bloodfiend.DrawPos - startPosition;
-            float distance = towardsBloodfiend.MagnitudeHorizontal();
-            float angleToBloodfiend = towardsBloodfiend.AngleFlat();
-
-            for (int dropletIndex = 0; dropletIndex < Settings.dropletsPerAbsorb; dropletIndex++)
-            {
-                float dropletSpeed = Settings.dropletSpeed * Rand.Range(0.85f, 1.15f);
-                Vector3 jitteredStart = startPosition + new Vector3(Rand.Range(-0.3f, 0.3f), 0f, Rand.Range(-0.3f, 0.3f));
-
-                FleckCreationData dropletData = FleckMaker.GetDataStatic(jitteredStart, map, dropletFleck, Rand.Range(0.2f, 0.35f));
-                dropletData.velocityAngle = angleToBloodfiend + Rand.Range(-6f, 6f);
-                dropletData.velocitySpeed = dropletSpeed;
-                dropletData.solidTimeOverride = distance / dropletSpeed;
-                dropletData.rotation = dropletData.velocityAngle + 180f;
-                map.flecks.CreateFleck(dropletData);
-            }
+            Vector3 source = sourceCell.ToVector3Shifted() + new Vector3(Rand.Range(-0.2f, 0.2f), 0f, Rand.Range(-0.2f, 0.2f));
+            stream = new StreamLineEffect(BloodPalette, source, bloodfiend, Settings.lineWidth * Rand.Range(0.8f, 1.2f), risesFirst, Rand.Int, Settings.lineSeconds * Rand.Range(0.9f, 1.1f));
+            MapComponent_BrushLines.Start(map, stream);
+            return true;
         }
     }
 }
