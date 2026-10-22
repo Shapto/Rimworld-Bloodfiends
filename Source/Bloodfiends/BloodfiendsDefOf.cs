@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using SingularityFramework.Kitbash;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace Bloodfiends
         public static AbilityDef Bloodfiends_CoagulateAndMeltAway;
         public static HediffDef Bloodfiends_Feasting;
         public static ThoughtDef Bloodfiends_FamilialImpiety;
+        public static HediffDef Bloodfiends_HardbloodGrowths;
+        public static KitbashPieceSetDef Bloodfiends_HardbloodCrystals;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

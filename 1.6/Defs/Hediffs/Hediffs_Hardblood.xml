@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<HediffDef>
+		<defName>Bloodfiends_HardbloodGrowths</defName>
+		<label>hardblood growths</label>
+		<description>TODO</description>
+		<hediffClass>Bloodfiends.Hardblood.Hediff_HardbloodGrowths</hediffClass>
+		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
+		<isBad>false</isBad>
+		<everCurableByItem>false</everCurableByItem>
+		<renderNodeProperties>
+			<li Class="Bloodfiends.Hardblood.PawnRenderNodeProperties_HardbloodGrowths">
+				<nodeClass>Bloodfiends.Hardblood.PawnRenderNode_HardbloodGrowths</nodeClass>
+				<workerClass>PawnRenderNodeWorker</workerClass>
+				<parentTagDef>Body</parentTagDef>
+				<onHead>false</onHead>
+				<baseLayer>40</baseLayer>
+			</li>
+			<li Class="Bloodfiends.Hardblood.PawnRenderNodeProperties_HardbloodGrowths">
+				<nodeClass>Bloodfiends.Hardblood.PawnRenderNode_HardbloodGrowths</nodeClass>
+				<workerClass>PawnRenderNodeWorker</workerClass>
+				<parentTagDef>Head</parentTagDef>
+				<onHead>true</onHead>
+				<baseLayer>67</baseLayer>
+			</li>
+		</renderNodeProperties>
+	</HediffDef>
+</Defs>

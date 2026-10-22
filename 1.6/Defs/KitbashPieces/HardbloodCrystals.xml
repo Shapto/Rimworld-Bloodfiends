@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<SingularityFramework.Kitbash.KitbashPieceSetDef>
+		<defName>Bloodfiends_HardbloodCrystals</defName>
+		<pieces>
+			<li><texPath>Hardblood/Crystal_Large_A</texPath><size>Large</size><pointed>true</pointed></li>
+			<li><texPath>Hardblood/Crystal_Large_B</texPath><size>Large</size><pointed>true</pointed></li>
+			<li><texPath>Hardblood/Crystal_Large_C</texPath><size>Large</size></li>
+			<li><texPath>Hardblood/Crystal_Large_D</texPath><size>Large</size></li>
+			<li><texPath>Hardblood/Crystal_Medium_A</texPath><size>Medium</size></li>
+			<li><texPath>Hardblood/Crystal_Medium_B</texPath><size>Medium</size></li>
+			<li><texPath>Hardblood/Crystal_Medium_C</texPath><size>Medium</size><pointed>true</pointed></li>
+			<li><texPath>Hardblood/Crystal_Medium_D</texPath><size>Medium</size><pointed>true</pointed></li>
+			<li><texPath>Hardblood/Crystal_Small_A</texPath><size>Small</size></li>
+			<li><texPath>Hardblood/Crystal_Small_B</texPath><size>Small</size></li>
+			<li><texPath>Hardblood/Crystal_Small_C</texPath><size>Small</size></li>
+			<li><texPath>Hardblood/Crystal_Small_D</texPath><size>Small</size></li>
+			<li><texPath>Hardblood/Crystal_Small_E</texPath><size>Small</size></li>
+			<li><texPath>Hardblood/Crystal_Small_F</texPath><size>Small</size></li>
+		</pieces>
+	</SingularityFramework.Kitbash.KitbashPieceSetDef>
+</Defs>
