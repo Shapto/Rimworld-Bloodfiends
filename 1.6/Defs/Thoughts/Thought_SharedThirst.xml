@@ -37,4 +37,30 @@
 			</li>
 		</modExtensions>
 	</ThoughtDef>
+
+	<ThoughtDef>
+		<defName>Bloodfiends_FamilyBond</defName>
+		<thoughtClass>Thought_SituationalSocial</thoughtClass>
+		<workerClass>Bloodfiends.SharedThirst.ThoughtWorker_FamilyBond</workerClass>
+		<stages>
+			<li>
+				<label>family</label>
+				<baseOpinionOffset>30</baseOpinionOffset>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<ThoughtDef>
+		<defName>Bloodfiends_FamilialImpiety</defName>
+		<thoughtClass>Thought_Memory</thoughtClass>
+		<durationDays>5</durationDays>
+		<stackLimit>3</stackLimit>
+		<stages>
+			<li>
+				<label>Familial impiety</label>
+				<description>TODO</description>
+				<baseMoodEffect>-15</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
 </Defs>

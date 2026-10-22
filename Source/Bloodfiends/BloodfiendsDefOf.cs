@@ -12,10 +12,10 @@ namespace Bloodfiends
     public static class BloodfiendsDefOf
     {
         public static HediffDef Bloodfiends_Lineage;
-
         public static XenotypeDef Bloodfiends_Bloodfiend;
         public static AbilityDef Bloodfiends_CoagulateAndMeltAway;
         public static HediffDef Bloodfiends_Feasting;
+        public static ThoughtDef Bloodfiends_FamilialImpiety;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

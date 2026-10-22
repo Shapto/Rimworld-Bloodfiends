@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Bloodfiends.SharedThirst;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,7 @@ namespace Bloodfiends.Family
             IntVec3 position = targetPawn.PositionHeld;
             Map map = targetPawn.MapHeld;
 
+            FamilialImpiety.TryApply(parent.pawn, targetPawn);
             targetPawn.Strip();
             targetPawn.Kill(new DamageInfo(DamageDefOf.Cut, 99999f, 999f, -1f, parent.pawn));
             targetPawn.Corpse?.Destroy();

@@ -93,9 +93,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SanguineRegeneration\Gene_SanguineRegeneration.cs" />
     <Compile Include="SanguineRegeneration\Patch_PawnHealthTracker_ShouldBeDead.cs" />
+    <Compile Include="SharedThirst\FamilialImpiety.cs" />
     <Compile Include="SharedThirst\Gene_SharedThirst.cs" />
     <Compile Include="SharedThirst\Hediff_Feasting.cs" />
     <Compile Include="SharedThirst\ThoughtWorker_BurdenOfTheFamily.cs" />
+    <Compile Include="SharedThirst\ThoughtWorker_FamilyBond.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -267,6 +267,13 @@ namespace Bloodfiends.Family
             }
         }
 
+        public bool AreSameFamily(Pawn firstPawn, Pawn secondPawn)
+        {
+            BloodfiendFamilyNode firstNode = GetNodeForPawn(firstPawn);
+            BloodfiendFamilyNode secondNode = GetNodeForPawn(secondPawn);
+            return firstNode != null && secondNode != null && firstNode != secondNode && firstNode.familyId == secondNode.familyId;
+        }
+
         public override void ExposeData()
         {
             base.ExposeData();
