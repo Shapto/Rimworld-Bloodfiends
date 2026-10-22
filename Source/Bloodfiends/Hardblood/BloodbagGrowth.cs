@@ -135,7 +135,8 @@ namespace Bloodfiends.Hardblood
                 }
                 centers.Add(bestCenter);
                 reaches.Add(reach);
-                crystals.AddRange(new Growth(space.width, space.height, allowed, pieces, random, bestCenter, reach, scale).Build().layers);
+                float delay = 0.15f * ((centers.Count - 1) % 4) / 3f;
+                crystals.AddRange(new Growth(space.width, space.height, allowed, pieces, random, bestCenter, reach, scale, delay).Build().layers);
             }
             return crystals;
         }
@@ -158,8 +159,9 @@ namespace Bloodfiends.Hardblood
             private readonly int scale;
             private readonly PixelMask union;
             private readonly Dictionary<string, int> usage = new Dictionary<string, int>();
+            private readonly float delay;   // when this site starts growing, as a share of the whole growth
 
-            public Growth(int width, int height, PixelMask allowed, List<KitbashPiece> pieces, KitbashRandom random, Vector2 center, float reach, int scale)
+            public Growth(int width, int height, PixelMask allowed, List<KitbashPiece> pieces, KitbashRandom random, Vector2 center, float reach, int scale, float delay)
             {
                 this.width = width;
                 this.height = height;
@@ -169,6 +171,7 @@ namespace Bloodfiends.Hardblood
                 this.center = center;
                 this.reach = reach;
                 this.scale = scale;
+                this.delay = delay;
                 union = new PixelMask(width, height);
             }
 
@@ -178,24 +181,21 @@ namespace Bloodfiends.Hardblood
                 List<KitbashPiece> chunky = pieces.FindAll(piece => piece.size != KitbashSize.Small);
                 List<KitbashPiece> pointed = pieces.FindAll(piece => piece.pointed);
 
-                // 1. the rock: a big crystal bursting out of the site
                 for (int attempt = 0; attempt < 30; attempt++)
                 {
                     Vector2 jitter = new Vector2(random.Uniform(-0.1f, 0.1f), random.Uniform(-0.1f, 0.1f)) * reach;
-                    if (GrowFrom(center + jitter, reach * random.Uniform(0.9f, 1.1f), random.Uniform(0.6f, 0.85f), large, 0.5f, 1f, 180f)) break;
+                    if (GrowFrom(center + jitter, reach * random.Uniform(0.9f, 1.1f), random.Uniform(0.6f, 0.85f), large, 0.5f, 1f, 180f, 0f, 0.55f)) break;
                 }
                 if (layers.Count == 0) return this;
 
-                // 2. mostly just the rock; now and then a second or third piece grows off it
                 int extraCount = random.WeightedChoice(new[] { 0, 1, 2 }, new[] { 0.6f, 0.3f, 0.1f });
                 for (int attempt = 0; attempt < extraCount * 6 && layers.Count < 1 + extraCount; attempt++)
                 {
                     List<Vector2> anchors = EdgeAnchors(reach * 0.6f);
                     if (anchors.Count == 0) break;
-                    GrowFrom(random.Choice(anchors), reach * random.Uniform(0.55f, 0.75f), random.Uniform(0.55f, 0.8f), chunky, 0.35f, 0.35f, 40f);
+                    GrowFrom(random.Choice(anchors), reach * random.Uniform(0.55f, 0.75f), random.Uniform(0.55f, 0.8f), chunky, 0.35f, 0.35f, 40f, 0.45f, 0.35f);
                 }
 
-                // 3. sometimes a spike, where the growth reaches furthest, so it bristles at the edge instead of thickening
                 int spikeCount = random.WeightedChoice(new[] { 0, 1 }, new[] { 0.6f, 0.4f });
                 int spikesPlaced = 0;
                 for (int attempt = 0; attempt < spikeCount * 8 && spikesPlaced < spikeCount; attempt++)
@@ -204,16 +204,12 @@ namespace Bloodfiends.Hardblood
                     if (anchors.Count == 0) break;
                     anchors.Sort((first, second) => Vector2.Distance(second, center).CompareTo(Vector2.Distance(first, center)));
                     Vector2 anchor = anchors[random.Index(Mathf.Max(1, anchors.Count / 3))];
-                    if (GrowFrom(anchor, reach * random.Uniform(0.6f, 0.9f), random.Uniform(0.35f, 0.5f), pointed, 0.2f, 0.3f, 25f)) spikesPlaced++;
+                    if (GrowFrom(anchor, reach * random.Uniform(0.6f, 0.9f), random.Uniform(0.35f, 0.5f), pointed, 0.2f, 0.3f, 25f, 0.6f, 0.4f)) spikesPlaced++;
                 }
                 return this;
             }
 
-            /// <summary>
-            /// One crystal sprouting at "anchor", pointing away from the site, "length" long with a base "widthShare" of
-            /// that wide, sunk "embed" of its length into the growth so it comes out of it rather than sitting on it.
-            /// </summary>
-            private bool GrowFrom(Vector2 anchor, float length, float widthShare, List<KitbashPiece> candidates, float embed, float maximumOverlap, float jitterDegrees)
+            private bool GrowFrom(Vector2 anchor, float length, float widthShare, List<KitbashPiece> candidates, float embed, float maximumOverlap, float jitterDegrees, float growthStart, float growthSpan)
             {
                 if (candidates.Count == 0) return false;
                 Vector2 outward = anchor - center;
@@ -224,13 +220,10 @@ namespace Bloodfiends.Hardblood
                 float halfWidth = length * widthShare / 2f;
                 Vector2 baseMiddle = anchor - direction * length * embed;
                 Vector2 tip = baseMiddle + direction * length;
-                return Place(Pick(candidates), baseMiddle - across * halfWidth, baseMiddle + across * halfWidth, tip, maximumOverlap);
+                return Place(Pick(candidates), baseMiddle - across * halfWidth, baseMiddle + across * halfWidth, tip, maximumOverlap, growthStart, growthSpan);
             }
 
-            /// <summary>
-            /// Lays the crystal with its base across baseStart to baseEnd and its tip at "tip". False if it doesn't fit.
-            /// </summary>
-            private bool Place(KitbashPiece piece, Vector2 baseStart, Vector2 baseEnd, Vector2 tip, float maximumOverlap)
+            private bool Place(KitbashPiece piece, Vector2 baseStart, Vector2 baseEnd, Vector2 tip, float maximumOverlap, float growthStart, float growthSpan)
             {
                 bool mirrored = random.Chance(0.5f);
                 Affine2D mirror = piece.MirrorTransform(mirrored);
@@ -253,14 +246,23 @@ namespace Bloodfiends.Hardblood
                     if (area == 0) continue;
                     if (layers.Count > 0)
                     {
-                        // it has to grow out of the growth (touching it), but mostly into new ground
                         float overlap = union.CountIn(spans) / (float)area;
                         if (overlap > maximumOverlap || overlap < 0.03f) continue;
                     }
                     if (allowed.CountIn(spans) / (float)area < 0.97f) continue;
                     if (NextToItself(piece, placedOutline)) continue;
 
-                    layers.Add(new PlacedPiece { piece = piece, placement = placement, outline = placedOutline, spans = spans, inTiling = true });
+                    layers.Add(new PlacedPiece
+                    {
+                        piece = piece,
+                        placement = placement,
+                        outline = placedOutline,
+                        spans = spans,
+                        inTiling = true,
+                        growthOrigin = (baseStart + baseEnd) / 2f,
+                        growthStart = delay + growthStart * (1f - delay),
+                        growthSpan = growthSpan * (1f - delay)
+                    });
                     union.Fill(spans);
                     usage[piece.name] = UsageOf(piece) + 1;
                     return true;
@@ -279,9 +281,6 @@ namespace Bloodfiends.Hardblood
 
             private int UsageOf(KitbashPiece piece) => usage.TryGetValue(piece.name, out int count) ? count : 0;
 
-            /// <summary>
-            /// A random piece, less likely the more it's been used here.
-            /// </summary>
             private KitbashPiece Pick(List<KitbashPiece> candidates)
             {
                 var weights = new List<float>();
@@ -289,9 +288,6 @@ namespace Bloodfiends.Hardblood
                 return random.WeightedChoice(candidates, weights);
             }
 
-            /// <summary>
-            /// Random points on the growth's outline, no further than "maximumDistance" from the site.
-            /// </summary>
             private List<Vector2> EdgeAnchors(float maximumDistance)
             {
                 var anchors = new List<Vector2>();

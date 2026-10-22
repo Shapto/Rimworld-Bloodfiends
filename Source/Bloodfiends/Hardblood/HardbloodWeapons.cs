@@ -29,7 +29,24 @@ namespace Bloodfiends.Hardblood
             KitbashCanvas canvas = space.BackToImage(assembly.Render());
             AddSweepingShards(canvas, profile, pieces, random);
             canvas.Harden();
+            RecordGrowthFromHand(canvas, profile);
             return canvas;
+        }
+
+        private static void RecordGrowthFromHand(KitbashCanvas canvas, WeaponProfile profile)
+        {
+            canvas.EnableGrowth();
+            Vector2 hand = new Vector2(canvas.width / 2f, canvas.height / 2f);
+            var distances = new float[canvas.pixels.Length];
+            float furthest = 1f;
+            for (int index = 0; index < canvas.pixels.Length; index++)
+            {
+                if (canvas.pixels[index].a == 0) continue;
+                Vector2 offset = new Vector2(index % canvas.width + 0.5f, index / canvas.width + 0.5f) - hand;
+                distances[index] = Mathf.Abs(Vector2.Dot(offset, profile.axis));
+                furthest = Mathf.Max(furthest, distances[index]);
+            }
+            for (int index = 0; index < canvas.pixels.Length; index++) if (canvas.pixels[index].a != 0) canvas.arrival[index] = distances[index] / furthest;
         }
 
         public static KitbashCanvas Replica(Color32[] weaponPixels, int width, int height, List<KitbashPiece> pieces, int seed, int scale, bool pointed)

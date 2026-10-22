@@ -21,7 +21,7 @@
 				<workerClass>PawnRenderNodeWorker</workerClass>
 				<parentTagDef>Head</parentTagDef>
 				<onHead>true</onHead>
-				<baseLayer>67</baseLayer>
+				<baseLayer>61</baseLayer>
 			</li>
 		</renderNodeProperties>
 	</HediffDef>

@@ -25,11 +25,15 @@ namespace Bloodfiends.Hardblood
         }
 
         /// <summary>
-        /// Throws the pawn's growths away and builds them again (after changing the code or the crystals).
+        /// Throws the pawn's growths away and grows them in again (after changing the code or the crystals, or to watch
+        /// the growth again).
         /// </summary>
-        [DebugAction("Bloodfiends", "Rebuild hardblood", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
-        private static void RebuildHardblood(Pawn pawn)
+        [DebugAction("Bloodfiends", "Regrow hardblood", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static void RegrowHardblood(Pawn pawn)
         {
+            Hediff growths = pawn.health.hediffSet.GetFirstHediffOfDef(BloodfiendsDefOf.Bloodfiends_HardbloodGrowths);
+            if (growths == null) return;
+            growths.ageTicks = 0;
             HardbloodGraphics.Forget(pawn);
             pawn.Drawer.renderer.SetAllGraphicsDirty();
         }

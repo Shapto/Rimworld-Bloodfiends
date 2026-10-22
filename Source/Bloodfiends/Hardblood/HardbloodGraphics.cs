@@ -14,6 +14,8 @@ namespace Bloodfiends.Hardblood
         public const int CanvasSize = 512;           // head and body textures are read at this size (128 pixel textures at 4x)
         public const int Scale = 4;                  // canvas pixels per pixel of a 128 pixel texture
         private const float WeaponPadding = 0.25f;   // room around a weapon for shards sweeping past it, as a share of its size
+        private const int GrowthTicks = 180;         // how long growths take to grow in (180 ticks: 3 seconds at normal speed)
+        private const int NewGrowthAgeTicks = 600;   // growths on a pawn younger than this grow in; older ones (loaded saves) are just there
 
         private class GrowthEntry
         {
@@ -64,6 +66,8 @@ namespace Bloodfiends.Hardblood
             List<KitbashPiece> crystals = Crystals;
             int seed = pawn.thingIDNumber;
             string name = $"HardbloodGrowths_{pawn.thingIDNumber}";
+            Hediff growthsHediff = pawn.health.hediffSet.GetFirstHediffOfDef(BloodfiendsDefOf.Bloodfiends_HardbloodGrowths);
+            int growthTicks = growthsHediff != null && growthsHediff.ageTicks < NewGrowthAgeTicks ? GrowthTicks : 0;
 
             KitbashBuilds.Start(() =>
             {
@@ -81,8 +85,8 @@ namespace Bloodfiends.Hardblood
             {
                 // the pawn may have been forgotten (hediff removed, new game) while this was building
                 if (!growthsByPawn.TryGetValue(seed, out GrowthEntry current) || current != entry) return;
-                entry.head = KitbashGraphic.Create(canvases[0], name + "_Head", ShaderDatabase.Cutout, Vector2.one);
-                entry.body = KitbashGraphic.Create(canvases[1], name + "_Body", ShaderDatabase.Cutout, Vector2.one);
+                entry.head = KitbashGraphic.Create(canvases[0], name + "_Head", ShaderDatabase.Cutout, Vector2.one, growthTicks);
+                entry.body = KitbashGraphic.Create(canvases[1], name + "_Body", ShaderDatabase.Cutout, Vector2.one, growthTicks);
                 if (!pawn.Destroyed) pawn.Drawer.renderer.SetAllGraphicsDirty();
             },
             name);
@@ -116,6 +120,17 @@ namespace Bloodfiends.Hardblood
         }
 
         // ----- weapon coating -----
+
+        /// <summary>
+        /// The weapon overlay for Bloodbags: a Bloodbag's weapon is always wrapped in hardblood.
+        /// </summary>
+        public static bool BloodbagCoating(Pawn pawn, Thing weapon, out Material material, out Vector2 drawScale)
+        {
+            material = null;
+            drawScale = Vector2.one;
+            if (!pawn.health.hediffSet.HasHediff(BloodfiendsDefOf.Bloodfiends_HardbloodGrowths)) return false;
+            return TryGetCoating(weapon, out material, out drawScale);
+        }
 
         /// <summary>
         /// The coating to draw over a weapon, and how much bigger than the weapon to draw it, across and up (it has room
@@ -156,11 +171,12 @@ namespace Bloodfiends.Hardblood
             List<KitbashPiece> crystals = Crystals;
             int seed = weapon.thingIDNumber;
             string name = $"HardbloodCoating_{weapon.thingIDNumber}";
+            int growthTicks = GameComponent_HardbloodCoatings.Instance?.MarkCoated(weapon) == true ? GrowthTicks : 0;
             KitbashBuilds.Start(() => HardbloodWeapons.Coating(padded, paddedWidth, paddedHeight, crystals, seed, Scale),
             canvas =>
             {
                 if (!coatingsByWeapon.TryGetValue(seed, out CoatingEntry current) || current != entry) return;
-                entry.material = KitbashGraphic.SingleMaterial(canvas, name, ShaderDatabase.Cutout, out entry.texture);
+                entry.material = KitbashGraphic.SingleMaterial(canvas, name, ShaderDatabase.Cutout, out entry.texture, growthTicks);
                 entry.drawScale = new Vector2(paddedWidth / (float)width, paddedHeight / (float)height);
             },
             name);
@@ -182,6 +198,7 @@ namespace Bloodfiends.Hardblood
             }
             foreach (CoatingEntry entry in coatingsByWeapon.Values)
             {
+                if (entry.texture != null) KitbashGrowth.Stop(new[] { entry.texture });
                 if (entry.material != null) UnityEngine.Object.Destroy(entry.material);
                 if (entry.texture != null) UnityEngine.Object.Destroy(entry.texture);
             }
