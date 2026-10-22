@@ -43,11 +43,11 @@ namespace Bloodfiends.Family
 
         private string GetRejectionReason(Pawn targetPawn)
         {
-            if (targetPawn == null || targetPawn.Dead) return "Must target a living Bloodfiend.";
+            if (targetPawn == null || targetPawn.Dead) return "Bloodfiends_MustTargetLivingBloodfiend".Translate();
 
             BloodfiendFamilyNode targetNode = targetPawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node;
-            if (targetNode == null) return "Only works on Bloodfiends.";
-            if (targetNode.generationNumber < Props.minimumTargetGeneration) return "Their blood is too strong to command.";
+            if (targetNode == null) return "Bloodfiends_OnlyWorksOnBloodfiends".Translate();
+            if (targetNode.generationNumber < Props.minimumTargetGeneration) return "Bloodfiends_BloodTooStrong".Translate();
             return null;
         }
 

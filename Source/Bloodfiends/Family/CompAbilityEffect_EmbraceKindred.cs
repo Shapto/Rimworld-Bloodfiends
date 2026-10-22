@@ -28,12 +28,12 @@ namespace Bloodfiends.Family
 
             if (registry == null || casterNode == null)
             {
-                reason = "Not part of a Bloodfiend Family.";
+                reason = "Bloodfiends_NotInFamily".Translate();
                 return true;
             }
             if (!registry.CanEmbraceKindred(casterNode))
             {
-                reason = "No Kindred slots left.";
+                reason = "Bloodfiends_NoKindredSlots".Translate();
                 return true;
             }
             return base.GizmoDisabled(out reason);
@@ -52,9 +52,9 @@ namespace Bloodfiends.Family
 
         private string GetRejectionReason(Pawn targetPawn)
         {
-            if (targetPawn == null || targetPawn.Dead || !targetPawn.RaceProps.Humanlike) return "Only living humans can be embraced.";
-            if (targetPawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() != null) return "Already a Bloodfiend.";
-            if (!targetPawn.Downed && !targetPawn.IsPrisonerOfColony && targetPawn.Faction != parent.pawn.Faction) return "Can only embrace someone who is downed, a prisoner, or one of your own.";
+            if (targetPawn == null || targetPawn.Dead || !targetPawn.RaceProps.Humanlike) return "Bloodfiends_EmbraceOnlyLivingHumans".Translate();
+            if (targetPawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() != null) return "Bloodfiends_AlreadyBloodfiend".Translate();
+            if (!targetPawn.Downed && !targetPawn.IsPrisonerOfColony && targetPawn.Faction != parent.pawn.Faction) return "Bloodfiends_EmbraceInvalidTarget".Translate();
             return null;
         }
 
@@ -78,7 +78,7 @@ namespace Bloodfiends.Family
             if (kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
 
             FilthMaker.TryMakeFilth(kindredPawn.PositionHeld, kindredPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
-            Messages.Message($"{casterPawn.LabelShort} has embraced {kindredPawn.LabelShort}.", kindredPawn, MessageTypeDefOf.PositiveEvent);
+            Messages.Message("Bloodfiends_Embraced".Translate(casterPawn.Named("CASTER"), kindredPawn.Named("KINDRED")), kindredPawn, MessageTypeDefOf.PositiveEvent);
         }
     }
 }
