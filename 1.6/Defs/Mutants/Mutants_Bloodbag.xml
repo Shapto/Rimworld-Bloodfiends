@@ -46,6 +46,7 @@
 			</li>
 			<li Class="Bloodfiends.Bloodbags.BloodbagExtension">
 				<hemogenMaxOffset>2</hemogenMaxOffset>
+				<hemogenPerDamage>0.005</hemogenPerDamage>
 			</li>
 		</modExtensions>
 		<renderNodeProperties>
@@ -54,7 +55,7 @@
 				<nodeClass>Bloodfiends.Hardblood.PawnRenderNode_BloodbagFaceShadow</nodeClass>
 				<workerClass>PawnRenderNodeWorker</workerClass>
 				<parentTagDef>Head</parentTagDef>
-				<baseLayer>53</baseLayer>
+				<baseLayer>50.1</baseLayer>
 			</li>
 		</renderNodeProperties>
 	</MutantDef>

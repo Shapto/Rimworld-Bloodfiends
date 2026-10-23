@@ -16,6 +16,7 @@ namespace Bloodfiends.Bloodbags
     public class BloodbagExtension : DefModExtension
     {
         public float hemogenMaxOffset = 2f;   // added to the hemogen maximum when they turn (1 = 100 hemogen)
+        public float hemogenPerDamage = 0.005f;   // hemogen drained per point of melee damage dealt (0.005 = 0.5 hemogen)
     }
 
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.GetDisabledWorkTypes))]

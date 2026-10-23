@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Verse;
 
 namespace Bloodfiends.Hunger
@@ -43,11 +44,11 @@ namespace Bloodfiends.Hunger
             {
                 if (change <= 0f) return;
                 withering = pawn.health.AddHediff(witheringDef);
-                withering.Severity = change;
+                withering.Severity = Mathf.Max(change, 0.01f);
                 return;
             }
             withering.Severity += change;
-            if (withering.Severity <= 0.001f) pawn.health.RemoveHediff(withering);
+            if (change < 0f && withering.Severity <= 0.001f) pawn.health.RemoveHediff(withering);
         }
     }
 }

@@ -304,8 +304,8 @@ namespace Bloodfiends.Hardblood
 
         // ----- Bloodbag face shadow -----
 
-        private const float ShadowSolidTo = 0.45f;   // share down the head: fully shadowed above this
-        private const float ShadowFadeTo = 0.62f;    // and gone below this (just under the eyes)
+        private const float ShadowSolidTo = 0.75f;   // share down the head: fully shadowed above this (past the eyes)
+        private const float ShadowFadeTo = 0.88f;    // and gone below this (above the mouth)
         private const byte ShadowAlpha = 235;
 
         private class ShadowEntry

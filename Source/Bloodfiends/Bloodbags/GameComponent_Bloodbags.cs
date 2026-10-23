@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Bloodfiends.Family;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,15 @@ namespace Bloodfiends.Bloodbags
             if (!pendingTurns.Contains(pawn)) pendingTurns.Add(pawn);
         }
 
+        private const int MasterlessCheckIntervalTicks = 250;
+
         public override void GameComponentTick()
+        {
+            TurnPendingInfections();
+            if (Find.TickManager.TicksGame % MasterlessCheckIntervalTicks == 0) RampageMasterless();
+        }
+
+        private void TurnPendingInfections()
         {
             if (pendingTurns.Count == 0) return;
             foreach (Pawn pawn in pendingTurns)
@@ -36,6 +45,18 @@ namespace Bloodfiends.Bloodbags
                 if (pawn.Faction == Faction.OfPlayer) Messages.Message("Bloodfiends_TurnedIntoBloodbag".Translate(pawn.Named("PAWN")), pawn, MessageTypeDefOf.NeutralEvent);
             }
             pendingTurns.Clear();
+        }
+        private static void RampageMasterless()
+        {
+            GameComponent_BloodfiendFamilies families = GameComponent_BloodfiendFamilies.Instance;
+            if (families == null) return;
+            foreach (Pawn pawn in PawnsFinder.AllMaps_Spawned)
+            {
+                if (!BloodbagUtility.IsBloodbag(pawn) || pawn.Dead || pawn.Downed || pawn.InMentalState) continue;
+                int familyId = BloodbagUtility.FamilyOf(pawn);
+                if (familyId < 0 || families.FamilyHasLivingBloodfiend(familyId)) continue;
+                pawn.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Berserk, "Bloodfiends_BloodbagMasterless".Translate(), forced: true, forceWake: true);
+            }
         }
     }
 }

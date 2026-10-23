@@ -13,6 +13,7 @@
   <Bloodfiends_AlreadyMutant>Already a mutant.</Bloodfiends_AlreadyMutant>
   <Bloodfiends_EmbracedBloodbag>{CASTER_labelShort} has made {BLOODBAG_labelShort} into a Bloodbag.</Bloodfiends_EmbracedBloodbag>
   <Bloodfiends_TurnedIntoBloodbag>{PAWN_labelShort} has turned into a Bloodbag.</Bloodfiends_TurnedIntoBloodbag>
+  <Bloodfiends_BloodbagMasterless>Its Family is gone; nothing steers the blood any more.</Bloodfiends_BloodbagMasterless>
 
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
