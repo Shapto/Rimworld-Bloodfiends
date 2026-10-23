@@ -28,7 +28,7 @@ namespace Bloodfiends.Hunger
     {
         private static float? cachedFactor;
 
-        private static float Factor
+        public static float Factor
         {
             get
             {

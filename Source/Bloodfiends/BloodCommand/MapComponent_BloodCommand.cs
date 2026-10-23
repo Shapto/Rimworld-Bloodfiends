@@ -1,5 +1,6 @@
 ﻿using Bloodfiends.Bloodbags;
 using Bloodfiends.Family;
+using Bloodfiends.Hunger;
 using RimWorld;
 using SingularityFramework.Visuals.Brushlines;
 using System;
@@ -154,7 +155,10 @@ namespace Bloodfiends.BloodCommand
             }
             bloodLoss.Severity = 1f;
 
-            return remainingBlood * innerPawn.BodySize * Settings.hemogenPerCorpseBodySize;
+            RotStage rotStage = corpse.GetRotStage();
+            if (rotStage == RotStage.Dessicated) return 0f;
+            float staleness = rotStage == RotStage.Rotting ? Patch_IngestionOutcomeDoer_OffsetHemogen_StaleBlood.Factor : 1f;
+            return remainingBlood * innerPawn.BodySize * Settings.hemogenPerCorpseBodySize * staleness;
         }
 
         /// <summary>

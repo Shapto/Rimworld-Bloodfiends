@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Bloodfiends.Bloodbags;
+using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -76,6 +78,15 @@ namespace Bloodfiends.Aquaphobia
                 if (exposure == AquaphobiaExposure.Strong) break;
             }
             return exposure;
+        }
+
+        public override void TickInterval(int delta)
+        {
+            base.TickInterval(delta);
+            if (!pawn.IsHashIntervalTick(Settings.recheckIntervalTicks, delta) || !BloodbagUtility.IsBloodbag(pawn)) return;
+            MentalStateDef panic = def.mentalBreakDef?.mentalState;
+            if (panic == null || !pawn.Spawned || pawn.Downed || pawn.InMentalState || Exposure != AquaphobiaExposure.Strong) return;
+            if (Rand.MTBEventOccurs(def.mentalBreakMtbDays, GenDate.TicksPerDay, Settings.recheckIntervalTicks)) pawn.mindState.mentalStateHandler.TryStartMentalState(panic, null, forced: true);
         }
 
         private AquaphobiaExposure GetCellExposure(IntVec3 cell, Map map)

@@ -17,6 +17,7 @@ namespace Bloodfiends.Bloodbags
     {
         public float hemogenMaxOffset = 2f;   // added to the hemogen maximum when they turn (1 = 100 hemogen)
         public float hemogenPerDamage = 0.005f;   // hemogen drained per point of melee damage dealt (0.005 = 0.5 hemogen)
+        public float hemogenLossPerDay = 0.02f;   // a Bloodbag's own slow thirst (0.02 = 2 hemogen a day)
     }
 
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.GetDisabledWorkTypes))]

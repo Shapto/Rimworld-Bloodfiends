@@ -47,6 +47,7 @@
 			<li Class="Bloodfiends.Bloodbags.BloodbagExtension">
 				<hemogenMaxOffset>2</hemogenMaxOffset>
 				<hemogenPerDamage>0.005</hemogenPerDamage>
+				<hemogenLossPerDay>0.02</hemogenLossPerDay>
 			</li>
 		</modExtensions>
 		<renderNodeProperties>

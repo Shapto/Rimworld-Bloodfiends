@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Bloodfiends.Bloodbags;
+using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,16 @@ namespace Bloodfiends.Hardblood
         {
             base.ExposeData();
             Scribe_Values.Look(ref familyId, "familyId", -1);
+        }
+
+        private const int ThirstIntervalTicks = 250;
+
+        public override void PostTick()
+        {
+            base.PostTick();
+            if (!pawn.IsHashIntervalTick(ThirstIntervalTicks) || !BloodbagUtility.IsBloodbag(pawn)) return;
+            float lossPerDay = BloodbagUtility.BloodbagDef?.GetModExtension<BloodbagExtension>()?.hemogenLossPerDay ?? 0f;
+            if (lossPerDay > 0f) GeneUtility.OffsetHemogen(pawn, -lossPerDay * ThirstIntervalTicks / GenDate.TicksPerDay);
         }
     }
 
