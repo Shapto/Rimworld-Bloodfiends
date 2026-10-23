@@ -108,6 +108,8 @@
     <Compile Include="Hardblood\HardbloodReplicaGraphics.cs" />
     <Compile Include="Hardblood\HardbloodWeaponry.cs" />
     <Compile Include="Hardblood\HardbloodWeapons.cs" />
+    <Compile Include="Hunger\Gene_Withering.cs" />
+    <Compile Include="Hunger\Patch_IngestionOutcomeDoer_OffsetHemogen_StaleBlood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SanguineRegeneration\Gene_SanguineRegeneration.cs" />
     <Compile Include="SanguineRegeneration\Patch_PawnHealthTracker_ShouldBeDead.cs" />

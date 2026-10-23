@@ -44,6 +44,9 @@
 					<li>Hauling</li>
 				</allowedWorkTypes>
 			</li>
+			<li Class="Bloodfiends.Bloodbags.BloodbagExtension">
+				<hemogenMaxOffset>2</hemogenMaxOffset>
+			</li>
 		</modExtensions>
 	</MutantDef>
 </Defs>

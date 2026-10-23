@@ -27,6 +27,20 @@ namespace Bloodfiends.Hardblood
     }
 
     /// <summary>
+    /// Draws a Bloodbag's face shadow on the head's mesh, between the face and the eyes.
+    /// </summary>
+    public class PawnRenderNode_BloodbagFaceShadow : PawnRenderNode
+    {
+        public PawnRenderNode_BloodbagFaceShadow(Pawn pawn, PawnRenderNodeProperties props, PawnRenderTree tree) : base(pawn, props, tree)
+        {
+        }
+
+        public override Graphic GraphicFor(Pawn pawn) => HardbloodGraphics.FaceShadowGraphic(pawn);
+
+        public override GraphicMeshSet MeshSetFor(Pawn pawn) => HumanlikeMeshPoolUtility.GetHumanlikeHeadSetForPawn(pawn);
+    }
+
+    /// <summary>
     /// Which part the growths' render node draws: the ones on the head, or the ones on the body.
     /// </summary>
     public class PawnRenderNodeProperties_HardbloodGrowths : PawnRenderNodeProperties

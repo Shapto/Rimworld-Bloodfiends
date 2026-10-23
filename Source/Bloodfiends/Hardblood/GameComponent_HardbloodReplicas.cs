@@ -102,15 +102,26 @@ namespace Bloodfiends.Hardblood
         }
 
         /// <summary>
-        /// Breaks the replica back into blood lines that drain into its holder, and destroys it.
+        /// Breaks the replica back into blood lines that drain into its holder, gives them back what it cost, and
+        /// destroys it.
         /// </summary>
         public void Dissolve(Thing replica)
         {
             Pawn holder = (replica.ParentHolder as Pawn_EquipmentTracker)?.pawn;
             if (holder == null) lastHolders.TryGetValue(replica, out holder);
             if (holder != null && holder.Spawned) StartDissolving(replica, holder);
+            if (holder != null && !holder.Dead) RefundCost(replica, holder);
             Forget(replica);
             if (!replica.Destroyed) replica.Destroy(DestroyMode.Vanish);
+        }
+
+        /// <summary>
+        /// The replica's blood returns to the Bloodfiend: the full manifest cost, unaffected by hemogen gain factors.
+        /// </summary>
+        private static void RefundCost(Thing replica, Pawn holder)
+        {
+            float cost = HardbloodWeaponry.CostOf(holder, new MimickedWeapon { weaponDef = replica.def, stuff = replica.Stuff });
+            GeneUtility.OffsetHemogen(holder, cost, false);
         }
 
         private void StartDissolving(Thing replica, Pawn holder)

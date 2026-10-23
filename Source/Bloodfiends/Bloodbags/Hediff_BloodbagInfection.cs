@@ -18,6 +18,7 @@ namespace Bloodfiends.Bloodbags
         public int familyId = -1;
         public Faction faction;
         private bool queuedToTurn;   // not saved: after loading it's simply queued again
+        public override bool ShouldRemove => base.ShouldRemove || !BloodbagUtility.CanBecomeBloodbag(pawn) && !pawn.Dead;
 
         public override void PostTick()
         {

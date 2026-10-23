@@ -37,6 +37,13 @@ namespace Bloodfiends.Bloodbags
             pawn.genes?.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodbag);
             MutantUtility.SetPawnAsMutantInstantly(pawn, bloodbagDef);
 
+            Gene_Hemogen hemogenGene = pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+            if (hemogenGene != null)
+            {
+                hemogenGene.SetMax(hemogenGene.Max + (bloodbagDef.GetModExtension<BloodbagExtension>()?.hemogenMaxOffset ?? 2f));
+                hemogenGene.Value = hemogenGene.Max;
+            }
+
             Hediff_HardbloodGrowths growths = pawn.health.hediffSet.GetFirstHediff<Hediff_HardbloodGrowths>();
             if (growths != null) growths.familyId = familyId;
             if (pawn.SpawnedOrAnyParentSpawned) FilthMaker.TryMakeFilth(pawn.PositionHeld, pawn.MapHeld, ThingDefOf.Filth_Blood, 3);

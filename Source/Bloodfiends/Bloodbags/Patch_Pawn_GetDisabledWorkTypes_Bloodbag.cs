@@ -13,6 +13,11 @@ namespace Bloodfiends.Bloodbags
         public List<WorkTypeDef> allowedWorkTypes = new List<WorkTypeDef>();
     }
 
+    public class BloodbagExtension : DefModExtension
+    {
+        public float hemogenMaxOffset = 2f;   // added to the hemogen maximum when they turn (1 = 100 hemogen)
+    }
+
     [HarmonyPatch(typeof(Pawn), nameof(Pawn.GetDisabledWorkTypes))]
     public static class Patch_Pawn_GetDisabledWorkTypes_Bloodbag
     {

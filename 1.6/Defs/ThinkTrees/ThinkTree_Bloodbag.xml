@@ -73,12 +73,7 @@
 						<li Class="JobGiver_Work">
 							<emergency>true</emergency>
 						</li>
-						<li Class="ThinkNode_Tagger">
-							<tagToGive>TrainedAnimalBehavior</tagToGive>
-							<subNodes>
-								<li Class="JobGiver_Work" />
-							</subNodes>
-						</li>
+						<li Class="JobGiver_Work" />
 					</subNodes>
 				</li>
 

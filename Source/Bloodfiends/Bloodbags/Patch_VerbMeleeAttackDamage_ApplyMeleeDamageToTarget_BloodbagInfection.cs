@@ -12,8 +12,9 @@ namespace Bloodfiends.Bloodbags
     [HarmonyPatch(typeof(Verb_MeleeAttackDamage), "ApplyMeleeDamageToTarget")]
     public static class Patch_VerbMeleeAttackDamage_ApplyMeleeDamageToTarget_BloodbagInfection
     {
-        public static void Postfix(Verb_MeleeAttackDamage __instance, LocalTargetInfo target)
+        public static void Postfix(Verb_MeleeAttackDamage __instance, LocalTargetInfo target, DamageWorker.DamageResult __result)
         {
+            if (__result == null || __result.deflected || __result.totalDamageDealt <= 0f) return;
             Pawn attacker = __instance.CasterPawn;
             if (!BloodbagUtility.IsBloodbag(attacker) || !(target.Thing is Pawn victim) || !BloodbagUtility.CanBecomeBloodbag(victim)) return;
             if (victim.health.hediffSet.HasHediff(BloodfiendsDefOf.Bloodfiends_BloodbagInfection)) return;

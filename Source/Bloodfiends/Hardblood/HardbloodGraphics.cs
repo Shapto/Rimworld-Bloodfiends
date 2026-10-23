@@ -302,6 +302,79 @@ namespace Bloodfiends.Hardblood
             masksByPawn.Remove(pawn.thingIDNumber);
         }
 
+        // ----- Bloodbag face shadow -----
+
+        private const float ShadowSolidTo = 0.45f;   // share down the head: fully shadowed above this
+        private const float ShadowFadeTo = 0.62f;    // and gone below this (just under the eyes)
+        private const byte ShadowAlpha = 235;
+
+        private class ShadowEntry
+        {
+            public KitbashGraphic graphic;
+        }
+
+        private static readonly Dictionary<int, ShadowEntry> shadowsByPawn = new Dictionary<int, ShadowEntry>();
+
+        /// <summary>
+        /// The dark band over a Bloodbag's upper face. Null until it's built (the first call starts the build).
+        /// </summary>
+        public static Graphic FaceShadowGraphic(Pawn pawn)
+        {
+            ForgetEverythingIfNewGame();
+            if (!shadowsByPawn.TryGetValue(pawn.thingIDNumber, out ShadowEntry entry))
+            {
+                entry = new ShadowEntry();
+                shadowsByPawn[pawn.thingIDNumber] = entry;
+                StartShadowBuild(pawn, entry);
+            }
+            return entry.graphic;
+        }
+
+        private static void StartShadowBuild(Pawn pawn, ShadowEntry entry)
+        {
+            Graphic_Multi headGraphic = pawn.story?.headType?.GetGraphic(pawn, Color.white);
+            if (headGraphic == null) return;
+
+            PixelMask[] headSilhouettes = ReadFacings(headGraphic);
+            int seed = pawn.thingIDNumber;
+            string name = $"BloodbagShadow_{pawn.thingIDNumber}";
+            KitbashBuilds.Start(() =>
+            {
+                var canvases = new KitbashCanvas[4];
+                for (int rotation = 0; rotation < 4; rotation++) canvases[rotation] = FaceShadow(headSilhouettes[rotation]);
+                return canvases;
+            },
+            canvases =>
+            {
+                if (!shadowsByPawn.TryGetValue(seed, out ShadowEntry current) || current != entry) return;
+                entry.graphic = KitbashGraphic.Create(canvases, name, ShaderDatabase.Transparent, Vector2.one);
+                if (!pawn.Destroyed) pawn.Drawer.renderer.SetAllGraphicsDirty();
+            },
+            name);
+        }
+
+        /// <summary>
+        /// The head's silhouette, near-black over its top and fading out just below the eyes.
+        /// </summary>
+        private static KitbashCanvas FaceShadow(PixelMask head)
+        {
+            var canvas = new KitbashCanvas(head.width, head.height);
+            if (!head.TryGetRowRange(out int top, out int bottom)) return canvas;
+            float height = Mathf.Max(1f, bottom - top);
+            for (int row = top; row <= bottom; row++)
+            {
+                float strength = 1f - Mathf.Clamp01(((row - top) / height - ShadowSolidTo) / (ShadowFadeTo - ShadowSolidTo));
+                if (strength <= 0f) continue;
+                var shadow = new Color32(12, 4, 6, (byte)(ShadowAlpha * strength));
+                for (int column = 0; column < head.width; column++)
+                {
+                    int index = row * head.width + column;
+                    if (head.cells[index]) canvas.pixels[index] = shadow;
+                }
+            }
+            return canvas;
+        }
+
         // ----- housekeeping -----
 
         /// <summary>
@@ -324,6 +397,8 @@ namespace Bloodfiends.Hardblood
             }
             foreach (MaskEntry entry in masksByPawn.Values) entry.graphic?.Destroy();
             masksByPawn.Clear();
+            foreach (ShadowEntry entry in shadowsByPawn.Values) entry.graphic?.Destroy();
+            shadowsByPawn.Clear();
             growthsByPawn.Clear();
             coatingsByWeapon.Clear();
         }

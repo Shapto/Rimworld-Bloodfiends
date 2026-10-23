@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<GeneDef>
+		<defName>Bloodfiends_Withering</defName>
+		<label>withering</label>
+		<description>TODO</description>
+		<geneClass>Bloodfiends.Hunger.Gene_Withering</geneClass>
+		<iconPath>TODO</iconPath>
+		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
+		<prerequisite>Hemogenic</prerequisite>
+		<disablesNeeds>
+			<li>Food</li>
+		</disablesNeeds>
+		<modExtensions>
+			<li Class="Bloodfiends.Hunger.WitheringExtension">
+				<witheringHediff>Bloodfiends_Withering</witheringHediff>
+			</li>
+		</modExtensions>
+	</GeneDef>
+</Defs>

@@ -110,6 +110,9 @@
 				<maximumQuality>Masterwork</maximumQuality>
 				<formSeconds>3</formSeconds>
 			</li>
+			<li Class="Bloodfiends.Hunger.StaleBloodExtension">
+				<hemogenFactor>0.25</hemogenFactor>
+			</li>
 		</modExtensions>
 	</GeneDef>
 
