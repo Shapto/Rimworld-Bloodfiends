@@ -120,7 +120,7 @@
 		<defName>Bloodfiends_PropagatingBite</defName>
 		<label>propagating bite</label>
 		<description>TODO</description>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/Embrace</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
 		<biostatArc>1</biostatArc>

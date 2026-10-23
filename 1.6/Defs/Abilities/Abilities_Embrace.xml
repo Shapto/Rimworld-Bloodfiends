@@ -4,7 +4,7 @@
 		<defName>Bloodfiends_Embrace</defName>
 		<label>embrace</label>
 		<description>TODO</description>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/Embrace</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>110</displayOrder>
 		<hostile>false</hostile>

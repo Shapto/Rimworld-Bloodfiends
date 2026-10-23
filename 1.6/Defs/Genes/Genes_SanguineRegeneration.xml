@@ -5,7 +5,7 @@
 		<label>Sanguine Regeneration</label>
 		<description>TODO</description>
 		<geneClass>Bloodfiends.SanguineRegeneration.Gene_SanguineRegeneration</geneClass>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/Healing</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
 		<biostatArc>1</biostatArc>
