@@ -1,4 +1,5 @@
-﻿using Bloodfiends.Family;
+﻿using Bloodfiends.Coagulate;
+using Bloodfiends.Family;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -75,7 +76,7 @@ namespace Bloodfiends.SanguineRegeneration
 
             HealBloodLoss();
 
-            float healingBudget = Settings.healingPerPassByGeneration?.Evaluate(Generation) ?? 1f;
+            float healingBudget = (Settings.healingPerPassByGeneration?.Evaluate(Generation) ?? 1f) * Hediff_HardbloodShell.RegenerationMultiplierFor(pawn);
             if (InMortalState)
             {
                 TryRegrowOnePart();

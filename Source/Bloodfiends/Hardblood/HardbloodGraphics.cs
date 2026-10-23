@@ -182,6 +182,99 @@ namespace Bloodfiends.Hardblood
             name);
         }
 
+        // ----- hardblood shell (the mask Coagulate grows) -----
+
+        private class MaskEntry
+        {
+            public KitbashGraphic graphic;
+        }
+
+        private static readonly Dictionary<int, MaskEntry> masksByPawn = new Dictionary<int, MaskEntry>();
+
+        /// <summary>
+        /// The hardblood mask's graphic for a pawn's head. Null until it's built (the first call starts the build).
+        /// </summary>
+        public static Graphic MaskGraphic(Pawn pawn)
+        {
+            ForgetEverythingIfNewGame();
+            if (!masksByPawn.TryGetValue(pawn.thingIDNumber, out MaskEntry entry))
+            {
+                entry = new MaskEntry();
+                masksByPawn[pawn.thingIDNumber] = entry;
+                StartMaskBuild(pawn, entry);
+            }
+            return entry.graphic;
+        }
+
+        private static void StartMaskBuild(Pawn pawn, MaskEntry entry)
+        {
+            Graphic_Multi headGraphic = pawn.story?.headType?.GetGraphic(pawn, Color.white);
+            if (headGraphic == null) return;   // only humanlikes have the head to grow it on
+
+            PixelMask[] headSilhouettes = ReadFacings(headGraphic);
+            List<KitbashPiece> crystals = Crystals;
+            int seed = pawn.thingIDNumber;
+            string name = $"HardbloodMask_{pawn.thingIDNumber}";
+            Hediff shell = pawn.health.hediffSet.GetFirstHediffOfDef(BloodfiendsDefOf.Bloodfiends_HardbloodShell);
+            int growthTicks = shell != null && shell.ageTicks < NewGrowthAgeTicks ? GrowthTicks : 0;
+
+            KitbashBuilds.Start(() =>
+            {
+                var mask = new HardbloodMask(headSilhouettes[Rot4.South.AsInt], crystals, seed, Scale);
+                var canvases = new KitbashCanvas[4];
+                for (int rotation = 0; rotation < 4; rotation++)
+                {
+                    canvases[rotation] = mask.Facing(headSilhouettes[rotation], rotation);
+                    RecordGrowthUpward(canvases[rotation], seed + rotation);
+                }
+                return canvases;
+            },
+            canvases =>
+            {
+                // the shell may have shattered (or a new game started) while this was building
+                if (!masksByPawn.TryGetValue(seed, out MaskEntry current) || current != entry) return;
+                entry.graphic = KitbashGraphic.Create(canvases, name, ShaderDatabase.Cutout, Vector2.one, growthTicks);
+                if (!pawn.Destroyed) pawn.Drawer.renderer.SetAllGraphicsDirty();
+            },
+            name);
+        }
+
+        /// <summary>
+        /// The mask creeps up the face from the jaw to its points, with a ragged front.
+        /// </summary>
+        private static void RecordGrowthUpward(KitbashCanvas canvas, int seed)
+        {
+            canvas.EnableGrowth();
+            int top = canvas.height, bottom = -1;
+            for (int index = 0; index < canvas.pixels.Length; index++)
+            {
+                if (canvas.pixels[index].a == 0) continue;
+                int row = index / canvas.width;
+                top = Mathf.Min(top, row);
+                bottom = Mathf.Max(bottom, row);
+            }
+            if (bottom < top) return;
+            float height = Mathf.Max(1f, bottom - top);
+            for (int index = 0; index < canvas.pixels.Length; index++)
+            {
+                if (canvas.pixels[index].a == 0) continue;
+                int row = index / canvas.width;
+                int column = index % canvas.width;
+                float ragged = 0.08f * Mathf.Sin(column * 0.09f + seed) + 0.05f * Mathf.Sin(column * 0.23f + seed * 0.7f);
+                canvas.arrival[index] = Mathf.Clamp01((bottom - row) / height * 0.85f + 0.08f + ragged);
+            }
+        }
+
+        /// <summary>
+        /// Drops a pawn's mask (the shell shattered or ran out), freeing its textures.
+        /// </summary>
+        public static void ForgetMask(Pawn pawn)
+        {
+            if (!masksByPawn.TryGetValue(pawn.thingIDNumber, out MaskEntry entry)) return;
+            entry.graphic?.Destroy();
+            masksByPawn.Remove(pawn.thingIDNumber);
+        }
+
         // ----- housekeeping -----
 
         /// <summary>
@@ -202,6 +295,8 @@ namespace Bloodfiends.Hardblood
                 if (entry.material != null) UnityEngine.Object.Destroy(entry.material);
                 if (entry.texture != null) UnityEngine.Object.Destroy(entry.texture);
             }
+            foreach (MaskEntry entry in masksByPawn.Values) entry.graphic?.Destroy();
+            masksByPawn.Clear();
             growthsByPawn.Clear();
             coatingsByWeapon.Clear();
         }

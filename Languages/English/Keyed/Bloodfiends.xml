@@ -2,17 +2,25 @@
 <LanguageData>
   <!-- Embrace: Kindred -->
   <Bloodfiends_NotInFamily>Not part of a Bloodfiend Family.</Bloodfiends_NotInFamily>
-  <Bloodfiends_NoKindredSlots>No Kindred slots left.</Bloodfiends_NoKindredSlots>
   <Bloodfiends_EmbraceOnlyLivingHumans>Only living humans can be embraced.</Bloodfiends_EmbraceOnlyLivingHumans>
   <Bloodfiends_AlreadyBloodfiend>Already a Bloodfiend.</Bloodfiends_AlreadyBloodfiend>
   <Bloodfiends_EmbraceInvalidTarget>Can only embrace someone who is downed, a prisoner, or one of your own.</Bloodfiends_EmbraceInvalidTarget>
   <Bloodfiends_Embraced>{CASTER_labelShort} has embraced {KINDRED_labelShort}.</Bloodfiends_Embraced>
+  <Bloodfiends_EmbraceNextKindred>The next embrace makes a Kindred ({0} left).</Bloodfiends_EmbraceNextKindred>
+  <Bloodfiends_EmbraceNextBloodbag>Kindred slots are full: the next embrace makes a Bloodbag.</Bloodfiends_EmbraceNextBloodbag>
+  <Bloodfiends_BloodbagsNeedAnomaly>Kindred slots are full. Making Bloodbags needs the Anomaly DLC.</Bloodfiends_BloodbagsNeedAnomaly>
+  <Bloodfiends_BloodbagsNotReady>Kindred slots are full. Bloodbags aren't in the mod yet.</Bloodfiends_BloodbagsNotReady>
+  <Bloodfiends_AlreadyMutant>Already a mutant.</Bloodfiends_AlreadyMutant>
+  <Bloodfiends_EmbracedBloodbag>{CASTER_labelShort} has made {BLOODBAG_labelShort} into a Bloodbag.</Bloodfiends_EmbracedBloodbag>
 
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
   <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends and Bloodbags.</Bloodfiends_OnlyWorksOnBloodfiends>
   <Bloodfiends_OnlyBloodbagsAtYourTier>Only First and Second Kindreds can obliterate Bloodfiends. You can only obliterate Bloodbags.</Bloodfiends_OnlyBloodbagsAtYourTier>
   <Bloodfiends_BloodTooStrong>Their blood is too strong to command.</Bloodfiends_BloodTooStrong>
+
+  <!-- Coagulate -->
+  <Bloodfiends_CoagulateOnlyAllies>Can only coagulate yourself or a living ally.</Bloodfiends_CoagulateOnlyAllies>
 
     <!-- Hardblood Weaponry -->
   <Bloodfiends_HardbloodWeaponry>Hardblood Weaponry</Bloodfiends_HardbloodWeaponry>

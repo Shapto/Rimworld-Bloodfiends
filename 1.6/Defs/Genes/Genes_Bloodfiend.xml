@@ -11,10 +11,12 @@
 		<biostatArc>1</biostatArc>
 		<abilities>
 			<li>Bloodfeed</li>
+			<li>Bloodfiends_Coagulate</li>
 			<li>Bloodfiends_CoagulateAndMeltAway</li>
 		</abilities>
 		<descriptionHyperlinks>
 			<AbilityDef>Bloodfeed</AbilityDef>
+			<AbilityDef>Bloodfiends_Coagulate</AbilityDef>
 			<AbilityDef>Bloodfiends_CoagulateAndMeltAway</AbilityDef>
 		</descriptionHyperlinks>
 		<modExtensions>
@@ -120,10 +122,10 @@
 		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
 		<biostatArc>1</biostatArc>
 		<abilities>
-			<li>Bloodfiends_EmbraceKindred</li>
+			<li>Bloodfiends_Embrace</li>
 		</abilities>
 		<descriptionHyperlinks>
-			<AbilityDef>Bloodfiends_EmbraceKindred</AbilityDef>
+			<AbilityDef>Bloodfiends_Embrace</AbilityDef>
 		</descriptionHyperlinks>
 	</GeneDef>
 </Defs>

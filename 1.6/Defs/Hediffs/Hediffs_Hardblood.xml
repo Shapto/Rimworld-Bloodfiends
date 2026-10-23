@@ -25,4 +25,35 @@
 			</li>
 		</renderNodeProperties>
 	</HediffDef>
+	<HediffDef>
+		<defName>Bloodfiends_HardbloodShell</defName>
+		<label>hardblood shell</label>
+		<description>TODO</description>
+		<hediffClass>Bloodfiends.Coagulate.Hediff_HardbloodShell</hediffClass>
+		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
+		<isBad>false</isBad>
+		<everCurableByItem>false</everCurableByItem>
+		<comps>
+			<li Class="HediffCompProperties_Disappears">
+				<disappearsAfterTicks>15000~15000</disappearsAfterTicks>
+				<showRemainingTime>true</showRemainingTime>
+			</li>
+		</comps>
+		<stages>
+			<li>
+				<totalBleedRateFactor>0</totalBleedRateFactor>
+				<statFactors>
+					<InjuryHealingFactor>2</InjuryHealingFactor>
+				</statFactors>
+			</li>
+		</stages>
+		<renderNodeProperties>
+			<li>
+				<nodeClass>Bloodfiends.Coagulate.PawnRenderNode_HardbloodMask</nodeClass>
+				<workerClass>PawnRenderNodeWorker</workerClass>
+				<parentTagDef>Head</parentTagDef>
+				<baseLayer>61</baseLayer>
+			</li>
+		</renderNodeProperties>
+	</HediffDef>
 </Defs>

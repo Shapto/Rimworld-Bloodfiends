@@ -19,6 +19,7 @@ namespace Bloodfiends
         public static ThoughtDef Bloodfiends_FamilialImpiety;
         public static HediffDef Bloodfiends_HardbloodGrowths;
         public static KitbashPieceSetDef Bloodfiends_HardbloodCrystals;
+        public static HediffDef Bloodfiends_HardbloodShell;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

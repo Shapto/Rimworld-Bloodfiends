@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
 	<AbilityDef>
-		<defName>Bloodfiends_EmbraceKindred</defName>
-		<label>Embrace: Kindred</label>
-		<description>Bite a human and pass on the Bloodfiend's illness, making them a Kindred one generation below you in your Family. A Bloodfiend can only embrace two Kindreds.</description>
+		<defName>Bloodfiends_Embrace</defName>
+		<label>embrace</label>
+		<description>TODO</description>
 		<iconPath>TODO</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>110</displayOrder>
@@ -29,7 +29,7 @@
 			<li Class="CompProperties_AbilityHemogenCost">
 				<hemogenCost>0.6</hemogenCost>
 			</li>
-			<li Class="Bloodfiends.Family.CompProperties_AbilityEmbraceKindred" />
+			<li Class="Bloodfiends.Family.CompProperties_AbilityEmbrace" />
 		</comps>
 	</AbilityDef>
 </Defs>

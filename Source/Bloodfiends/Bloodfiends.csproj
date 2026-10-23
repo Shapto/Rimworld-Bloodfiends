@@ -81,11 +81,14 @@
     <Compile Include="BloodCommand\MapComponent_BloodCommand.cs" />
     <Compile Include="BloodfiendsDefOf.cs" />
     <Compile Include="BloodfiendsMod.cs" />
+    <Compile Include="Coagulate\CompAbilityEffect_Coagulate.cs" />
+    <Compile Include="Coagulate\Hediff_HardbloodShell.cs" />
+    <Compile Include="Coagulate\Patch_PawnHealthTracker_PreApplyDamage_HardbloodShell.cs" />
     <Compile Include="Family\BloodfiendDebugActions.cs" />
     <Compile Include="Family\BloodfiendFamilyNode.cs" />
     <Compile Include="Family\BloodfiendStartingTierExtension.cs" />
     <Compile Include="Family\CompAbilityEffect_CoagulateAndMeltAway.cs" />
-    <Compile Include="Family\CompAbilityEffect_EmbraceKindred.cs" />
+    <Compile Include="Family\CompAbilityEffect_Embrace.cs" />
     <Compile Include="Family\GameComponent_BloodfiendFamilies.cs" />
     <Compile Include="Family\Gene_Bloodfiend.cs" />
     <Compile Include="Family\Hediff_BloodfiendLineage.cs" />
