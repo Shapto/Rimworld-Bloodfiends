@@ -3,7 +3,7 @@
   <!-- Embrace -->
   <Bloodfiends_NotInFamily>Not part of a Bloodfiend Family.</Bloodfiends_NotInFamily>
   <Bloodfiends_EmbraceOnlyLivingHumans>Only living humans can be embraced.</Bloodfiends_EmbraceOnlyLivingHumans>
-  <Bloodfiends_AlreadyBloodfiend>Already a Bloodfiend.</Bloodfiends_AlreadyBloodfiend>
+  <Bloodfiends_AlreadyBloodfiend>Already carries the crimson curse.</Bloodfiends_AlreadyBloodfiend>
   <Bloodfiends_EmbraceInvalidTarget>Can only embrace someone who is downed, a prisoner, or one of your own.</Bloodfiends_EmbraceInvalidTarget>
   <Bloodfiends_Embraced>{CASTER_labelShort} has embraced {KINDRED_labelShort}.</Bloodfiends_Embraced>
   <Bloodfiends_EmbraceNextKindred>The next embrace makes a Kindred ({0} left).</Bloodfiends_EmbraceNextKindred>
@@ -13,6 +13,11 @@
   <Bloodfiends_AlreadyMutant>Already a mutant.</Bloodfiends_AlreadyMutant>
   <Bloodfiends_EmbracedBloodbag>{CASTER_labelShort} has made {BLOODBAG_labelShort} into a Bloodbag.</Bloodfiends_EmbracedBloodbag>
   <Bloodfiends_TurnedIntoBloodbag>{PAWN_labelShort} has turned into a Bloodbag.</Bloodfiends_TurnedIntoBloodbag>
+  <Bloodfiends_EmbraceNextXenogenes>The next embrace passes on your xenogenes.</Bloodfiends_EmbraceNextXenogenes>
+  <Bloodfiends_NoXenogenesToPass>No xenogenes to pass on.</Bloodfiends_NoXenogenesToPass>
+  <Bloodfiends_EmbracedXenogenes>{CASTER_labelShort} has passed on their genes to {TARGET_labelShort}.</Bloodfiends_EmbracedXenogenes>
+
+
   <Bloodfiends_BloodbagMasterless>Its Family is gone; nothing steers the blood any more.</Bloodfiends_BloodbagMasterless>
 
   <!-- Coagulate and Melt Away -->

@@ -2,7 +2,7 @@
 <Defs>
 	<HediffDef>
 		<defName>Bloodfiends_BloodbagInfection</defName>
-		<label>crimson curse</label>
+		<label>crimson fever</label>
 		<description>TODO</description>
 		<hediffClass>Bloodfiends.Bloodbags.Hediff_BloodbagInfection</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>

@@ -2,7 +2,7 @@
 <Defs>
 	<GeneDef>
 		<defName>Bloodfiends_SharedThirst</defName>
-		<label>Shared Thirst</label>
+		<label>shared thirst</label>
 		<description>TODO</description>
 		<geneClass>Bloodfiends.SharedThirst.Gene_SharedThirst</geneClass>
 		<iconPath>TODO</iconPath>

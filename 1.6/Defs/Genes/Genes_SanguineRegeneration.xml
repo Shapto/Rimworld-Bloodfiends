@@ -2,7 +2,7 @@
 <Defs>
 	<GeneDef>
 		<defName>Bloodfiends_SanguineRegeneration</defName>
-		<label>Sanguine Regeneration</label>
+		<label>sanguine regeneration</label>
 		<description>TODO</description>
 		<geneClass>Bloodfiends.SanguineRegeneration.Gene_SanguineRegeneration</geneClass>
 		<iconPath>Icons/Healing</iconPath>

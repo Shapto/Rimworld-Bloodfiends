@@ -2,7 +2,7 @@
 <Defs>
 	<GeneDef>
 		<defName>Bloodfiends_Bloodfiend</defName>
-		<label>bloodfiend</label>
+		<label>crimson curse</label>
 		<description>TODO</description>
 		<geneClass>Bloodfiends.Family.Gene_Bloodfiend</geneClass>
 		<iconPath>TODO</iconPath>
@@ -11,7 +11,6 @@
 		<biostatArc>1</biostatArc>
 		<abilities>
 			<li>Bloodfeed</li>
-			<li>Bloodfiends_Coagulate</li>
 			<li>Bloodfiends_CoagulateAndMeltAway</li>
 		</abilities>
 		<descriptionHyperlinks>
@@ -122,8 +121,8 @@
 		<description>TODO</description>
 		<iconPath>Icons/Embrace</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
-		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
-		<biostatArc>1</biostatArc>
+		<prerequisite>Hemogenic</prerequisite>
+		<biostatArc>3</biostatArc>
 		<abilities>
 			<li>Bloodfiends_Embrace</li>
 		</abilities>

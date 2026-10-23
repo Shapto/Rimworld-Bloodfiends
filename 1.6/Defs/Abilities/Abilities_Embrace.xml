@@ -7,7 +7,10 @@
 		<iconPath>Icons/Embrace</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>110</displayOrder>
+		<warmupEffecter>Bloodfeed_Warmup</warmupEffecter>
+		<warmupStartSound>Bloodfeed_Cast</warmupStartSound>
 		<hostile>false</hostile>
+		<historyEvent>PropagateBloodfeederGene</historyEvent>
 		<casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
 		<stunTargetWhileCasting>true</stunTargetWhileCasting>
 		<displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
@@ -23,13 +26,24 @@
 				<canTargetBuildings>false</canTargetBuildings>
 				<canTargetMechs>false</canTargetMechs>
 				<canTargetAnimals>false</canTargetAnimals>
+				<canTargetBloodfeeders>true</canTargetBloodfeeders>
 			</targetParams>
 		</verbProperties>
 		<comps>
 			<li Class="CompProperties_AbilityHemogenCost">
 				<hemogenCost>0.6</hemogenCost>
 			</li>
-			<li Class="Bloodfiends.Family.CompProperties_AbilityEmbrace" />
+			<li Class="Bloodfiends.Family.CompProperties_AbilityEmbrace">
+				<outsiderGoodwillImpact>-30</outsiderGoodwillImpact>
+				<thoughtDefToGiveTarget>FedOn</thoughtDefToGiveTarget>
+				<opinionThoughtDefToGiveTarget>FedOn_Social</opinionThoughtDefToGiveTarget>
+			</li>
+			<li Class="CompProperties_AbilityFleckOnTarget">
+				<fleckDef>BloodSplash</fleckDef>
+			</li>
+			<li Class="CompProperties_AbilityRequiresCapacity">
+				<capacity>Eating</capacity>
+			</li>
 		</comps>
 	</AbilityDef>
 </Defs>
