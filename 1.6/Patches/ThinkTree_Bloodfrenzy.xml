@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Patch>
+  <Operation Class="PatchOperationInsert">
+    <xpath>Defs/ThinkTreeDef//li[@Class="ThinkNode_ConditionalMentalState" and state="Berserk"]</xpath>
+    <order>Append</order>
+    <value>
+      <li Class="ThinkNode_ConditionalMentalState">
+        <state>Bloodfiends_Bloodfrenzy</state>
+        <subNodes>
+          <li Class="JobGiver_Berserk" />
+          <li Class="JobGiver_WanderAnywhere">
+            <maxDanger>Deadly</maxDanger>
+          </li>
+        </subNodes>
+      </li>
+    </value>
+  </Operation>
+</Patch>

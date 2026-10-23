@@ -14,7 +14,22 @@
 		<modExtensions>
 			<li Class="Bloodfiends.Hunger.WitheringExtension">
 				<witheringHediff>Bloodfiends_Withering</witheringHediff>
+				<frenzyState>Bloodfiends_Bloodfrenzy</frenzyState>
 			</li>
 		</modExtensions>
 	</GeneDef>
+
+	<MentalStateDef ParentName="BaseMentalState">
+		<defName>Bloodfiends_Bloodfrenzy</defName>
+		<label>bloodfrenzy</label>
+		<stateClass>Bloodfiends.Hunger.MentalState_Bloodfrenzy</stateClass>
+		<category>Aggro</category>
+		<nameColor>(0.9, 0.2, 0.2)</nameColor>
+		<beginLetterLabel>bloodfrenzy</beginLetterLabel>
+		<beginLetter>{0} has gone too long without feeding and has lost control to the hunger. {0} will attack anyone until fed, and will die if {0} isn't fed soon.</beginLetter>
+		<beginLetterDef>ThreatBig</beginLetterDef>
+		<recoveryMessage>{0} has fed enough to come back from the bloodfrenzy.</recoveryMessage>
+		<baseInspectLine>Mental state: Bloodfrenzy</baseInspectLine>
+		<blockNormalThoughts>true</blockNormalThoughts>
+	</MentalStateDef>
 </Defs>

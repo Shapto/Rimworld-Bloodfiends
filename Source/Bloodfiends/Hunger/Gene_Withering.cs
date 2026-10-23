@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Bloodfiends.Family;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,9 @@ namespace Bloodfiends.Hunger
         public float recoveringAbove = 0.25f;         // hemogen share at or above which they recover
         public float severityPerDayStarving = 0.5f;
         public float severityPerDayRecovering = 2f;
+        public MentalStateDef frenzyState;
+        public float frenzyAtSeverity = 0.85f;   // ravenous: the last stage before Withering kills them 
+        public float frenzyEndsAbove = 0.25f;   // hemogen share that brings them out of it
     }
 
     public class Gene_Withering : Gene
@@ -23,7 +27,7 @@ namespace Bloodfiends.Hunger
         private const int UpdateIntervalTicks = 60;
         private static readonly WitheringExtension DefaultSettings = new WitheringExtension();
 
-        private WitheringExtension Settings => def.GetModExtension<WitheringExtension>() ?? DefaultSettings;
+        public WitheringExtension Settings => def.GetModExtension<WitheringExtension>() ?? DefaultSettings;
 
         public override void TickInterval(int delta)
         {
@@ -48,7 +52,15 @@ namespace Bloodfiends.Hunger
                 return;
             }
             withering.Severity += change;
+            if (change > 0f) TryFrenzy(withering);
             if (change < 0f && withering.Severity <= 0.001f) pawn.health.RemoveHediff(withering);
+        }
+
+        private void TryFrenzy(Hediff withering)
+        {
+            if (Settings.frenzyState == null || withering.Severity < Settings.frenzyAtSeverity) return;
+            if (!pawn.Spawned || pawn.Downed || pawn.InMentalState) return;
+            pawn.mindState.mentalStateHandler.TryStartMentalState(Settings.frenzyState, null, forced: true, forceWake: true);
         }
     }
 }
