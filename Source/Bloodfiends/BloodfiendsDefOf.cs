@@ -20,6 +20,8 @@ namespace Bloodfiends
         public static HediffDef Bloodfiends_HardbloodGrowths;
         public static KitbashPieceSetDef Bloodfiends_HardbloodCrystals;
         public static HediffDef Bloodfiends_HardbloodShell;
+        public static XenotypeDef Bloodfiends_Bloodbag;
+        public static HediffDef Bloodfiends_BloodbagInfection;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

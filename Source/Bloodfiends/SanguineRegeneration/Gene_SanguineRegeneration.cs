@@ -1,4 +1,5 @@
-﻿using Bloodfiends.Coagulate;
+﻿using Bloodfiends.Bloodbags;
+using Bloodfiends.Coagulate;
 using Bloodfiends.Family;
 using RimWorld;
 using System;
@@ -38,7 +39,7 @@ namespace Bloodfiends.SanguineRegeneration
 
         private Gene_Hemogen HemogenGene => pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
 
-        private int Generation => pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node?.generationNumber ?? Settings.defaultGeneration;
+        private int Generation => BloodbagUtility.IsBloodbag(pawn) ? BloodbagUtility.BloodbagGeneration : pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node?.generationNumber ?? Settings.defaultGeneration;
 
         public bool InMortalState => Find.TickManager.TicksGame - lastDeathPreventedTick <= Settings.regenerationIntervalTicks * 2;
 

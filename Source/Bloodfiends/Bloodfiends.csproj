@@ -78,6 +78,11 @@
     <Compile Include="Aquaphobia\MentalBreakWorker_AquaTerror.cs" />
     <Compile Include="Aquaphobia\MentalState_PanicFleeWater.cs" />
     <Compile Include="Aquaphobia\ThoughtWorker_Aquaphobia.cs" />
+    <Compile Include="Bloodbags\BloodbagUtility.cs" />
+    <Compile Include="Bloodbags\GameComponent_Bloodbags.cs" />
+    <Compile Include="Bloodbags\Hediff_BloodbagInfection.cs" />
+    <Compile Include="Bloodbags\Patch_Pawn_GetDisabledWorkTypes_Bloodbag.cs" />
+    <Compile Include="Bloodbags\Patch_VerbMeleeAttackDamage_ApplyMeleeDamageToTarget_BloodbagInfection.cs" />
     <Compile Include="BloodCommand\MapComponent_BloodCommand.cs" />
     <Compile Include="BloodfiendsDefOf.cs" />
     <Compile Include="BloodfiendsMod.cs" />

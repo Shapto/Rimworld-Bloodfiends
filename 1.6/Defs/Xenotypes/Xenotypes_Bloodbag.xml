@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<XenotypeDef>
+		<defName>Bloodfiends_Bloodbag</defName>
+		<label>bloodbag</label>
+		<description>TODO</description>
+		<descriptionShort>TODO</descriptionShort>
+		<iconPath>UI/Icons/Xenotypes/Sanguophage</iconPath>
+		<inheritable>false</inheritable>
+		<genes>
+			<li>Ageless</li>
+			<li>ArchiteMetabolism</li>
+			<li>DiseaseFree</li>
+			<li>PerfectImmunity</li>
+			<li>TotalHealing</li>
+			<li>Hemogenic</li>
+			<li>Bloodfiends_PropagatingBite</li>
+			<li>Bloodfiends_Aquaphobia</li>
+			<li>Bloodfiends_SanguineRegeneration</li>
+			<li>Eyes_Red</li>
+			<li>WoundHealing_SuperFast</li>
+			<li>ToxResist_Total</li>
+			<li>UVSensitivity_Mild</li>
+			<li>FireWeakness</li>
+			<li>MeleeDamage_Strong</li>
+			<li>Robust</li>
+			<li>DarkVision</li>
+			<li>AptitudeStrong_Melee</li>
+		</genes>
+	</XenotypeDef>
+</Defs>

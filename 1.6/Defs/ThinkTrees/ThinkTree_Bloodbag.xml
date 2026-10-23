@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<ThinkTreeDef MayRequire="Ludeon.RimWorld.Anomaly">
+		<defName>Bloodfiends_Bloodbag</defName>
+		<thinkRoot Class="ThinkNode_Priority">
+			<subNodes>
+				<li Class="ThinkNode_ConditionalMustKeepLyingDown">
+					<subNodes>
+						<li Class="ThinkNode_QueuedJob">
+							<inBedOnly>true</inBedOnly>
+						</li>
+						<li Class="JobGiver_KeepLyingDown" />
+					</subNodes>
+				</li>
+
+				<li Class="ThinkNode_Subtree">
+					<treeDef>Downed</treeDef>
+				</li>
+				<li Class="ThinkNode_Subtree">
+					<treeDef>BurningResponse</treeDef>
+				</li>
+				<li Class="ThinkNode_Subtree">
+					<treeDef>MentalStateCritical</treeDef>
+				</li>
+
+				<li Class="JobGiver_ReactToCloseMeleeThreat" />
+				<li Class="ThinkNode_QueuedJob" />
+
+				<li Class="ThinkNode_Subtree">
+					<treeDef>MentalStateNonCritical</treeDef>
+				</li>
+
+				<!-- drafted orders -->
+				<li Class="ThinkNode_ConditionalOfPlayerFaction">
+					<subNodes>
+						<li Class="ThinkNode_Tagger">
+							<tagToGive>DraftedOrder</tagToGive>
+							<subNodes>
+								<li Class="JobGiver_MoveToStandable" />
+								<li Class="JobGiver_Orders" />
+							</subNodes>
+						</li>
+					</subNodes>
+				</li>
+
+				<li Class="ThinkNode_Subtree">
+					<treeDef>LordDuty</treeDef>
+				</li>
+
+				<li Class="JobGiver_SeekAllowedArea" />
+				<li Class="JobGiver_SeekSafeTemperature">
+					<requiresInjury>false</requiresInjury>
+					<waitInSafeTemp>false</waitInSafeTemp>
+					<maxRadius>15</maxRadius>
+				</li>
+
+				<li Class="JobGiver_AIFightEnemies">
+					<targetAcquireRadius>30</targetAcquireRadius>
+					<targetKeepRadius>35</targetKeepRadius>
+				</li>
+
+				<!-- resting when hurt, then work: basic, cleaning and hauling only -->
+				<li Class="ThinkNode_ConditionalOfPlayerFaction">
+					<subNodes>
+						<li Class="ThinkNode_Tagger">
+							<tagToGive>RestingForMedicalReasons</tagToGive>
+							<subNodes>
+								<li Class="JobGiver_PatientGoToBed">
+									<urgentOnly>true</urgentOnly>
+								</li>
+							</subNodes>
+						</li>
+						<li Class="JobGiver_Work">
+							<emergency>true</emergency>
+						</li>
+						<li Class="ThinkNode_Tagger">
+							<tagToGive>TrainedAnimalBehavior</tagToGive>
+							<subNodes>
+								<li Class="JobGiver_Work" />
+							</subNodes>
+						</li>
+					</subNodes>
+				</li>
+
+				<!-- nothing to do: stand around like a husk -->
+				<li Class="ThinkNode_Tagger">
+					<subNodes>
+						<li Class="JobGiver_ShamblerWander">
+							<wanderRadius>12</wanderRadius>
+						</li>
+					</subNodes>
+				</li>
+
+				<li Class="JobGiver_IdleError" />
+			</subNodes>
+		</thinkRoot>
+	</ThinkTreeDef>
+</Defs>

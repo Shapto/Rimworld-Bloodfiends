@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<HediffDef>
+		<defName>Bloodfiends_BloodbagInfection</defName>
+		<label>The Crimson Curse</label>
+		<description>TODO</description>
+		<hediffClass>Bloodfiends.Bloodbags.Hediff_BloodbagInfection</hediffClass>
+		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
+		<isBad>true</isBad>
+		<initialSeverity>0.001</initialSeverity>
+		<maxSeverity>1</maxSeverity>
+		<everCurableByItem>false</everCurableByItem>
+		<comps>
+			<li Class="HediffCompProperties_SeverityPerDay">
+				<severityPerDay>1</severityPerDay>
+			</li>
+		</comps>
+		<modExtensions>
+			<li Class="Bloodfiends.Bloodbags.BloodbagInfectionExtension">
+				<chancePerHit>0.1</chancePerHit>
+			</li>
+		</modExtensions>
+	</HediffDef>
+</Defs>

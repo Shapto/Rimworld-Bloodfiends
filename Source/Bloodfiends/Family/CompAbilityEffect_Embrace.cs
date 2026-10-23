@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Bloodfiends.Bloodbags;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,30 +18,37 @@ namespace Bloodfiends.Family
     {
         private BloodfiendFamilyNode CasterNode => parent.pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node;
 
-        private static MutantDef BloodbagDef => ModsConfig.AnomalyActive ? DefDatabase<MutantDef>.GetNamedSilentFail("Bloodfiends_Bloodbag") : null;
+        private bool CasterIsBloodbag => BloodbagUtility.IsBloodbag(parent.pawn);
 
-        private bool MakesKindred => GameComponent_BloodfiendFamilies.Instance?.CanEmbraceKindred(CasterNode) == true;
+        private bool MakesKindred => !CasterIsBloodbag && GameComponent_BloodfiendFamilies.Instance?.CanEmbraceKindred(CasterNode) == true;
+
+        /// <summary>
+        /// The Family the caster's Bloodbags join: a Bloodfiend's own, or the one a Bloodbag belongs to.
+        /// </summary>
+        private int CasterFamilyId => CasterIsBloodbag ? BloodbagUtility.FamilyOf(parent.pawn) : CasterNode?.familyId ?? -1;
 
         public override bool GizmoDisabled(out string reason)
         {
-            if (GameComponent_BloodfiendFamilies.Instance == null || CasterNode == null)
+            if (!CasterIsBloodbag && (GameComponent_BloodfiendFamilies.Instance == null || CasterNode == null))
             {
                 reason = "Bloodfiends_NotInFamily".Translate();
                 return true;
             }
-            if (!MakesKindred && BloodbagDef == null)
+            if (!MakesKindred && BloodbagUtility.BloodbagDef == null)
             {
                 reason = ModsConfig.AnomalyActive ? "Bloodfiends_BloodbagsNotReady".Translate() : "Bloodfiends_BloodbagsNeedAnomaly".Translate();
                 return true;
             }
             return base.GizmoDisabled(out reason);
         }
+
+        /// <summary>
+        /// Says in the gizmo's tooltip what the next embrace makes.
+        /// </summary>
         public override string ExtraTooltipPart()
         {
-            BloodfiendFamilyNode casterNode = CasterNode;
-            if (casterNode == null) return null;
-            if (MakesKindred) return "Bloodfiends_EmbraceNextKindred".Translate(GameComponent_BloodfiendFamilies.MaximumKindredsPerBloodfiend - casterNode.kindredCreatedCount);
-            return "Bloodfiends_EmbraceNextBloodbag".Translate();
+            if (!MakesKindred) return "Bloodfiends_EmbraceNextBloodbag".Translate();
+            return "Bloodfiends_EmbraceNextKindred".Translate(GameComponent_BloodfiendFamilies.MaximumKindredsPerBloodfiend - CasterNode.kindredCreatedCount);
         }
 
         public override bool Valid(LocalTargetInfo target, bool throwMessages = false)
@@ -66,16 +74,22 @@ namespace Bloodfiends.Family
         public override void Apply(LocalTargetInfo target, LocalTargetInfo dest)
         {
             base.Apply(target, dest);
+            Pawn casterPawn = parent.pawn;
             Pawn targetPawn = target.Pawn;
-            if (targetPawn == null || GameComponent_BloodfiendFamilies.Instance == null) return;
+            if (targetPawn == null) return;
 
-            if (MakesKindred) MakeKindred(parent.pawn, targetPawn);
-            else MakeBloodbag(parent.pawn, targetPawn);
+            if (MakesKindred)
+            {
+                MakeKindred(casterPawn, targetPawn);
+                return;
+            }
+            BloodbagUtility.MakeBloodbag(targetPawn, casterPawn.Faction, casterPawn, CasterFamilyId);
+            Messages.Message("Bloodfiends_EmbracedBloodbag".Translate(casterPawn.Named("CASTER"), targetPawn.Named("BLOODBAG")), targetPawn, MessageTypeDefOf.NeutralEvent);
         }
 
         private void MakeKindred(Pawn casterPawn, Pawn kindredPawn)
         {
-            BloodfiendFamilyNode kindredNode = GameComponent_BloodfiendFamilies.Instance.CreateKindredNode(CasterNode, kindredPawn);
+            BloodfiendFamilyNode kindredNode = GameComponent_BloodfiendFamilies.Instance?.CreateKindredNode(CasterNode, kindredPawn);
             if (kindredNode == null) return;
 
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
@@ -87,18 +101,6 @@ namespace Bloodfiends.Family
 
             FilthMaker.TryMakeFilth(kindredPawn.PositionHeld, kindredPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
             Messages.Message("Bloodfiends_Embraced".Translate(casterPawn.Named("CASTER"), kindredPawn.Named("KINDRED")), kindredPawn, MessageTypeDefOf.PositiveEvent);
-        }
-
-        private void MakeBloodbag(Pawn casterPawn, Pawn bloodbagPawn)
-        {
-            MutantDef bloodbagDef = BloodbagDef;
-            if (bloodbagDef == null) return;
-
-            if (bloodbagPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(bloodbagPawn, casterPawn.Faction, casterPawn);
-            MutantUtility.SetPawnAsMutantInstantly(bloodbagPawn, bloodbagDef);
-
-            FilthMaker.TryMakeFilth(bloodbagPawn.PositionHeld, bloodbagPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
-            Messages.Message("Bloodfiends_EmbracedBloodbag".Translate(casterPawn.Named("CASTER"), bloodbagPawn.Named("BLOODBAG")), bloodbagPawn, MessageTypeDefOf.NeutralEvent);
         }
     }
 }

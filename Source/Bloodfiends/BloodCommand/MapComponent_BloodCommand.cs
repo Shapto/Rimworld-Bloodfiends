@@ -1,4 +1,5 @@
-﻿using Bloodfiends.Family;
+﻿using Bloodfiends.Bloodbags;
+using Bloodfiends.Family;
 using RimWorld;
 using SingularityFramework.Visuals.Brushlines;
 using System;
@@ -70,7 +71,9 @@ namespace Bloodfiends.BloodCommand
 
         private static int GenerationOf(Pawn pawn)
         {
-            if (pawn.Dead || pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>()?.Active != true) return 0;
+            if (pawn.Dead) return 0;
+            if (BloodbagUtility.IsBloodbag(pawn)) return BloodbagUtility.BloodbagGeneration;
+            if (pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>()?.Active != true) return 0;
             return pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node?.generationNumber ?? 0;
         }
 

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<MutantDef ParentName="BaseMutantEntity" MayRequire="Ludeon.RimWorld.Anomaly">
+		<defName>Bloodfiends_Bloodbag</defName>
+		<label>bloodbag</label>
+		<description>TODO</description>
+		<hediff>Bloodfiends_HardbloodGrowths</hediff>
+		<thinkTree>Bloodfiends_Bloodbag</thinkTree>
+		<thinkTreeConstant>GhoulConstant</thinkTreeConstant>
+		<showJobReport>true</showJobReport>
+		<workDisables Inherit="False">
+			<li>ManualSkilled</li>
+			<li>Intellectual</li>
+			<li>Social</li>
+			<li>Caring</li>
+			<li>Animals</li>
+			<li>Artistic</li>
+			<li>PlantWork</li>
+			<li>Mining</li>
+			<li>Constructing</li>
+			<li>Crafting</li>
+			<li>Cooking</li>
+			<li>Firefighting</li>
+		</workDisables>
+		<whitelistedFloatMenuProviders IsNull="True" />
+		<disablesGenes Inherit="False">
+			<li MayRequire="Ludeon.RimWorld.Biotech">Deathrest</li>
+		</disablesGenes>
+		<abilityWhitelist>
+			<li>Bloodfiends_Embrace</li>
+		</abilityWhitelist>
+		<canBleed>true</canBleed>
+		<canBeCapturedToHoldingPlatform>false</canBeCapturedToHoldingPlatform>
+		<producesBioferrite>false</producesBioferrite>
+		<removePermanentInjuries>true</removePermanentInjuries>
+		<deathLetter>One of your Bloodbags has died.</deathLetter>
+		<modExtensions>
+			<li Class="Bloodfiends.Bloodbags.MutantAllowedWorkExtension">
+				<allowedWorkTypes>
+					<li>Patient</li>
+					<li>PatientBedRest</li>
+					<li>BasicWorker</li>
+					<li>Cleaning</li>
+					<li>Hauling</li>
+				</allowedWorkTypes>
+			</li>
+		</modExtensions>
+	</MutantDef>
+</Defs>

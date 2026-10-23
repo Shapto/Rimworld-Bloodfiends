@@ -1,4 +1,5 @@
-﻿using Bloodfiends.SharedThirst;
+﻿using Bloodfiends.Bloodbags;
+using Bloodfiends.SharedThirst;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -57,10 +58,7 @@ namespace Bloodfiends.Family
             return null;
         }
 
-        /// <summary>
-        /// stub
-        /// </summary>
-        private static bool IsBloodbag(Pawn pawn) => false;
+        private static bool IsBloodbag(Pawn pawn) => BloodbagUtility.IsBloodbag(pawn);
 
         public override void Apply(LocalTargetInfo target, LocalTargetInfo dest)
         {

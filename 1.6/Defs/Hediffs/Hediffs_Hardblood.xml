@@ -8,6 +8,21 @@
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>false</isBad>
 		<everCurableByItem>false</everCurableByItem>
+		<keepOnBodyPartRestoration>True</keepOnBodyPartRestoration>
+		<stages>
+			<li>
+				<painFactor>0</painFactor>
+				<statFactors>
+					<PsychicSensitivity>0</PsychicSensitivity>
+				</statFactors>
+				<capMods>
+					<li>
+						<capacity>Talking</capacity>
+						<postFactor>0</postFactor>
+					</li>
+				</capMods>
+			</li>
+		</stages>
 		<renderNodeProperties>
 			<li Class="Bloodfiends.Hardblood.PawnRenderNodeProperties_HardbloodGrowths">
 				<nodeClass>Bloodfiends.Hardblood.PawnRenderNode_HardbloodGrowths</nodeClass>

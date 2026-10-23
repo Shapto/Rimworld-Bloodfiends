@@ -12,10 +12,17 @@ namespace Bloodfiends.Hardblood
     /// </summary>
     public class Hediff_HardbloodGrowths : HediffWithComps
     {
+        public int familyId = -1;   // the Family this Bloodbag belongs to
         public override void PostRemoved()
         {
             base.PostRemoved();
             HardbloodGraphics.Forget(pawn);
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Values.Look(ref familyId, "familyId", -1);
         }
     }
 
