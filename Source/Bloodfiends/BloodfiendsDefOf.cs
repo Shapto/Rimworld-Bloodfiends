@@ -22,6 +22,7 @@ namespace Bloodfiends
         public static HediffDef Bloodfiends_HardbloodShell;
         public static XenotypeDef Bloodfiends_Bloodbag;
         public static HediffDef Bloodfiends_BloodbagInfection;
+        public static AbilityDef Bloodfiends_Coagulate;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

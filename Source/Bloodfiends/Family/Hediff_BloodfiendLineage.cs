@@ -32,6 +32,18 @@ namespace Bloodfiends.Family
 
             Severity = node.generationNumber;
             RefreshHemogenMax(node);
+            RefreshCoagulate(node);
+        }
+
+        private void RefreshCoagulate(BloodfiendFamilyNode node)
+        {
+            if (pawn.abilities == null) return;
+            AbilityDef coagulate = BloodfiendsDefOf.Bloodfiends_Coagulate;
+            int maximumGeneration = coagulate.comps?.OfType<Bloodfiends.Coagulate.CompProperties_AbilityCoagulate>().FirstOrDefault()?.maximumCasterGeneration ?? 4;
+            bool knowsIt = pawn.abilities.GetAbility(coagulate) != null;
+
+            if (node.generationNumber <= maximumGeneration && !knowsIt) pawn.abilities.GainAbility(coagulate);
+            else if (node.generationNumber > maximumGeneration && knowsIt) pawn.abilities.RemoveAbility(coagulate);
         }
 
         private void RefreshHemogenMax(BloodfiendFamilyNode node)
@@ -52,6 +64,7 @@ namespace Bloodfiends.Family
 
             Gene_Hemogen hemogenGene = pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
             if (hemogenGene != null && appliedHemogenMaxOffset != 0f) hemogenGene.SetMax(hemogenGene.Max - appliedHemogenMaxOffset);
+            if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_Coagulate) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_Coagulate);
             appliedHemogenMaxOffset = 0f;
         }
 
