@@ -48,5 +48,14 @@
 				<hemogenMaxOffset>2</hemogenMaxOffset>
 			</li>
 		</modExtensions>
+		<renderNodeProperties>
+			<li>
+				<debugLabel>Bloodbag face shadow</debugLabel>
+				<nodeClass>Bloodfiends.Hardblood.PawnRenderNode_BloodbagFaceShadow</nodeClass>
+				<workerClass>PawnRenderNodeWorker</workerClass>
+				<parentTagDef>Head</parentTagDef>
+				<baseLayer>53</baseLayer>
+			</li>
+		</renderNodeProperties>
 	</MutantDef>
 </Defs>

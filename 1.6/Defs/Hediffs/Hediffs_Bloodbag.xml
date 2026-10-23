@@ -52,14 +52,5 @@
 				<chancePerHit>0.1</chancePerHit>
 			</li>
 		</modExtensions>
-		<renderNodeProperties>
-			<li>
-				<debugLabel>Bloodbag face shadow</debugLabel>
-				<nodeClass>Bloodfiends.Hardblood.PawnRenderNode_BloodbagFaceShadow</nodeClass>
-				<workerClass>PawnRenderNodeWorker</workerClass>
-				<parentTagDef>Head</parentTagDef>
-				<baseLayer>53</baseLayer>
-			</li>
-		</renderNodeProperties>
 	</HediffDef>
 </Defs>
