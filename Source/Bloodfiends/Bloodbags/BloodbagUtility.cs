@@ -14,6 +14,8 @@ namespace Bloodfiends.Bloodbags
     {
         public const string BloodbagMutantName = "Bloodfiends_Bloodbag";
 
+        public const int BloodbagGeneration = 8;
+
         public static MutantDef BloodbagDef => ModsConfig.AnomalyActive ? DefDatabase<MutantDef>.GetNamedSilentFail(BloodbagMutantName) : null;
 
         public static bool IsBloodbag(Pawn pawn) => pawn != null && pawn.IsMutant && pawn.mutant.Def.defName == BloodbagMutantName;
