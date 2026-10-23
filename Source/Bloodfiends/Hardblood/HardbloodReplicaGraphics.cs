@@ -138,12 +138,9 @@ namespace Bloodfiends.Hardblood
                 // the replica may have dissolved (or a new game started) while this was building
                 if (!entriesByReplica.TryGetValue(seed, out ReplicaEntry current) || current != entry || replica.Destroyed) return;
                 entry.grip = ToSprite(build.grip, paddedWidth, paddedHeight);
-                entry.tip = ToSprite(build.tip, paddedWidth, paddedHeight);
-                if (growsIn && build.canvas.arrival != null)
-                {
-                    KitbashGrowth.Start(new[] { entry.texture }, new[] { build.canvas }, GrowthTicks);
-                    return;
-                }
+                entry.texture.SetPixels32(KitbashTextures.TexturePixels(build.canvas, false));
+                entry.texture.Apply(true, true);
+                if (growsIn && build.canvas.arrival != null) KitbashGrowth.Start(new[] { entry.material }, GrowthTicks);
                 entry.texture.SetPixels32(KitbashTextures.OrientForTexture(build.canvas.pixels, build.canvas.width, build.canvas.height, false));
                 entry.texture.Apply(true, true);
             },
