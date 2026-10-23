@@ -1,5 +1,7 @@
-﻿using Bloodfiends.Hardblood;
+﻿using Bloodfiends.BloodCommand;
+using Bloodfiends.Hardblood;
 using RimWorld;
+using SingularityFramework.Visuals.Brushlines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,14 +45,32 @@ namespace Bloodfiends.Coagulate
 
         private void Shatter()
         {
-            if (pawn.Spawned) FilthMaker.TryMakeFilth(pawn.Position, pawn.Map, ThingDefOf.Filth_Blood, 2);
             pawn.health.RemoveHediff(this);
         }
 
         public override void PostRemoved()
         {
             base.PostRemoved();
+            if (pawn.Spawned) StartShatter();
             HardbloodGraphics.ForgetMask(pawn);
+        }
+
+        private void StartShatter()
+        {
+            Map map = pawn.Map;
+            float side = HardbloodGraphics.MaskSide(pawn);
+            Vector3 headPosition = pawn.DrawPos + pawn.Drawer.renderer.BaseHeadOffsetAt(pawn.Rotation);
+            Vector3 source = headPosition + new Vector3(0.12f * side, 0f, 0f);
+            var effect = new ShatterLineEffect(MapComponent_BloodCommand.BloodPalette, source, pawn.DrawPos, side, 7, 0.15f, 0.09f, pawn.thingIDNumber ^ Find.TickManager.TicksGame, 1.4f);
+            effect.AtMoment(0.5f, () =>
+            {
+                foreach (Vector3 landing in effect.landingPoints)
+                {
+                    IntVec3 cell = landing.ToIntVec3();
+                    if (cell.InBounds(map)) FilthMaker.TryMakeFilth(cell, map, ThingDefOf.Filth_Blood, 1);
+                }
+            });
+            MapComponent_BrushLines.Start(map, effect);
         }
 
         public override void ExposeData()
@@ -60,5 +80,16 @@ namespace Bloodfiends.Coagulate
             Scribe_Values.Look(ref maximumShellPoints, "maximumShellPoints");
             Scribe_Values.Look(ref regenerationMultiplier, "regenerationMultiplier", 1f);
         }
+    }
+
+    public class PawnRenderNode_HardbloodMask : PawnRenderNode
+    {
+        public PawnRenderNode_HardbloodMask(Pawn pawn, PawnRenderNodeProperties props, PawnRenderTree tree) : base(pawn, props, tree)
+        {
+        }
+
+        public override Graphic GraphicFor(Pawn pawn) => HardbloodGraphics.MaskGraphic(pawn);
+
+        public override GraphicMeshSet MeshSetFor(Pawn pawn) => HumanlikeMeshPoolUtility.GetHumanlikeHeadSetForPawn(pawn);
     }
 }

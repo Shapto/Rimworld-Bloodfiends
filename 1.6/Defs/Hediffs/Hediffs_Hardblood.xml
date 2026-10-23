@@ -41,7 +41,7 @@
 		</comps>
 		<stages>
 			<li>
-				<totalBleedRateFactor>0</totalBleedRateFactor>
+				<totalBleedFactor>0</totalBleedFactor>
 				<statFactors>
 					<InjuryHealingFactor>2</InjuryHealingFactor>
 				</statFactors>
@@ -52,7 +52,7 @@
 				<nodeClass>Bloodfiends.Coagulate.PawnRenderNode_HardbloodMask</nodeClass>
 				<workerClass>PawnRenderNodeWorker</workerClass>
 				<parentTagDef>Head</parentTagDef>
-				<baseLayer>61</baseLayer>
+				<baseLayer>75</baseLayer>
 			</li>
 		</renderNodeProperties>
 	</HediffDef>

@@ -187,6 +187,7 @@ namespace Bloodfiends.Hardblood
         private class MaskEntry
         {
             public KitbashGraphic graphic;
+            public float[] sideByRotation = { 1f, 1f, 1f, 1f };   // which side of the head it sits on, on screen: +1 right, -1 left
         }
 
         private static readonly Dictionary<int, MaskEntry> masksByPawn = new Dictionary<int, MaskEntry>();
@@ -233,10 +234,36 @@ namespace Bloodfiends.Hardblood
             {
                 // the shell may have shattered (or a new game started) while this was building
                 if (!masksByPawn.TryGetValue(seed, out MaskEntry current) || current != entry) return;
+                for (int rotation = 0; rotation < 4; rotation++) entry.sideByRotation[rotation] = ScreenSideOf(canvases[rotation]);
                 entry.graphic = KitbashGraphic.Create(canvases, name, ShaderDatabase.Cutout, Vector2.one, growthTicks);
                 if (!pawn.Destroyed) pawn.Drawer.renderer.SetAllGraphicsDirty();
             },
             name);
+        }
+
+        /// <summary>
+        /// Which side of the head a pawn's mask is on as it's drawn now: +1 the right of the screen, -1 the left.
+        /// </summary>
+        public static float MaskSide(Pawn pawn)
+        {
+            return masksByPawn.TryGetValue(pawn.thingIDNumber, out MaskEntry entry) ? entry.sideByRotation[pawn.Rotation.AsInt] : 1f;
+        }
+
+        /// <summary>
+        /// Whether a facing's crystals sit mostly right or left of the middle of its canvas.
+        /// </summary>
+        private static float ScreenSideOf(KitbashCanvas canvas)
+        {
+            double columnTotal = 0;
+            int solidCount = 0;
+            for (int index = 0; index < canvas.pixels.Length; index++)
+            {
+                if (canvas.pixels[index].a == 0) continue;
+                columnTotal += index % canvas.width;
+                solidCount++;
+            }
+            if (solidCount == 0) return 1f;
+            return columnTotal / solidCount >= canvas.width / 2f ? 1f : -1f;
         }
 
         /// <summary>
