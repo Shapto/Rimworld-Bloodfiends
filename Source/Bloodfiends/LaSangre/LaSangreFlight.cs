@@ -65,7 +65,7 @@ namespace Bloodfiends.LaSangre
 
         private CompProperties_AbilityLaSangre Props => abilityDef?.comps?.OfType<CompProperties_AbilityLaSangre>().FirstOrDefault() ?? new CompProperties_AbilityLaSangre();
 
-        private float LanceAhead => Props.lanceGripFraction * Props.lanceLength + 0.4f;
+        private float LanceAhead => 0f;
 
         public ThingOwner GetDirectlyHeldThings() => innerContainer;
 
@@ -323,11 +323,11 @@ namespace Bloodfiends.LaSangre
                 {
                     float share = step / (float)Steps;
                     float along = guard + (1f - guard) * share;
-                    float angle = phase + share * 5f * Mathf.PI;
-                    float radius = TendrilRadius * (1.15f - 0.9f * share);
+                    float angle = phase + share * 7f * Mathf.PI;
+                    float radius = Props.tendrilRadiusByAlong?.Evaluate(along) ?? TendrilRadius * (1.15f - 0.9f * share);
                     Vector3 centre = butt + diveDirection * length * along + across * Mathf.Sin(angle) * radius;
                     bool inFront = Mathf.Cos(angle) > 0f;
-                    Vector3 halfWidth = across * 0.035f;
+                    Vector3 halfWidth = across * 0.025f;
                     Vector3 left = centre + halfWidth, right = centre - halfWidth;
                     if (step > 0)
                     {

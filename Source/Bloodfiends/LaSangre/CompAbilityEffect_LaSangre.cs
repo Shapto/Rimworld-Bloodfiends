@@ -20,8 +20,9 @@ namespace Bloodfiends.LaSangre
         public float airHeight = 3.5f;                     // how high (drawn north of where they are over the ground)
         public string lanceTexturePath = "Items/SanchoLanceAsc";
         public float lanceLength = 4.6f;                   // cells
-        public float lanceGripFraction = 0.33f;            // where along the texture (left to right) the hands are
+        public float lanceGripFraction = 0.18f;            // where along the texture (left to right) the hands are: the middle of the haft
         public float lanceGuardFraction = 0.38f;           // the tendrils wrap from here to the tip
+        public SimpleCurve tendrilRadiusByAlong;           // how far out the tendrils wind (cells), by how far along the lance: just outside its outline
         public float cameraShake = 4f;
         public SoundDef impactSound;
 
