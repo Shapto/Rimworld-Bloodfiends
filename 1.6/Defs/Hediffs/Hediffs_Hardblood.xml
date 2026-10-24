@@ -50,7 +50,7 @@
 		<everCurableByItem>false</everCurableByItem>
 		<comps>
 			<li Class="HediffCompProperties_Disappears">
-				<disappearsAfterTicks>15000~15000</disappearsAfterTicks>
+				<disappearsAfterTicks>1800~1800</disappearsAfterTicks>
 				<showRemainingTime>true</showRemainingTime>
 			</li>
 		</comps>
@@ -70,5 +70,31 @@
 				<baseLayer>75</baseLayer>
 			</li>
 		</renderNodeProperties>
+	</HediffDef>
+	<HediffDef>
+		<defName>Bloodfiends_HardbloodMantle</defName>
+		<label>hardblood mantle</label>
+		<description>TODO</description>
+		<hediffClass>Bloodfiends.Mantle.Hediff_Mantle</hediffClass>
+		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
+		<isBad>false</isBad>
+		<everCurableByItem>false</everCurableByItem>
+		<comps>
+			<li Class="HediffCompProperties_Disappears">
+				<disappearsAfterTicks>5000~5000</disappearsAfterTicks>
+				<showRemainingTime>true</showRemainingTime>
+			</li>
+		</comps>
+		<modExtensions>
+			<li Class="Bloodfiends.Mantle.MantleExtension">
+				<cutFraction>0.5</cutFraction>
+				<chargePerHemogen>100</chargePerHemogen>
+				<maximumChargePerHemogenMaximum>100</maximumChargePerHemogenMaximum>
+				<chargeOnCast>0.5</chargeOnCast>
+				<minimumWallAngle>35</minimumWallAngle>
+				<noticeRadius>7</noticeRadius>
+				<wallHoldSeconds>1.2</wallHoldSeconds>
+			</li>
+		</modExtensions>
 	</HediffDef>
 </Defs>

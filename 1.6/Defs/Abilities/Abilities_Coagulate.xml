@@ -2,11 +2,12 @@
 <Defs>
 	<AbilityDef>
 		<defName>Bloodfiends_Coagulate</defName>
-		<label>coagulate</label>
+		<label>hardblood armor</label>
 		<description>TODO</description>
 		<iconPath>TODO</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>100</displayOrder>
+		<cooldownTicksRange>7500</cooldownTicksRange>
 		<hostile>false</hostile>
 		<casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
 		<displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
