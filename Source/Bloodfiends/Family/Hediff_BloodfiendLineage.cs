@@ -1,4 +1,5 @@
-﻿using Bloodfiends.Mantle;
+﻿using Bloodfiends.LaSangre;
+using Bloodfiends.Mantle;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -41,8 +42,10 @@ namespace Bloodfiends.Family
             if (pawn.abilities == null) return;
             int coagulateGeneration = BloodfiendsDefOf.Bloodfiends_Coagulate.comps?.OfType<Bloodfiends.Coagulate.CompProperties_AbilityCoagulate>().FirstOrDefault()?.maximumCasterGeneration ?? 6;
             int mantleGeneration = BloodfiendsDefOf.Bloodfiends_Mantle.comps?.OfType<CompProperties_AbilityMantle>().FirstOrDefault()?.maximumCasterGeneration ?? 3;
+            int laSangreGeneration = BloodfiendsDefOf.Bloodfiends_LaSangre.comps?.OfType<CompProperties_AbilityLaSangre>().FirstOrDefault()?.maximumCasterGeneration ?? 1;
             RefreshTierAbility(BloodfiendsDefOf.Bloodfiends_Coagulate, coagulateGeneration, node.generationNumber);
             RefreshTierAbility(BloodfiendsDefOf.Bloodfiends_Mantle, mantleGeneration, node.generationNumber);
+            RefreshTierAbility(BloodfiendsDefOf.Bloodfiends_LaSangre, laSangreGeneration, node.generationNumber);
         }
 
         private void RefreshTierAbility(AbilityDef ability, int maximumGeneration, int generation)
@@ -72,6 +75,7 @@ namespace Bloodfiends.Family
             if (hemogenGene != null && appliedHemogenMaxOffset != 0f) hemogenGene.SetMax(hemogenGene.Max - appliedHemogenMaxOffset);
             if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_Coagulate) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_Coagulate);
             if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_Mantle) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_Mantle);
+            if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_LaSangre) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_LaSangre);
             appliedHemogenMaxOffset = 0f;
         }
 

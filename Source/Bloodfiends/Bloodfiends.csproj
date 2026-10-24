@@ -111,6 +111,9 @@
     <Compile Include="Hunger\Gene_Withering.cs" />
     <Compile Include="Hunger\MentalState_Bloodfrenzy.cs" />
     <Compile Include="Hunger\Patch_IngestionOutcomeDoer_OffsetHemogen_StaleBlood.cs" />
+    <Compile Include="LaSangre\BurstLineEffect.cs" />
+    <Compile Include="LaSangre\CompAbilityEffect_LaSangre.cs" />
+    <Compile Include="LaSangre\LaSangreFlight.cs" />
     <Compile Include="Mantle\CompAbilityEffect_Mantle.cs" />
     <Compile Include="Mantle\Gizmo_MantleStatus.cs" />
     <Compile Include="Mantle\Hediff_Mantle.cs" />

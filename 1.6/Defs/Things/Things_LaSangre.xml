@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<ThingDef>
+		<defName>Bloodfiends_LaSangreFlight</defName>
+		<label>La Sangre</label>
+		<thingClass>Bloodfiends.LaSangre.LaSangreFlight</thingClass>
+		<category>Ethereal</category>
+		<tickerType>Normal</tickerType>
+		<altitudeLayer>Skyfaller</altitudeLayer>
+		<drawerType>RealtimeOnly</drawerType>
+		<useHitPoints>false</useHitPoints>
+		<drawOffscreen>true</drawOffscreen>
+		<selectable>false</selectable>
+	</ThingDef>
+</Defs>

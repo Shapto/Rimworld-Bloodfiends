@@ -22,6 +22,8 @@
 
   <Bloodfiends_MantleGizmoTip>TODO</Bloodfiends_MantleGizmoTip>
 
+  <Bloodfiends_LaSangreNeedsHemogen>Needs at least half a bar of hemogen.</Bloodfiends_LaSangreNeedsHemogen>
+
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
   <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends and Bloodbags.</Bloodfiends_OnlyWorksOnBloodfiends>

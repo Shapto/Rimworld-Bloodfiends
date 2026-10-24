@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<AbilityDef>
+		<defName>Bloodfiends_LaSangre</defName>
+		<label>La Sangre</label>
+		<description>TODO</description>
+		<iconPath>TODO</iconPath>
+		<category>Bloodfiends_Bloodfiend</category>
+		<displayOrder>120</displayOrder>
+		<cooldownTicksRange>60000</cooldownTicksRange>
+		<hostile>true</hostile>
+		<casterMustBeCapableOfViolence>true</casterMustBeCapableOfViolence>
+		<verbProperties>
+			<verbClass>Verb_CastAbility</verbClass>
+			<range>24.9</range>
+			<warmupTime>0.25</warmupTime>
+			<requireLineOfSight>false</requireLineOfSight>
+			<targetParams>
+				<canTargetLocations>true</canTargetLocations>
+				<canTargetPawns>true</canTargetPawns>
+				<canTargetBuildings>false</canTargetBuildings>
+			</targetParams>
+		</verbProperties>
+		<comps>
+			<li Class="Bloodfiends.LaSangre.CompProperties_AbilityLaSangre">
+				<maximumCasterGeneration>1</maximumCasterGeneration>
+				<minimumHemogenFraction>0.5</minimumHemogenFraction>
+				<maximumStrength>3</maximumStrength>
+				<damageDef>Stab</damageDef>
+				<damage>30</damage>
+				<armorPenetration>0.6</armorPenetration>
+				<impactRadius>2.8</impactRadius>
+				<stunTicks>120</stunTicks>
+				<hemogenStolenPerEnemy>0.08</hemogenStolenPerEnemy>
+				<familyRadius>14</familyRadius>
+				<airDistance>7</airDistance>
+				<airHeight>3.5</airHeight>
+				<lanceTexturePath>Items/SanchoLanceAsc</lanceTexturePath>
+				<lanceLength>4.6</lanceLength>
+				<lanceGripFraction>0.4</lanceGripFraction>
+				<lanceGuardFraction>0.42</lanceGuardFraction>
+				<cameraShake>4</cameraShake>
+			</li>
+		</comps>
+	</AbilityDef>
+</Defs>
