@@ -10,7 +10,6 @@
 		<warmupEffecter>Bloodfeed_Warmup</warmupEffecter>
 		<warmupStartSound>Bloodfeed_Cast</warmupStartSound>
 		<hostile>false</hostile>
-		<historyEvent>PropagateBloodfeederGene</historyEvent>
 		<casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
 		<stunTargetWhileCasting>true</stunTargetWhileCasting>
 		<displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
@@ -34,6 +33,7 @@
 				<hemogenCost>0.6</hemogenCost>
 			</li>
 			<li Class="Bloodfiends.Family.CompProperties_AbilityEmbrace">
+				<historyEvent>PropagateBloodfeederGene</historyEvent>
 				<outsiderGoodwillImpact>-30</outsiderGoodwillImpact>
 				<thoughtDefToGiveTarget>FedOn</thoughtDefToGiveTarget>
 				<opinionThoughtDefToGiveTarget>FedOn_Social</opinionThoughtDefToGiveTarget>
