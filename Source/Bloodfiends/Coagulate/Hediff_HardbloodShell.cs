@@ -18,7 +18,15 @@ namespace Bloodfiends.Coagulate
         public float maximumShellPoints;
         public float regenerationMultiplier = 1f;
 
-        public override string LabelInBrackets => $"{Mathf.CeilToInt(shellPoints)} / {Mathf.CeilToInt(maximumShellPoints)}";
+        public override string LabelInBrackets
+        {
+            get
+            {
+                string points = $"{Mathf.CeilToInt(shellPoints)} / {Mathf.CeilToInt(maximumShellPoints)}";
+                string fromComps = base.LabelInBrackets;
+                return fromComps.NullOrEmpty() ? points : $"{points}, {fromComps}";
+            }
+        }
 
         public static float RegenerationMultiplierFor(Pawn pawn)
         {

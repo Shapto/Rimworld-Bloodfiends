@@ -46,7 +46,15 @@ namespace Bloodfiends.Mantle
 
         public float ChargeFraction => MaximumCharge > 0f ? Mathf.Clamp01(charge / MaximumCharge) : 0f;
 
-        public override string LabelInBrackets => $"{Mathf.CeilToInt(charge)} / {Mathf.CeilToInt(MaximumCharge)}";
+        public override string LabelInBrackets
+        {
+            get
+            {
+                string chargeText = $"{Mathf.CeilToInt(charge)} / {Mathf.CeilToInt(MaximumCharge)}";
+                string fromComps = base.LabelInBrackets;
+                return fromComps.NullOrEmpty() ? chargeText : $"{chargeText}, {fromComps}";
+            }
+        }
 
         private MantleRibbons Ribbons => pawn.Spawned ? MapComponent_MantleRibbons.For(pawn.Map)?.RibbonsOf(this) : null;
 
