@@ -309,34 +309,47 @@ namespace Bloodfiends.LaSangre
             float wrapped = BrushStroke.SmoothStep(0f, 0.55f, windUp);
             float spin = windUp * windUp * 40f;
             float length = Props.lanceLength;
-            Vector3 grip = GripPosition(airPosition);
-            Vector3 butt = grip - diveDirection * Props.lanceGripFraction * length;
+            Vector3 butt = GripPosition(airPosition) - diveDirection * Props.lanceGripFraction * length;
             Vector3 across = new Vector3(-diveDirection.z, 0f, diveDirection.x);
             float guard = Props.lanceGuardFraction;
-            const int Steps = 70;
+            const int Steps = 90;
+            const float HalfWidth = 0.03f;
+            int drawnSteps = Mathf.RoundToInt(Steps * wrapped);
+            if (drawnSteps < 2) return;
+            float drawnTo = drawnSteps / (float)Steps;
+
+            var centres = new Vector3[drawnSteps + 1];
+            var inFront = new bool[drawnSteps + 1];
+            var tapers = new float[drawnSteps + 1];
             for (int helix = 0; helix < 3; helix++)
             {
                 float phase = helix * Mathf.PI * 2f / 3f + spin;
-                Vector3 previousLeft = Vector3.zero, previousRight = Vector3.zero;
-                bool previousFront = false;
-                for (int step = 0; step <= Mathf.RoundToInt(Steps * wrapped); step++)
+                for (int step = 0; step <= drawnSteps; step++)
                 {
                     float share = step / (float)Steps;
                     float along = guard + (1f - guard) * share;
                     float angle = phase + share * 7f * Mathf.PI;
                     float radius = Props.tendrilRadiusByAlong?.Evaluate(along) ?? TendrilRadius * (1.15f - 0.9f * share);
-                    Vector3 centre = butt + diveDirection * length * along + across * Mathf.Sin(angle) * radius;
-                    bool inFront = Mathf.Cos(angle) > 0f;
-                    Vector3 halfWidth = across * 0.025f;
-                    Vector3 left = centre + halfWidth, right = centre - halfWidth;
+                    centres[step] = butt + diveDirection * length * along + across * Mathf.Sin(angle) * radius;
+                    inFront[step] = Mathf.Cos(angle) > 0f;
+                    tapers[step] = BrushStroke.SmoothStep(0f, 0.06f, share) * BrushStroke.SmoothStep(0f, 0.14f, drawnTo - share);
+                }
+
+                Vector3 previousLeft = Vector3.zero, previousRight = Vector3.zero;
+                for (int step = 0; step <= drawnSteps; step++)
+                {
+                    Vector3 ahead = centres[Mathf.Min(step + 1, drawnSteps)] - centres[Mathf.Max(step - 1, 0)];
+                    ahead.y = 0f;
+                    Vector3 direction = ahead.sqrMagnitude > 1e-8f ? ahead.normalized : diveDirection;
+                    Vector3 side = new Vector3(-direction.z, 0f, direction.x) * (HalfWidth * tapers[step]);
+                    Vector3 left = centres[step] + side, right = centres[step] - side;
                     if (step > 0)
                     {
-                        BrushLineDrawer drawer = previousFront ? frontDrawer : backDrawer;
-                        drawer.AddQuad(previousFront ? 0 : 2, previousFront ? 1f : 0.7f, previousLeft, left, right, previousRight);
+                        bool front = inFront[step - 1];
+                        (front ? frontDrawer : backDrawer).AddQuad(front ? 0 : 2, front ? 1f : 0.7f, previousLeft, left, right, previousRight);
                     }
                     previousLeft = left;
                     previousRight = right;
-                    previousFront = inFront;
                 }
             }
         }
