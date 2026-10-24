@@ -37,8 +37,8 @@
 				<airHeight>3.5</airHeight>
 				<lanceTexturePath>Items/SanchoLanceAsc</lanceTexturePath>
 				<lanceLength>4.6</lanceLength>
-				<lanceGripFraction>0.4</lanceGripFraction>
-				<lanceGuardFraction>0.42</lanceGuardFraction>
+				<lanceGripFraction>0.33</lanceGripFraction>
+				<lanceGuardFraction>0.38</lanceGuardFraction>
 				<cameraShake>4</cameraShake>
 			</li>
 		</comps>

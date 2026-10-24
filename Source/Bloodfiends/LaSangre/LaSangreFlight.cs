@@ -96,8 +96,7 @@ namespace Bloodfiends.LaSangre
             diveDirection = impactPosition - airPosition;
             diveDirection.y = 0f;
             diveDirection.Normalize();
-            float gripToTip = (1f - Props.lanceGripFraction) * Props.lanceLength;
-            landingPosition = impactPosition - diveDirection * (LanceAhead + gripToTip - 0.3f);
+            landingPosition = impactPosition;
         }
 
         public override Vector3 DrawPos => ageTicks < TeleportEndTick ? groundPosition : airPosition;
@@ -119,7 +118,7 @@ namespace Bloodfiends.LaSangre
 
         private void StartSmear()
         {
-            MapComponent_BrushLines.Start(Map, new SmearLineEffect(MapComponent_BloodCommand.BloodPalette, airPosition, landingPosition + diveDirection * (LanceAhead + Props.lanceLength * 0.4f), seed + 13, 0.5f));
+            MapComponent_BrushLines.Start(Map, new SmearLineEffect(MapComponent_BloodCommand.BloodPalette, airPosition, impactPosition + diveDirection * 0.5f, seed + 13, 0.5f));
         }
 
         private void Impact()
@@ -163,7 +162,7 @@ namespace Bloodfiends.LaSangre
 
         private void StartLanceDissolve(Map map)
         {
-            Vector3 middle = landingPosition + diveDirection * (LanceAhead + Props.lanceLength * 0.25f);
+            Vector3 middle = impactPosition + diveDirection * 1f;
             float side = diveDirection.x >= 0f ? 1f : -1f;
             var dissolve = new ShatterLineEffect(MapComponent_BloodCommand.BloodPalette, middle, impactPosition, side, 10, 0.4f, 0.1f, seed + 19, 0.9f);
             MapComponent_BrushLines.Start(map, dissolve);
@@ -384,10 +383,6 @@ namespace Bloodfiends.LaSangre
             lanceMesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };
         }
 
-        /// <summary>
-        /// The cocoon: strands winding up round the First Kindred from below their feet to a point above their head,
-        /// crossing over each other. On the ground, each strand first runs in along the ground to the feet.
-        /// </summary>
         private static List<(BrushStroke stroke, float delay)> BuildCocoon(Vector3 centre, System.Random random, bool fromGround)
         {
             var strands = new List<(BrushStroke stroke, float delay)>();
