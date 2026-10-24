@@ -11,7 +11,7 @@
 		</customEffectDescriptions>
 		<displayCategory>ResistanceAndWeakness</displayCategory>
 		<displayOrderInCategory>81</displayOrderInCategory>
-		<iconPath>UI/Icons/Bloodfiends/TODO</iconPath>
+		<iconPath>Icons/Aquaphobia</iconPath>
 		<mentalBreakMtbDays>0.1</mentalBreakMtbDays>
 		<mentalBreakDef>Bloodfiends_AquaTerror</mentalBreakDef>
 		<biostatMet>4</biostatMet>

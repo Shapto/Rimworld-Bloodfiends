@@ -5,7 +5,7 @@
 		<label>bloodfiend</label>
 		<description>TODO</description>
 		<descriptionShort>TODO</descriptionShort>
-		<iconPath>UI/Icons/Xenotypes/Sanguophage</iconPath>
+		<iconPath>Icons/Bloodfiend</iconPath>
 		<inheritable>false</inheritable>
 		<genes>
 			<li>Ageless</li>
