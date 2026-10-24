@@ -39,7 +39,7 @@ namespace Bloodfiends.Family
         private void RefreshTierAbilities(BloodfiendFamilyNode node)
         {
             if (pawn.abilities == null) return;
-            int coagulateGeneration = BloodfiendsDefOf.Bloodfiends_Coagulate.comps?.OfType<CompProperties_AbilityCoagulate>().FirstOrDefault()?.maximumCasterGeneration ?? 4;
+            int coagulateGeneration = BloodfiendsDefOf.Bloodfiends_Coagulate.comps?.OfType<Bloodfiends.Coagulate.CompProperties_AbilityCoagulate>().FirstOrDefault()?.maximumCasterGeneration ?? 6;
             int mantleGeneration = BloodfiendsDefOf.Bloodfiends_Mantle.comps?.OfType<CompProperties_AbilityMantle>().FirstOrDefault()?.maximumCasterGeneration ?? 3;
             RefreshTierAbility(BloodfiendsDefOf.Bloodfiends_Coagulate, coagulateGeneration, node.generationNumber);
             RefreshTierAbility(BloodfiendsDefOf.Bloodfiends_Mantle, mantleGeneration, node.generationNumber);

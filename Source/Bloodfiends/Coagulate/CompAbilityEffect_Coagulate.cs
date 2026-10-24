@@ -19,7 +19,7 @@ namespace Bloodfiends.Coagulate
         public FloatRange tendQualityRange = new FloatRange(0.5f, 0.8f);
         public float lineWidth = 0.14f;
         public float lineSeconds = 0.9f;
-        public int maximumCasterGeneration = 4;   // only this Kindred tier and above can coagulate (First to Fourth)
+        public int maximumCasterGeneration = 6;   // only this Kindred tier and above can coagulate (First to Sixth)
 
         public CompProperties_AbilityCoagulate() => compClass = typeof(CompAbilityEffect_Coagulate);
     }

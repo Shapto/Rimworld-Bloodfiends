@@ -29,6 +29,7 @@
 			</li>
 			<li Class="Bloodfiends.Coagulate.CompProperties_AbilityCoagulate">
 				<shellHediff>Bloodfiends_HardbloodShell</shellHediff>
+				<maximumCasterGeneration>6</maximumCasterGeneration>
 				<shellPointsByGeneration>
 					<points>
 						<li>(1, 120)</li>
