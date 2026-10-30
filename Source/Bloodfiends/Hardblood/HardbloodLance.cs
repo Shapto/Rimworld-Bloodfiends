@@ -31,7 +31,9 @@ namespace Bloodfiends.Hardblood
         public float chargeMinimumRange = 3f;
         public float chargeMaximumRange = 8f;
         public int cellsPastTarget = 2;
-        public CompProperties_AbilityLineDash charge;      // the framework's dash
+        public CompProperties_AbilityLineDash charge;
+
+        public int chargeWindupTicks = 22;                  // the lance raised overhead before the slide (the animation's raise and hold)
     }
 
     public class MapComponent_HardbloodLances : MapComponent
@@ -124,6 +126,19 @@ namespace Bloodfiends.Hardblood
     public class JobDriver_HardbloodLanceCharge : JobDriver_LineDash
     {
         protected override CompProperties_AbilityLineDash DashProps => HardbloodLance.LanceOf(pawn)?.charge;
+
+        protected override IEnumerable<Toil> MakeNewToils()
+        {
+            int windupTicks = HardbloodLance.LanceOf(pawn)?.chargeWindupTicks ?? 0;
+            if (windupTicks > 0)
+            {
+                Toil windUp = Toils_General.Wait(windupTicks);
+                windUp.AddPreInitAction(() => pawn.pather.StopDead());
+                windUp.AddPreTickAction(() => pawn.rotationTracker.FaceTarget(job.targetB.IsValid ? job.targetB : job.targetA));
+                yield return windUp;
+            }
+            foreach (Toil toil in base.MakeNewToils()) yield return toil;
+        }
     }
 
     public class JobDriver_HardbloodLanceThrust : JobDriver

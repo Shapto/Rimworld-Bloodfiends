@@ -47,7 +47,8 @@
 				<thrustDamageDef>Stab</thrustDamageDef>
 				<thrustDamage>38</thrustDamage>
 				<thrustArmorPenetration>0.8</thrustArmorPenetration>
-				<thrustWarmupTicks>24</thrustWarmupTicks>
+				<thrustWarmupTicks>12</thrustWarmupTicks>
+				<chargeWindupTicks>22</chargeWindupTicks>
 				<thrustCooldownTicks>120</thrustCooldownTicks>
 				<chargeMinimumRange>3</chargeMinimumRange>
 				<chargeMaximumRange>8</chargeMaximumRange>
