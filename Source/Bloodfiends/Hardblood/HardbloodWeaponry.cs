@@ -23,10 +23,20 @@ namespace Bloodfiends.Hardblood
         public float formSeconds = 3f;
         public float lineWidth = 0.12f;
         public float hemogenPerShotDamage = 0.05f;                                   
-        public List<string> extraMimicableCompClasses = new List<string>();          
-        public string shardTexturePath = "Hardblood/Crystal_Small_A";
+        public List<string> extraMimicableCompClasses = new List<string>();
+        public List<HardbloodShardVariant> shardVariants = new List<HardbloodShardVariant>
+        {
+            new HardbloodShardVariant { texturePath = "Hardblood/Crystal_Small_A", tipAngle = -145f },
+            new HardbloodShardVariant { texturePath = "Hardblood/Crystal_Small_B", tipAngle = -96f },
+            new HardbloodShardVariant { texturePath = "Hardblood/Crystal_Small_C", tipAngle = -53f },
+            new HardbloodShardVariant { texturePath = "Hardblood/Crystal_Small_D", tipAngle = -26f },
+            new HardbloodShardVariant { texturePath = "Hardblood/Crystal_Small_E", tipAngle = 14f },
+            new HardbloodShardVariant { texturePath = "Hardblood/Crystal_Small_F", tipAngle = 16f }
+        };
         public float shardDrawSize = 1.2f;
-        public float shardAngleOffset = -54f;                                       
+        public float shardTrailLength = 1.4f;                                          // cells of streak behind each shard
+        public float shardTrailWidth = 0.1f;
+        public Color shardTrailColor = new Color(0.6f, 0.03f, 0.06f, 0.8f);
     }
 
     public class MimickedWeapon : IExposable
@@ -43,6 +53,15 @@ namespace Bloodfiends.Hardblood
             Scribe_Defs.Look(ref weaponDef, "weaponDef");
             Scribe_Defs.Look(ref stuff, "stuff");
         }
+    }
+    public class HardbloodShardVariant
+    {
+        public string texturePath;
+        public float tipAngle;   // which way the shard's point faces in its texture, degrees counterclockwise from east
+
+        private Material material;
+
+        public Material Material => material ?? (material = MaterialPool.MatFrom(texturePath, ShaderDatabase.Transparent));
     }
 
     public class HardbloodWeaponry : IExposable

@@ -26,7 +26,8 @@ namespace Bloodfiends.Hardblood
 
         private static HashSet<Type> allowedCompClasses;
         private static readonly HashSet<Projectile> shards = new HashSet<Projectile>();
-        private static Material shardMaterial;
+        private static readonly AccessTools.FieldRef<Projectile, Vector3> OriginOf = AccessTools.FieldRefAccess<Projectile, Vector3>("origin");
+        private static Material trailMaterial;
 
         public static bool firingReplica;
 
@@ -100,8 +101,8 @@ namespace Bloodfiends.Hardblood
         }
 
         /// <summary>
-        /// Draws a hardblood shard in place of the bullet, if this projectile came from a replica. False to draw it
-        /// normally.
+        /// Draws a hardblood shard in place of the bullet, if this projectile came from a replica, with a blood streak
+        /// behind it. Each projectile keeps one shard shape for its whole flight. False to draw it normally.
         /// </summary>
         public static bool TryDrawShard(Projectile projectile, Vector3 drawLocation)
         {
@@ -112,10 +113,61 @@ namespace Bloodfiends.Hardblood
                 return false;
             }
             HardbloodWeaponryExtension settings = HardbloodWeaponry.Settings;
-            if (shardMaterial == null) shardMaterial = MaterialPool.MatFrom(settings.shardTexturePath, ShaderDatabase.Transparent);
-            Quaternion rotation = projectile.ExactRotation * Quaternion.AngleAxis(settings.shardAngleOffset, Vector3.up);
-            Graphics.DrawMesh(MeshPool.GridPlane(new Vector2(settings.shardDrawSize, settings.shardDrawSize)), drawLocation, rotation, shardMaterial, 0);
+            if (settings.shardVariants.NullOrEmpty()) return false;
+
+            DrawTrail(projectile, drawLocation, settings);
+            HardbloodShardVariant variant = settings.shardVariants[projectile.thingIDNumber % settings.shardVariants.Count];
+            Quaternion rotation = projectile.ExactRotation * Quaternion.AngleAxis(variant.tipAngle - 90f, Vector3.up);   // turns the tip to face the way it flies
+            Graphics.DrawMesh(MeshPool.GridPlane(new Vector2(settings.shardDrawSize, settings.shardDrawSize)), drawLocation, rotation, variant.Material, 0);
             return true;
+        }
+
+        /// <summary>
+        /// A thin streak from the shard back along its path, never longer than the distance it has flown.
+        /// </summary>
+        private static void DrawTrail(Projectile projectile, Vector3 drawLocation, HardbloodWeaponryExtension settings)
+        {
+            Vector3 travelled = projectile.ExactPosition - OriginOf(projectile);
+            travelled.y = 0f;
+            float length = Mathf.Min(settings.shardTrailLength, travelled.magnitude);
+            if (length < 0.05f) return;
+            if (trailMaterial == null) trailMaterial = MakeTrailMaterial(settings.shardTrailColor);
+
+            Vector3 direction = projectile.ExactRotation * Vector3.forward;
+            Vector3 center = drawLocation - direction * (length / 2f);
+            center.y -= 0.01f;   // just under the shard
+            Matrix4x4 matrix = Matrix4x4.TRS(center, projectile.ExactRotation, new Vector3(settings.shardTrailWidth, 1f, length));
+            Graphics.DrawMesh(MeshPool.plane10, matrix, trailMaterial, 0);
+        }
+
+        /// <summary>
+        /// The streak's shape: thick and solid at the shard, thinning and fading out toward the tail.
+        /// </summary>
+        private static Material MakeTrailMaterial(Color color)
+        {
+            const int width = 16;
+            const int length = 64;
+            var texture = new Texture2D(width, length, TextureFormat.RGBA32, false)
+            {
+                name = "HardbloodShardTrail",
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear
+            };
+            var pixels = new Color32[width * length];
+            for (int row = 0; row < length; row++)
+            {
+                float along = row / (float)(length - 1);   // 0 at the tail, 1 at the shard
+                float halfWidth = Mathf.Lerp(0.15f, 1f, along);
+                for (int column = 0; column < width; column++)
+                {
+                    float across = Mathf.Abs(column / (float)(width - 1) * 2f - 1f);
+                    float alpha = Mathf.Pow(along, 1.5f) * Mathf.Clamp01((halfWidth - across) / 0.25f);
+                    pixels[row * width + column] = new Color32(255, 255, 255, (byte)(alpha * 255f));
+                }
+            }
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            return MaterialPool.MatFrom(new MaterialRequest(texture, ShaderDatabase.Transparent, color));
         }
     }
 
