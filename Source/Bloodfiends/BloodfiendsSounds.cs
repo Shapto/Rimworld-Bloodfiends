@@ -7,10 +7,12 @@ namespace Bloodfiends
 {
     public static class BloodfiendsSounds
     {
-        public static void PlayAt(SoundDef sound, Thing thing)
+        public static void PlayAt(SoundDef sound, Thing thing, float volumeFactor = 1f)
         {
             if (sound == null || thing == null || !thing.Spawned) return;
-            sound.PlayOneShot(SoundInfo.InMap(thing));
+            SoundInfo soundInfo = SoundInfo.InMap(thing);
+            soundInfo.volumeFactor = volumeFactor;
+            sound.PlayOneShot(soundInfo);
         }
 
         public static void PlayAt(SoundDef sound, Vector3 position, Map map)

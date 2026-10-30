@@ -27,6 +27,8 @@ namespace Bloodfiends.Mantle
         private const int ThreatCheckIntervalTicks = 3;
         private const float WallRadius = 0.56f;
         private const float WallMiddleHeight = 0.26f;
+        private const int ReformSoundCooldownTicks = 30;   // half a second between swishes, however fast threats switch sides
+        private int lastReformSoundTick = -9999;
 
         private static readonly MantleExtension DefaultSettings = new MantleExtension();
 
@@ -103,7 +105,15 @@ namespace Bloodfiends.Mantle
             base.PostTick();
             if (!pawn.Spawned || !pawn.IsHashIntervalTick(ThreatCheckIntervalTicks)) return;
             MantleRibbons ribbons = Ribbons;
-            if (ribbons != null && charge > 0f && TryFindThreat(out float angle) && ribbons.Threat(angle, Settings)) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodForming, pawn);
+            if (ribbons != null && charge > 0f && TryFindThreat(out float angle) && ribbons.Threat(angle, Settings)) PlayReformSound();
+        }
+
+        private void PlayReformSound()
+        {
+            int now = Find.TickManager.TicksGame;
+            if (now - lastReformSoundTick < ReformSoundCooldownTicks) return;
+            lastReformSoundTick = now;
+            BloodfiendsSounds.PlayAt(SoundDefOf.Pawn_Melee_Punch_Miss, pawn, 0.6f);
         }
 
         private bool TryFindThreat(out float angle)
