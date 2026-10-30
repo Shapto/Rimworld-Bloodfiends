@@ -1,97 +1,77 @@
 # Bloodfiends
 
-A RimWorld 1.6 biotech mod adding a blood-driven xenotype and family-based bloodfiend progression inspired by Limbus Company.
+A RimWorld 1.6 biotech mod focused on a blood-driven xenotype, bloodline progression, and high-risk hemogen survival mechanics inspired by Limbus Company.
 
-This mod adds a custom Bloodfiend xenotype, family lineage mechanics, bloodbag mutant variants, hemogen management systems, and a set of combat and survival abilities centered on feeding, regeneration, and bloodcraft.
+## Version
 
-## Requirements
+- Supported RimWorld version: 1.6
+- Current state: updated for the modern 1.6 codebase
 
-- RimWorld 1.6
-- Biotech
-- Harmony
-- Singularity Framework
+## Overview
+
+Bloodfiends are a bloodline-based xenotype built around hemogen management, feeding, family identity, and hardblood combat techniques. The current mod structure revolves around a family/lineage system, blood-feeding abilities, bloodbag variants, and several combat and survival mechanics that evolve with generation rank.
 
 ## Core Features
 
-### Bloodfiend xenotype and lineage
+### Bloodfiend lineage and family progression
 
-- A custom Bloodfiend xenotype built around hemogenic bloodfeeding and high-risk survival.
-- Bloodfiends gain a bloodline/family lineage system with generation tiers.
-- Higher-generation Bloodfiends receive stronger buffs and a more advanced bloodline state.
-- Bloodfiends can join or create family groups, with family members sharing bloodline identity and progression.
+- Bloodfiends gain a family-based lineage system that scales by generation.
+- Higher-generation Bloodfiends gain stronger bonuses and more powerful bloodline progression.
+- Family membership and bloodline identity are tracked across the colony and can influence both gameplay and social dynamics.
+- The progression system is built around blood affinity, kinship, and survival pressure rather than a simple xenotype-only template.
 
-### Bloodfeeding and family conversion
+### Hemogen management and bloodfeeding
 
-- Bloodfiends can feed on blood and absorb hemogen from nearby filth and corpses.
-- The mod includes a conversion-style ability called Embrace.
-- Embrace can:
-  - turn a living human into a Bloodbag
-  - pass xenogenes to another pawn
-  - create a new kindred relationship inside a Bloodfiend family
-- It also applies faction and mood consequences for outsiders, making the social dynamic feel like a real bloodline ritual.
+- Bloodfiends rely on hemogen as a core survival resource.
+- Feeding and blood collection provide sustained hemogen flow and create a constant pressure around when to feed and when to avoid risk.
+- The mod includes blood-absorption behaviors tied to nearby filth, corpses, and combat conditions.
+- This creates a dangerous but rewarding loop of blood collection, resource planning, and family survival.
 
-### Coagulate and defensive bloodcraft
+### Embrace and conversion mechanics
 
-- The Coagulate ability lets Bloodfiends harden their body with a temporary shell.
-- The hardblood shell grants injury healing and temporary protection against bleeding.
-- Coagulate and Melt Away is a more aggressive form of the ability that can cause violent gore effects and drain hemogen.
-- This creates a defensive/offensive blood transformation style for Bloodfiends.
+- The Embrace ability lets Bloodfiends convert or recruit others into the bloodline ecosystem.
+- This can affect social relationships, produce bloodline consequences, and create new family-linked outcomes.
+- The mechanic is tied to both progression and colony drama, not just direct combat utility.
 
-### Hardblood weaponry
+### Hardblood combat systems
 
-- Bloodfiends can mimic weapons they have seen and stored in a repertoire.
-- They can manifest hardblood replicas of those weapons using hemogen.
-- Replica weapons are created in a temporary form that fades when discarded or dissolved.
-- Weapon quality and manifesting cost scale with generation and crafting skill.
-- This adds a blood-art weapon system similar to a living weapon mimic mechanic.
+- Bloodfiends have access to hardblood armor and hardblood weaponry that scale with generations and combat context.
+- Hardblood abilities are designed to support both defense and offense with a bloodcraft flavor.
+- The mod includes combat-oriented transformations that can regenerate damage, create armor-like protection, and alter battlefield pressure.
 
-### Shared Thirst
+### La Sangre and mantle abilities
 
-- Bloodfiends suffer a shared hemogen drain based on how many family members are nearby.
-- The more blood relatives in the same family, the stronger the drain multiplier becomes.
-- This creates a tradeoff between a connected bloodline and the cost of keeping a family alive.
+- La Sangre is a high-impact bloodline ability centered on thrusting, area pressure, and family-linked hemogen gain.
+- Mantle is a defensive utility ability geared toward protecting the user while maintaining the bloodfiend identity.
+- These abilities reinforce the mod's emphasis on bloodline-specific combat rather than generic gene utility alone.
 
-### Sanguine Regeneration
+### Blood Command and blood absorption
 
-- Bloodfiends can regenerate injuries and recover from blood loss by spending hemogen.
-- The gene can restore missing parts when enough hemogen is available.
-- It also helps prevent death in mortal states and gradually heals the body over time.
-- This makes Bloodfiends resilient in prolonged battle and survival scenarios.
+- Bloodfiends can passively draw blood from nearby filth and corpses in range.
+- This makes battlefield cleanup and messier encounters valuable for long-term survival.
+- The system keeps Bloodfiend colonies feeling reactive to combat, filth, and blood-soaked environments.
 
-### Withering and Bloodfrenzy
+### Bloodbags and bloodline variants
 
-- Bloodfiends can enter a Withering state when hemogen falls too low.
-- The longer they stay starved of blood, the worse the condition becomes.
-- Once severe enough, they may enter Bloodfrenzy, a dangerous mental state where they attack indiscriminately until fed.
-- This creates a real survival pressure around hemogen management.
+- The mod includes Bloodbag mutant archetypes and related bloodline derivative content.
+- Bloodbags fit into the same family ecosystem while operating as a distinct survival/mutation path.
+- They support the broader bloodline progression concept and interact with Bloodfiend family systems.
 
-### Aquaphobia
+### Genes and status effects
 
-- Bloodfiends are especially vulnerable around water and marshy terrain.
-- Aquaphobia causes mood penalties and can trigger a panic-fleeing response around water.
-- This adds a powerful thematic weakness and a high-risk environmental hazard for Bloodfiend colonies.
+- Shared Thirst: family proximity increases hemogen drain pressure.
+- Sanguine Regeneration: bloodfiends can recover from damage and blood loss by spending hemogen.
+- Withering: prolonged blood deprivation becomes a dangerous state.
+- Aquaphobia: water and wet terrain are a significant threat and mood pressure.
+- The gene package is designed to make Bloodfiends feel fragile, adaptive, and dangerous in the right conditions.
 
-### Blood Command
+### Hardblood weaponry and weapon mimicry
 
-- Bloodfiends can passively draw blood from nearby filth and corpses.
-- Any blood-stained filth or carcass in range can be siphoned for hemogen.
-- This makes the Bloodfiend colony feel alive and reactive to messy battlefield conditions.
-- The visual effect includes crimson blood-streams feeding the Bloodfiend and keeping them supplied.
+- Bloodfiends can mimic and manifest weapons from their repertoire using hemogen.
+- These temporary weapons scale with generation, crafting, and quality, creating a fantasy of living weapon bloodcraft.
+- The weapon system adds a strong combat identity beyond pure xenotype or gene play.
 
-### Bloodbags
-
-- The mod includes a bloodbag mutant archetype for Anomaly-enabled play.
-- Bloodbags are a bloodline derivative that has specialized hemogen and growth mechanics.
-- They can be embraced into a Bloodfiend family and are part of the bloodline progression structure.
-- They are designed to fit into the same family ecosystem while serving a distinct role.
-
-### Bloodfiend family progression and world simulation
-
-- Bloodfiend capture, recruitment, and lineage tracking are handled through a family system.
-- Family membership persists through death and bloodline events.
-- This creates a more structured "bloodline civilization" feel than a typical xenotype-only addition.
-
-## Included content summary
+## Included Content Summary
 
 - Bloodfiend xenotype
 - Bloodfiend gene set
@@ -99,15 +79,22 @@ This mod adds a custom Bloodfiend xenotype, family lineage mechanics, bloodbag m
 - Sanguine Regeneration gene
 - Withering gene
 - Aquaphobia gene
-- Bloodfiend family lineage hediff
-- Bloodbag mutant and xenotype
-- Bloodbag growth hediffs
+- Bloodfiend family lineage hediffs
+- Bloodbag mutant and xenotype content
 - Embrace ability
-- Coagulate ability
-- Coagulate and Melt Away ability
-- Hardblood weaponry
-- Blood-command hemogen absorption
-- World family tracking and progression
+- Coagulate / Hardblood armor ability
+- Mantle ability
+- La Sangre ability
+- Blood Command hemogen absorption
+- Hardblood weaponry and mimic systems
+- Family tracking and progression systems
+
+## Requirements
+
+- RimWorld 1.6
+- Biotech
+- Harmony
+- Singularity Framework
 
 ## Installation
 
@@ -118,8 +105,9 @@ This mod adds a custom Bloodfiend xenotype, family lineage mechanics, bloodbag m
 
 ## Notes
 
-- This mod is built for RimWorld 1.6 and uses Biotech-heavy mechanics.
-- Some content is tied to the Bloodfiend family progression and bloodline systems, so it is best experienced as a full xenotype/genes mod rather than a small utility patch.
+- This mod is built for RimWorld 1.6.
+- The current feature set reflects the modern bloodline, hardblood, and family-based overhaul rather than the older simpler summary.
+- It is best experienced as a full xenotype-and-gene mod rather than a small utility patch.
 
 ## Credits
 
