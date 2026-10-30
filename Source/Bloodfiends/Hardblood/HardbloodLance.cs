@@ -64,6 +64,7 @@ namespace Bloodfiends.Hardblood
                 Job attack = currentJob == JobDefOf.AttackMelee ? WalkingAttack(pawn, lance) : StandingAttack(pawn, lance);
                 if (attack == null) continue;
                 attack.playerForced = pawn.CurJob.playerForced;
+                if (currentJob == JobDefOf.AttackMelee) HardbloodLance.KeepChasing(pawn, attack.targetA.Pawn ?? attack.targetB.Pawn, pawn.CurJob);
                 pawn.jobs.StartJob(attack, JobCondition.InterruptForced);
             }
         }
@@ -72,6 +73,7 @@ namespace Bloodfiends.Hardblood
         {
             Pawn target = pawn.CurJob.targetA.Pawn;
             if (target == null || !target.Spawned || target.Map != map) return null;
+            if (target.Downed && !pawn.CurJob.killIncappedTarget) return null;
             return HardbloodLance.AttackJobFor(pawn, target, lance);
         }
 
@@ -115,6 +117,14 @@ namespace Bloodfiends.Hardblood
             return null;
         }
 
+        public static void KeepChasing(Pawn pawn, Pawn target, Job chase)
+        {
+            Job followUp = JobMaker.MakeJob(JobDefOf.AttackMelee, target);
+            followUp.playerForced = chase.playerForced;
+            followUp.killIncappedTarget = chase.killIncappedTarget;
+            pawn.jobs.jobQueue.EnqueueFirst(followUp);
+        }
+
         public static IntVec3 ChargeEndCell(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
         {
             Map map = pawn.Map;
@@ -127,6 +137,21 @@ namespace Bloodfiends.Hardblood
                 if (cell.InBounds(map) && cell.Standable(map) && LineStrike.IsLineWalkable(pawn.Position, cell, map, lance.charge.strikeSettings)) return cell;
             }
             return IntVec3.Invalid;
+        }
+
+        public static void Prefix(Pawn ___pawn, ref Job newJob)
+        {
+            if (newJob == null || newJob.def != JobDefOf.AttackMelee || ___pawn == null || !___pawn.Spawned) return;
+            HardbloodLanceExtension lance = HardbloodLance.LanceOf(___pawn);
+            Pawn target = newJob.targetA.Pawn;
+            if (lance == null || target == null || !target.Spawned || target.Map != ___pawn.Map) return;
+            if (target.Downed && !newJob.killIncappedTarget) return;
+
+            Job replacement = HardbloodLance.AttackJobFor(___pawn, target, lance);
+            if (replacement == null) return;
+            replacement.playerForced = newJob.playerForced;
+            HardbloodLance.KeepChasing(___pawn, target, newJob);
+            newJob = replacement;
         }
     }
 
@@ -198,6 +223,7 @@ namespace Bloodfiends.Hardblood
             this.FailOn(() => HardbloodLance.LanceOf(pawn) == null);
 
             Toil windUp = Toils_General.Wait(lance?.thrustWarmupTicks ?? 24);
+            windUp.AddFailCondition(() => job.targetA.Pawn is Pawn target && pawn.Position.DistanceTo(target.Position) > (HardbloodLance.LanceOf(pawn)?.reachRange ?? 0f) + 0.5f);
             windUp.AddPreInitAction(() =>
             {
                 pawn.pather.StopDead();
