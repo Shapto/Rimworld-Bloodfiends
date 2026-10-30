@@ -43,6 +43,7 @@ namespace Bloodfiends.Hardblood
             public Vector2 grip;   // the weapon's ends on its sprite (-0.5 to 0.5), for the blood lines
             public Vector2 tip;
             public int retiredFrame;
+            public int grownTick = -1;   // the lance: when its growing copy is done and it goes back to its own graphic
         }
 
         private class ReplicaBuild
@@ -145,6 +146,81 @@ namespace Bloodfiends.Hardblood
                 if (grows) KitbashGrowth.Start(new[] { entry.material }, GrowthTicks);
             },
             name);
+        }
+
+        /// <summary>
+        /// The hardblood lance keeps its own drawn texture (no crystal rebuild), but still grows in: a copy of its
+        /// texture with each pixel's arrival in its alpha, revealed from the butt to the tip as the blood lines run along
+        /// it. A lance that's already there (loaded from a save) just draws as itself.
+        /// </summary>
+        public static void ApplyLance(ThingWithComps lance, bool growsIn)
+        {
+            ForgetEverythingIfNewGame();
+            if (GraphicField == null || entriesByReplica.ContainsKey(lance.thingIDNumber)) return;
+            var entry = new ReplicaEntry();
+            entriesByReplica[lance.thingIDNumber] = entry;
+            HardbloodLanceExtension settings = lance.def.GetModExtension<HardbloodLanceExtension>();
+            entry.grip = settings.gripOnSprite;
+            entry.tip = settings.tipOnSprite;
+
+            Graphic original = lance.def.graphic;
+            Texture originalTexture = original?.MatSingle?.mainTexture;
+            if (!growsIn || originalTexture == null) return;
+
+            int width = originalTexture.width;
+            int height = originalTexture.height;
+            Color32[] topFirst = KitbashTextures.ReadPixels(originalTexture, width, height, false);
+            var bottomFirst = new Color32[topFirst.Length];
+            for (int row = 0; row < height; row++)
+            {
+                for (int column = 0; column < width; column++)
+                {
+                    Color32 pixel = topFirst[row * width + column];
+                    pixel.a = pixel.a < 64 ? (byte)0 : KitbashGrowth.EncodeArrival(column / (float)Mathf.Max(1, width - 1));
+                    bottomFirst[(height - 1 - row) * width + column] = pixel;
+                }
+            }
+
+            string name = $"HardbloodLance_{lance.thingIDNumber}";
+            entry.texture = new Texture2D(width, height, TextureFormat.RGBA32, true)
+            {
+                name = name,
+                filterMode = FilterMode.Trilinear,
+                wrapMode = TextureWrapMode.Clamp
+            };
+            entry.texture.SetPixels32(bottomFirst);
+            entry.texture.Apply(true, false);
+            entry.material = new Material(ShaderDatabase.Cutout)
+            {
+                name = name,
+                mainTexture = entry.texture,
+                color = Color.white
+            };
+            entry.graphic = HardbloodReplicaGraphic.Create(entry.material, original.drawSize, name);
+            GraphicField.SetValue(lance, entry.graphic);
+            int formTicks = Mathf.RoundToInt(settings.formSeconds * GenTicks.TicksPerRealSecond);
+            entry.grownTick = Find.TickManager.TicksGame + formTicks;
+            KitbashGrowth.Start(new[] { entry.material }, formTicks);
+        }
+
+        /// <summary>
+        /// Once the lance has grown in, it goes back to drawing as its own def graphic (soft edges, quality colours
+        /// intact) and the growing copy is freed a few frames later, like a dissolved replica's. Called every frame.
+        /// </summary>
+        public static void SettleLance(ThingWithComps lance)
+        {
+            if (!entriesByReplica.TryGetValue(lance.thingIDNumber, out ReplicaEntry entry) || entry.texture == null) return;
+            if (Find.TickManager.TicksGame < entry.grownTick) return;
+            GraphicField.SetValue(lance, null);   // Thing.Graphic rebuilds the def's own graphic on next draw
+            retired.Add(new ReplicaEntry
+            {
+                material = entry.material,
+                texture = entry.texture,
+                retiredFrame = Time.frameCount
+            });
+            entry.graphic = null;
+            entry.material = null;
+            entry.texture = null;
         }
 
         /// <summary>

@@ -18,8 +18,10 @@ namespace Bloodfiends.Hardblood
         public int maximumGeneration = 2;                  // Second Kindred and above can manifest it
         public float manifestCost = 0.8f;                  // 80 hemogen
         public float hemogenPerDamage = 0.01f;             // blood drunk back per point of damage it deals
-        public Vector2 gripOnSprite = new Vector2(-0.14f, 0f);
+        public Vector2 gripOnSprite = new Vector2(-0.48f, 0f);   
         public Vector2 tipOnSprite = new Vector2(0.48f, 0f);
+        public float formSeconds = 0.8f;
+        public float formLineWidth = 0.24f;
 
         public float reachRange = 2.9f;
         public DamageDef thrustDamageDef;

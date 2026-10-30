@@ -36,7 +36,8 @@ namespace Bloodfiends.Hardblood
         {
             if (!replicaSet.Add(replica)) return;
             replicas.Add(replica);
-            if (replica.def.GetModExtension<HardbloodLanceExtension>() == null) HardbloodReplicaGraphics.Apply(replica, growsIn);
+            if (replica.def.GetModExtension<HardbloodLanceExtension>() != null) HardbloodReplicaGraphics.ApplyLance(replica, growsIn);
+            else HardbloodReplicaGraphics.Apply(replica, growsIn);
         }
 
         /// <summary>
@@ -45,8 +46,11 @@ namespace Bloodfiends.Hardblood
         public void StartForming(ThingWithComps replica, Pawn holder)
         {
             if (!holder.Spawned) return;
+            HardbloodLanceExtension lance = replica.def.GetModExtension<HardbloodLanceExtension>();
+            float lineWidth = lance?.formLineWidth ?? HardbloodWeaponry.Settings.lineWidth;
+            float formSeconds = lance?.formSeconds ?? HardbloodWeaponry.Settings.formSeconds;
             WeaponFormingEffect.DefaultEnds(out Vector3 gripOffset, out Vector3 tipOffset);
-            var effect = new WeaponFormingEffect(MapComponent_BloodCommand.BloodPalette, holder, replica, () => HardbloodReplicaGraphics.GripOf(replica), () => HardbloodReplicaGraphics.TipOf(replica), gripOffset, tipOffset, HardbloodWeaponry.Settings.lineWidth, false, replica.thingIDNumber, HardbloodWeaponry.Settings.formSeconds);
+            var effect = new WeaponFormingEffect(MapComponent_BloodCommand.BloodPalette, holder, replica, () => HardbloodReplicaGraphics.GripOf(replica), () => HardbloodReplicaGraphics.TipOf(replica), gripOffset, tipOffset, lineWidth, false, replica.thingIDNumber, formSeconds);
             MapComponent_BrushLines.Start(holder.Map, effect);
         }
 
@@ -81,7 +85,9 @@ namespace Bloodfiends.Hardblood
             HardbloodReplicaGraphics.FreeRetired();
             foreach (Thing replica in replicas)
             {
-                if (replica is ThingWithComps weapon && !weapon.Destroyed && weapon.def.GetModExtension<HardbloodLanceExtension>() == null) HardbloodReplicaGraphics.EnsureApplied(weapon);
+                if (!(replica is ThingWithComps weapon) || weapon.Destroyed) continue;
+                if (weapon.def.GetModExtension<HardbloodLanceExtension>() != null) HardbloodReplicaGraphics.SettleLance(weapon);
+                else HardbloodReplicaGraphics.EnsureApplied(weapon);
             }
         }
 
