@@ -2,9 +2,9 @@
 <LanguageData>
   <!-- Embrace -->
   <Bloodfiends_NotInFamily>Not part of a Bloodfiend Family.</Bloodfiends_NotInFamily>
-  <Bloodfiends_EmbraceOnlyLivingHumans>Only living humans can be embraced.</Bloodfiends_EmbraceOnlyLivingHumans>
+  <Bloodfiends_EmbraceOnlyLivingHumans>Only living pawns can be embraced.</Bloodfiends_EmbraceOnlyLivingHumans>
   <Bloodfiends_AlreadyBloodfiend>Already carries the crimson curse.</Bloodfiends_AlreadyBloodfiend>
-  <Bloodfiends_EmbraceInvalidTarget>Can only embrace someone who is downed, a prisoner, or one of your own.</Bloodfiends_EmbraceInvalidTarget>
+  <Bloodfiends_EmbraceInvalidTarget>Can only embrace a downed pawn, a prisoner, or a colonist.</Bloodfiends_EmbraceInvalidTarget>
   <Bloodfiends_Embraced>{CASTER_labelShort} has embraced {KINDRED_labelShort}.</Bloodfiends_Embraced>
   <Bloodfiends_EmbraceNextKindred>The next embrace makes a Kindred ({0} left).</Bloodfiends_EmbraceNextKindred>
   <Bloodfiends_EmbraceNextBloodbag>Kindred slots are full: the next embrace makes a Bloodbag.</Bloodfiends_EmbraceNextBloodbag>
@@ -18,20 +18,20 @@
   <Bloodfiends_EmbracedXenogenes>{CASTER_labelShort} has passed on their genes to {TARGET_labelShort}.</Bloodfiends_EmbracedXenogenes>
 
   <!-- misc -->
-  <Bloodfiends_BloodbagMasterless>Its Family is gone; nothing steers the blood any more.</Bloodfiends_BloodbagMasterless>
+  <Bloodfiends_BloodbagMasterless>Their Family is gone; nothing steers the blood any more.</Bloodfiends_BloodbagMasterless>
 
-  <Bloodfiends_MantleGizmoTip>TODO</Bloodfiends_MantleGizmoTip>
+  <Bloodfiends_MantleGizmoTip>A complex Hardblood technique. Surround a pawn with a ring of coagulated Hardblood that will automatically shift to block and deflect attacks toward them. Casting will split hemogen gains in half, between the hemogen gauge and maintaining the Mantle. The Mantle requires a consistent source of hemogen to sustain itself.</Bloodfiends_MantleGizmoTip>
 
   <Bloodfiends_LaSangreNeedsHemogen>Needs at least half a bar of hemogen.</Bloodfiends_LaSangreNeedsHemogen>
 
   <Bloodfiends_ManifestLance>Manifest hardblood lance ({0} hemogen)</Bloodfiends_ManifestLance>
 
-  <Bloodfiends_CannotMimicSpecial>this weapon is too complicated to copy</Bloodfiends_CannotMimicSpecial>
+  <Bloodfiends_CannotMimicSpecial>This weapon is too complex to mimic.</Bloodfiends_CannotMimicSpecial>
 
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
   <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends and Bloodbags.</Bloodfiends_OnlyWorksOnBloodfiends>
-  <Bloodfiends_OnlyBloodbagsAtYourTier>Only First and Second Kindreds can obliterate Bloodfiends. You can only obliterate Bloodbags.</Bloodfiends_OnlyBloodbagsAtYourTier>
+  <Bloodfiends_OnlyBloodbagsAtYourTier>Can only melt away Bloodbags at your tier. Only First and Second Kindred can melt away other Bloodfiends.</Bloodfiends_OnlyBloodbagsAtYourTier>
   <Bloodfiends_BloodTooStrong>Their blood is too strong to command.</Bloodfiends_BloodTooStrong>
 
   <!-- Coagulate -->
