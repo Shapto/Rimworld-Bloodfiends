@@ -32,6 +32,9 @@ namespace Bloodfiends.Hardblood
         private const int GrowthTicks = 180;         // how long the crystal takes to harden in (3 seconds at normal speed)
         private const int RetireFrames = 3;          // a dissolved replica's textures live this many frames longer (this frame's gizmos still draw its icon)
 
+        private const float OutlineWidth = 6f;                                          // canvas pixels: 1.5 pixels of a 128 pixel weapon texture
+        private static readonly Color32 OutlineColor = new Color32(18, 8, 10, 255);     // near-black with a hint of red, like vanilla's outlines
+
         // Thing caches its graphic in this field; setting it makes the replica draw as hardblood everywhere
         private static readonly FieldInfo GraphicField = AccessTools.Field(typeof(Thing), "graphicInt");
 
@@ -131,6 +134,7 @@ namespace Bloodfiends.Hardblood
             {
                 var build = new ReplicaBuild();
                 build.canvas = HardbloodWeapons.Replica(padded, paddedWidth, paddedHeight, crystals, seed, HardbloodGraphics.Scale, pointed, out build.grip, out build.tip);
+                build.canvas.AddOutline(OutlineWidth, OutlineColor);
                 return build;
             },
             build =>
