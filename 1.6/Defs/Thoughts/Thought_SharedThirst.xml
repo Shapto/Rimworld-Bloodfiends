@@ -134,4 +134,45 @@
 			</li>
 		</stages>
 	</ThoughtDef>
+
+	<ThoughtDef>
+		<defName>Bloodfiends_EmbracedWillingly</defName>
+		<thoughtClass>Thought_Memory</thoughtClass>
+		<durationDays>6</durationDays>
+		<stackLimit>1</stackLimit>
+		<stages>
+			<li>
+				<label>embraced</label>
+				<description>TODO</description>
+				<baseMoodEffect>6</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<ThoughtDef>
+		<defName>Bloodfiends_TurnedAgainstWill</defName>
+		<thoughtClass>Thought_Memory</thoughtClass>
+		<durationDays>20</durationDays>
+		<stackLimit>1</stackLimit>
+		<stages>
+			<li>
+				<label>turned against my will</label>
+				<description>TODO</description>
+				<baseMoodEffect>-15</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<ThoughtDef>
+		<defName>Bloodfiends_TurnedMeAgainstWill</defName>
+		<thoughtClass>Thought_MemorySocial</thoughtClass>
+		<durationDays>30</durationDays>
+		<stackLimit>1</stackLimit>
+		<stages>
+			<li>
+				<label>turned me against my will</label>
+				<baseOpinionOffset>-40</baseOpinionOffset>
+			</li>
+		</stages>
+	</ThoughtDef>
 </Defs>

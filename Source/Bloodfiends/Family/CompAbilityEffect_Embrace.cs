@@ -10,7 +10,12 @@ namespace Bloodfiends.Family
         public ThoughtDef thoughtDefToGiveTarget;         // how the victim feels about being bitten (vanilla bloodfeed's)
         public ThoughtDef opinionThoughtDefToGiveTarget;  // and about the biter
         public HistoryEventDef historyEvent;              // counts as bloodfeeding, for ideologies
-
+        public float embracerHemogenFraction = 0.5f;      // making a Kindred costs the embracer this share of their full bar, on top of the cast cost
+        public HediffDef embracerWeaknessHediff;          // and leaves them weakened for a while
+        public ThoughtDef willingKindredThought;          // a Kindred who wanted it (already one of the embracer's people)
+        public ThoughtDef unwillingKindredThought;        // a Kindred turned against their will (a prisoner or an outsider)
+        public ThoughtDef unwillingKindredOpinionThought; // and what they think of the one who did it
+        public int kindredComaTicks = 30000;              // a new Kindred lies in vanilla's xenogermination coma this long (half a day); 0 for none
         public CompProperties_AbilityEmbrace() => compClass = typeof(CompAbilityEffect_Embrace);
     }
 
@@ -129,13 +134,40 @@ namespace Bloodfiends.Family
         {
             BloodfiendFamilyNode kindredNode = GameComponent_BloodfiendFamilies.Instance?.CreateKindredNode(CasterNode, kindredPawn);
             if (kindredNode == null) return;
+            bool willing = kindredPawn.Faction == casterPawn.Faction && !kindredPawn.IsPrisoner;
 
             kindredPawn.genes.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodfiend);
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
             lineageHediff.nodeId = kindredNode.nodeId;
             kindredPawn.health.AddHediff(lineageHediff);
 
+            // born starving
+            Gene_Hemogen kindredHemogen = kindredPawn.genes.GetFirstGeneOfType<Gene_Hemogen>();
+            if (kindredHemogen != null) kindredHemogen.Value = 0f;
+
+            // the turning takes them under for a while; they wake to the hunger
+            if (Props.kindredComaTicks > 0)
+            {
+                Hediff coma = HediffMaker.MakeHediff(HediffDefOf.XenogerminationComa, kindredPawn);
+                kindredPawn.health.AddHediff(coma);
+                HediffComp_Disappears comaTimer = coma.TryGetComp<HediffComp_Disappears>();
+                if (comaTimer != null) comaTimer.ticksToDisappear = Props.kindredComaTicks;
+            }
+
+            // the embracer's blood
+            Gene_Hemogen casterHemogen = casterPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+            if (casterHemogen != null) casterHemogen.Value -= casterHemogen.Max * Props.embracerHemogenFraction;
+            if (Props.embracerWeaknessHediff != null) casterPawn.health.AddHediff(Props.embracerWeaknessHediff);
+
             if (kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
+
+            MemoryThoughtHandler memories = kindredPawn.needs?.mood?.thoughts.memories;
+            if (willing && Props.willingKindredThought != null) memories?.TryGainMemory(Props.willingKindredThought, casterPawn);
+            if (!willing)
+            {
+                if (Props.unwillingKindredThought != null) memories?.TryGainMemory(Props.unwillingKindredThought, casterPawn);
+                if (Props.unwillingKindredOpinionThought != null) memories?.TryGainMemory(Props.unwillingKindredOpinionThought, casterPawn);
+            }
 
             FilthMaker.TryMakeFilth(kindredPawn.PositionHeld, kindredPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
             Messages.Message("Bloodfiends_Embraced".Translate(casterPawn.Named("CASTER"), kindredPawn.Named("KINDRED")), kindredPawn, MessageTypeDefOf.PositiveEvent);

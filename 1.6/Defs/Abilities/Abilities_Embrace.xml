@@ -37,6 +37,12 @@
 				<outsiderGoodwillImpact>-30</outsiderGoodwillImpact>
 				<thoughtDefToGiveTarget>FedOn</thoughtDefToGiveTarget>
 				<opinionThoughtDefToGiveTarget>FedOn_Social</opinionThoughtDefToGiveTarget>
+				<embracerHemogenFraction>0.5</embracerHemogenFraction>
+				<embracerWeaknessHediff>Bloodfiends_EmbraceWeakness</embracerWeaknessHediff>
+				<willingKindredThought>Bloodfiends_EmbracedWillingly</willingKindredThought>
+				<unwillingKindredThought>Bloodfiends_TurnedAgainstWill</unwillingKindredThought>
+				<unwillingKindredOpinionThought>Bloodfiends_TurnedMeAgainstWill</unwillingKindredOpinionThought>
+				<kindredComaTicks>30000</kindredComaTicks>
 			</li>
 			<li Class="CompProperties_AbilityFleckOnTarget">
 				<fleckDef>BloodSplash</fleckDef>
