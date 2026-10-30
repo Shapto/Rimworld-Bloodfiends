@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<JobDef>
+		<defName>Bloodfiends_HardbloodLanceCharge</defName>
+		<driverClass>Bloodfiends.Hardblood.JobDriver_HardbloodLanceCharge</driverClass>
+		<reportString>charging TargetB.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+	<JobDef>
+		<defName>Bloodfiends_HardbloodLanceThrust</defName>
+		<driverClass>Bloodfiends.Hardblood.JobDriver_HardbloodLanceThrust</driverClass>
+		<reportString>thrusting at TargetA.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
+</Defs>

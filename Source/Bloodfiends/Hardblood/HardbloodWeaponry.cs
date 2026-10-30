@@ -101,6 +101,8 @@ namespace Bloodfiends.Hardblood
         /// </summary>
         public static float CostOf(Pawn pawn, MimickedWeapon mimicked)
         {
+            HardbloodLanceExtension lance = mimicked.weaponDef.GetModExtension<HardbloodLanceExtension>();
+            if (lance != null) return lance.manifestCost;
             float marketValue = mimicked.weaponDef.GetStatValueAbstract(StatDefOf.MarketValue, StuffFor(mimicked));
             return Settings.hemogenCostByMarketValue.Evaluate(marketValue) * Settings.costMultiplierByGeneration.Evaluate(GenerationOf(pawn)) / 100f;
         }
@@ -178,14 +180,35 @@ namespace Bloodfiends.Hardblood
             repertoire.Add(new MimickedWeapon { weaponDef = weapon.def, stuff = weapon.Stuff });
         }
 
-        /// <summary>
-        /// Pays the cost, puts the held weapon away (or dissolves a held replica) and forms the replica in the
-        /// Bloodfiend's hands.
-        /// </summary>
+        private void AddLanceOption(Pawn pawn, List<FloatMenuOption> options, ThingWithComps held, bool holdingReplica, float hemogen)
+        {
+            ThingDef lanceDef = BloodfiendsDefOf.Bloodfiends_HardbloodLance;
+            HardbloodLanceExtension lance = lanceDef?.GetModExtension<HardbloodLanceExtension>();
+            if (lance == null || GenerationOf(pawn) > lance.maximumGeneration) return;
+            string label = "Bloodfiends_ManifestLance".Translate((lance.manifestCost * 100f).ToString("0"));
+            if (holdingReplica && held.def == lanceDef) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_AlreadyManifested".Translate() + ")", null));
+            else if (hemogen < lance.manifestCost) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_NotEnoughHemogen".Translate() + ")", null));
+            else options.Add(new FloatMenuOption(label, () => ManifestLance(pawn)));
+        }
+
+        public void ManifestLance(Pawn pawn)
+        {
+            ThingDef lanceDef = BloodfiendsDefOf.Bloodfiends_HardbloodLance;
+            var lance = (ThingWithComps)ThingMaker.MakeThing(lanceDef);
+            lance.TryGetComp<CompQuality>()?.SetQuality(QualityCategory.Legendary, ArtGenerationContext.Colony);
+            Equip(pawn, lance, lanceDef.GetModExtension<HardbloodLanceExtension>().manifestCost);
+        }
+
         public void Manifest(Pawn pawn, MimickedWeapon mimicked)
         {
+            var replica = (ThingWithComps)ThingMaker.MakeThing(mimicked.weaponDef, StuffFor(mimicked));
+            replica.TryGetComp<CompQuality>()?.SetQuality(QualityFor(pawn), ArtGenerationContext.Colony);
+            Equip(pawn, replica, CostOf(pawn, mimicked));
+        }
+
+        private static void Equip(Pawn pawn, ThingWithComps replica, float cost)
+        {
             GameComponent_HardbloodReplicas replicas = GameComponent_HardbloodReplicas.Instance;
-            float cost = CostOf(pawn, mimicked);
             if (replicas == null || pawn.equipment == null || HemogenOf(pawn) < cost) return;
 
             ThingWithComps held = pawn.equipment.Primary;
@@ -195,8 +218,6 @@ namespace Bloodfiends.Hardblood
                 else if (!pawn.equipment.TryTransferEquipmentToContainer(held, pawn.inventory.innerContainer)) return;
             }
 
-            var replica = (ThingWithComps)ThingMaker.MakeThing(mimicked.weaponDef, StuffFor(mimicked));
-            replica.TryGetComp<CompQuality>()?.SetQuality(QualityFor(pawn), ArtGenerationContext.Colony);
             // registered before it's equipped, so its first frame is already drawn as hardblood
             replicas.Register(replica, true);
             pawn.equipment.AddEquipment(replica);

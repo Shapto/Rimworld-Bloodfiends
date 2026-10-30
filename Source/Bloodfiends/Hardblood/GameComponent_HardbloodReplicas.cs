@@ -34,6 +34,7 @@ namespace Bloodfiends.Hardblood
         /// </summary>
         public void Register(ThingWithComps replica, bool growsIn)
         {
+            if (replica.def.GetModExtension<HardbloodLanceExtension>() == null) HardbloodReplicaGraphics.Apply(replica, growsIn);
             if (!replicaSet.Add(replica)) return;
             replicas.Add(replica);
             HardbloodReplicaGraphics.Apply(replica, growsIn);
@@ -81,7 +82,7 @@ namespace Bloodfiends.Hardblood
             HardbloodReplicaGraphics.FreeRetired();
             foreach (Thing replica in replicas)
             {
-                if (replica is ThingWithComps weapon && !weapon.Destroyed) HardbloodReplicaGraphics.EnsureApplied(weapon);
+                if (replica is ThingWithComps weapon && !weapon.Destroyed && weapon.def.GetModExtension<HardbloodLanceExtension>() == null) HardbloodReplicaGraphics.EnsureApplied(weapon);
             }
         }
 

@@ -104,6 +104,7 @@
     <Compile Include="Hardblood\HardbloodDebugActions.cs" />
     <Compile Include="Hardblood\HardbloodGraphics.cs" />
     <Compile Include="Hardblood\HardbloodGrowthsRendering.cs" />
+    <Compile Include="Hardblood\HardbloodLance.cs" />
     <Compile Include="Hardblood\HardbloodMask.cs" />
     <Compile Include="Hardblood\HardbloodReplicaGraphics.cs" />
     <Compile Include="Hardblood\HardbloodWeaponry.cs" />

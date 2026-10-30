@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<ThingDef ParentName="BaseMeleeWeapon_Sharp_Quality">
+		<defName>Bloodfiends_HardbloodLance</defName>
+		<label>hardblood lance</label>
+		<description>TODO</description>
+		<graphicData>
+			<texPath>Items/SanchoLance</texPath>
+			<graphicClass>Graphic_Single</graphicClass>
+			<drawSize>(3.0, 0.65)</drawSize>
+		</graphicData>
+		<equippedAngleOffset>-20</equippedAngleOffset>
+		<techLevel>Archotech</techLevel>
+		<smeltable>false</smeltable>
+		<tradeability>None</tradeability>
+		<statBases>
+			<MarketValue>2000</MarketValue>
+			<Mass>2</Mass>
+		</statBases>
+		<tools>
+			<li>
+				<label>point</label>
+				<capacities>
+					<li>Stab</li>
+				</capacities>
+				<power>38</power>
+				<armorPenetration>0.8</armorPenetration>
+				<cooldownTime>2.4</cooldownTime>
+			</li>
+			<li>
+				<label>ribbons</label>
+				<capacities>
+					<li>Cut</li>
+				</capacities>
+				<power>30</power>
+				<armorPenetration>0.5</armorPenetration>
+				<cooldownTime>2.1</cooldownTime>
+			</li>
+		</tools>
+		<modExtensions>
+			<li Class="Bloodfiends.Hardblood.HardbloodLanceExtension">
+				<maximumGeneration>2</maximumGeneration>
+				<manifestCost>0.8</manifestCost>
+				<hemogenPerDamage>0.01</hemogenPerDamage>
+				<reachRange>2.9</reachRange>
+				<thrustDamageDef>Stab</thrustDamageDef>
+				<thrustDamage>38</thrustDamage>
+				<thrustArmorPenetration>0.8</thrustArmorPenetration>
+				<thrustWarmupTicks>24</thrustWarmupTicks>
+				<thrustCooldownTicks>120</thrustCooldownTicks>
+				<chargeMinimumRange>3</chargeMinimumRange>
+				<chargeMaximumRange>8</chargeMaximumRange>
+				<cellsPastTarget>2</cellsPastTarget>
+				<charge>
+					<cellsPerTick>0.6</cellsPerTick>
+					<easingPower>3</easingPower>
+					<trailFleck>BloodSplash</trailFleck>
+					<strikeSettings>
+						<damageDefinition>Stab</damageDefinition>
+						<damageAmount>38</damageAmount>
+						<armorPenetration>0.8</armorPenetration>
+						<hitsFriendlies>false</hitsFriendlies>
+						<hitsDownedPawns>false</hitsDownedPawns>
+						<maximumWallsPierced>0</maximumWallsPierced>
+						<piercesNaturalRock>false</piercesNaturalRock>
+					</strikeSettings>
+				</charge>
+			</li>
+		</modExtensions>
+	</ThingDef>
+</Defs>

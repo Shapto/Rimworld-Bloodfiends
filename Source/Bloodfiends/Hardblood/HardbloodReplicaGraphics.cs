@@ -72,9 +72,9 @@ namespace Bloodfiends.Hardblood
             if (entry.graphic != null && GraphicField.GetValue(replica) != entry.graphic) GraphicField.SetValue(replica, entry.graphic);
         }
 
-        public static Vector2 GripOf(Thing replica) => entriesByReplica.TryGetValue(replica.thingIDNumber, out ReplicaEntry entry) ? entry.grip : new Vector2(-0.3f, -0.3f);
+        public static Vector2 GripOf(Thing replica) => replica.def.GetModExtension<HardbloodLanceExtension>()?.gripOnSprite ?? (entriesByReplica.TryGetValue(replica.thingIDNumber, out ReplicaEntry entry) ? entry.grip : new Vector2(-0.3f, -0.3f));
 
-        public static Vector2 TipOf(Thing replica) => entriesByReplica.TryGetValue(replica.thingIDNumber, out ReplicaEntry entry) ? entry.tip : new Vector2(0.32f, 0.32f);
+        public static Vector2 TipOf(Thing replica) => replica.def.GetModExtension<HardbloodLanceExtension>()?.tipOnSprite ?? (entriesByReplica.TryGetValue(replica.thingIDNumber, out ReplicaEntry entry) ? entry.tip : new Vector2(0.32f, 0.32f));
 
         /// <summary>
         /// Gives the replica its (still empty) hardblood texture and starts building the crystal into it.

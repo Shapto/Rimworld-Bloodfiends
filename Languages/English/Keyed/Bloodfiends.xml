@@ -24,6 +24,8 @@
 
   <Bloodfiends_LaSangreNeedsHemogen>Needs at least half a bar of hemogen.</Bloodfiends_LaSangreNeedsHemogen>
 
+  <Bloodfiends_ManifestLance>Manifest hardblood lance ({0} hemogen)</Bloodfiends_ManifestLance>
+
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
   <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends and Bloodbags.</Bloodfiends_OnlyWorksOnBloodfiends>
