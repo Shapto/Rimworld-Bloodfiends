@@ -2,6 +2,11 @@
 
 A RimWorld 1.6 biotech mod adding a blood-driven xenotype and family-based bloodfiend progression inspired by Limbus Company.
 
+## Version
+
+- Latest supported game version: RimWorld 1.6
+- Mod compatibility: current for RimWorld 1.6
+
 This mod adds a custom Bloodfiend xenotype, family lineage mechanics, bloodbag mutant variants, hemogen management systems, and a set of combat and survival abilities centered on feeding, regeneration, and bloodcraft.
 
 ## Requirements
