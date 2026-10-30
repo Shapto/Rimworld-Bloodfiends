@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-	<ThingDef ParentName="BaseMeleeWeapon_Sharp_Quality">
+	<ThingDef ParentName="BaseMeleeWeapon_Sharp">
 		<defName>Bloodfiends_HardbloodLance</defName>
 		<label>hardblood lance</label>
 		<description>TODO</description>

@@ -233,7 +233,6 @@ namespace Bloodfiends.Hardblood
         {
             ThingDef lanceDef = BloodfiendsDefOf.Bloodfiends_HardbloodLance;
             var lance = (ThingWithComps)ThingMaker.MakeThing(lanceDef);
-            lance.TryGetComp<CompQuality>()?.SetQuality(QualityCategory.Legendary, ArtGenerationContext.Colony);
             Equip(pawn, lance, lanceDef.GetModExtension<HardbloodLanceExtension>().manifestCost);
         }
 

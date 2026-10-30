@@ -29,7 +29,7 @@
 				<damageDef>Stab</damageDef>
 				<damage>30</damage>
 				<armorPenetration>0.6</armorPenetration>
-				<impactRadius>2.8</impactRadius>
+				<impactRadius>4.9</impactRadius>
 				<stunTicks>120</stunTicks>
 				<hemogenStolenPerEnemy>0.08</hemogenStolenPerEnemy>
 				<familyRadius>14</familyRadius>
