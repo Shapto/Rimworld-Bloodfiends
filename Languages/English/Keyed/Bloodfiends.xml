@@ -17,7 +17,7 @@
   <Bloodfiends_NoXenogenesToPass>No xenogenes to pass on.</Bloodfiends_NoXenogenesToPass>
   <Bloodfiends_EmbracedXenogenes>{CASTER_labelShort} has passed on their genes to {TARGET_labelShort}.</Bloodfiends_EmbracedXenogenes>
 
-
+  <!-- misc -->
   <Bloodfiends_BloodbagMasterless>Its Family is gone; nothing steers the blood any more.</Bloodfiends_BloodbagMasterless>
 
   <Bloodfiends_MantleGizmoTip>TODO</Bloodfiends_MantleGizmoTip>
@@ -25,6 +25,8 @@
   <Bloodfiends_LaSangreNeedsHemogen>Needs at least half a bar of hemogen.</Bloodfiends_LaSangreNeedsHemogen>
 
   <Bloodfiends_ManifestLance>Manifest hardblood lance ({0} hemogen)</Bloodfiends_ManifestLance>
+
+  <Bloodfiends_CannotMimicSpecial>this weapon is too complicated to copy</Bloodfiends_CannotMimicSpecial>
 
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>

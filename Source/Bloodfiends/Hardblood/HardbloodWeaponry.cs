@@ -27,6 +27,11 @@ namespace Bloodfiends.Hardblood
         public QualityCategory maximumQuality = QualityCategory.Masterwork;
         public float formSeconds = 3f;
         public float lineWidth = 0.12f;
+        public float hemogenPerShotDamage = 0.05f;                                   
+        public List<string> extraMimicableCompClasses = new List<string>();          
+        public string shardTexturePath = "Hardblood/Crystal_Small_A";
+        public float shardDrawSize = 1.2f;
+        public float shardAngleOffset = -54f;                                       
     }
 
     /// <summary>
@@ -151,7 +156,8 @@ namespace Bloodfiends.Hardblood
             if (held != null && !holdingReplica)
             {
                 string label = "Bloodfiends_MimicWeapon".Translate(held.LabelShortCap);
-                if (repertoire.Any(mimicked => mimicked.Matches(held))) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_AlreadyMimicked".Translate() + ")", null));
+                if (!HardbloodGuns.CanMimic(held, out string cannotMimicReason)) options.Add(new FloatMenuOption(label + " (" + cannotMimicReason + ")", null));
+                else if (repertoire.Any(mimicked => mimicked.Matches(held))) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_AlreadyMimicked".Translate() + ")", null));
                 else if (repertoire.Count >= SlotsFor(pawn)) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_RepertoireFull".Translate() + ")", null));
                 else options.Add(new FloatMenuOption(label, () => Mimic(held)));
             }
@@ -234,6 +240,7 @@ namespace Bloodfiends.Hardblood
                 if (repertoire == null) repertoire = new List<MimickedWeapon>();
                 repertoire.RemoveAll(mimicked => mimicked?.weaponDef == null);   // weapons from mods that were removed
             }
+            repertoire.RemoveAll(mimicked => mimicked?.weaponDef == null || !HardbloodGuns.IsPlainWeaponDef(mimicked.weaponDef));
         }
     }
 }
