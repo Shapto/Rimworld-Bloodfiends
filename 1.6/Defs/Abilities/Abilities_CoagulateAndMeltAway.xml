@@ -4,7 +4,7 @@
 		<defName>Bloodfiends_CoagulateAndMeltAway</defName>
 		<label>coagulate and melt away</label>
 		<description>TODO</description>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/MeltAway</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>120</displayOrder>
 		<hostile>true</hostile>
