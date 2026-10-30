@@ -105,8 +105,22 @@ namespace Bloodfiends.LaSangre
         {
             base.Tick();
             ageTicks++;
-            if (ageTicks == CocoonClosedTick) StartEruption();
-            if (ageTicks == DiveTick) StartSmear();
+            Map map = Map;
+            if (ageTicks == 1) BloodfiendsSounds.PlayAt(SoundDefOf.Psycast_Skip_Pulse, groundPosition, map);                  // blood winding into the cocoon
+            if (ageTicks == CocoonClosedTick)
+            {
+                StartEruption();
+                BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodForming, groundPosition, map);               // the cocoon seals
+                BloodfiendsSounds.PlayAt(SoundDefOf.Psycast_Skip_Exit, groundPosition, map);                                // and is gone
+            }
+            if (ageTicks == AirCocoonStartTick) BloodfiendsSounds.PlayAt(SoundDefOf.Psycast_Skip_Entry, airPosition, map);
+            if (ageTicks == RevealTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, airPosition, map);
+            if (ageTicks == LanceStartTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceForming, airPosition, map);
+            if (ageTicks == DiveTick)
+            {
+                StartSmear();
+                BloodfiendsSounds.PlayBloodRush(airPosition, map);
+            }
             if (ageTicks >= ImpactTick) Impact();
         }
 
@@ -166,6 +180,7 @@ namespace Bloodfiends.LaSangre
             float side = diveDirection.x >= 0f ? 1f : -1f;
             var dissolve = new ShatterLineEffect(MapComponent_BloodCommand.BloodPalette, middle, impactPosition, side, 10, 0.4f, 0.1f, seed + 19, 0.9f);
             MapComponent_BrushLines.Start(map, dissolve);
+            BloodfiendsSounds.PlayDissolve(impactPosition, map);
         }
 
         private void FeedFamily(Pawn caster, List<Pawn> enemiesHit, Map map)

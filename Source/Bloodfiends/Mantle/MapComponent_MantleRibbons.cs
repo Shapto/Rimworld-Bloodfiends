@@ -155,9 +155,10 @@ namespace Bloodfiends.Mantle
 
         private static float Range(System.Random random, float minimum, float maximum) => minimum + (float)random.NextDouble() * (maximum - minimum);
 
-        public void Threat(float angle, MantleExtension settings)
+        public bool Threat(float angle, MantleExtension settings)
         {
             holdSeconds = settings.wallHoldSeconds;
+            bool startsReforming = false;
             if (tightness < 0.05f && !retangling)
             {
                 facing = angle;
@@ -165,9 +166,11 @@ namespace Bloodfiends.Mantle
             }
             else if (tightness >= 0.5f && Mathf.Abs(Mathf.DeltaAngle(facing, angle)) >= settings.minimumWallAngle)
             {
+                startsReforming = !retangling;
                 retangling = true;
             }
             targetFacing = angle;
+            return startsReforming;
         }
 
         public void Blocked(float angle, MantleExtension settings)

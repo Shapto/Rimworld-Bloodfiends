@@ -93,6 +93,7 @@ namespace Bloodfiends.Mantle
                 Ribbons?.Blocked(angle, Settings);
                 FleckMaker.Static(WallPoint(angle), pawn.Map, FleckDefOf.ShotFlash, 0.6f);
                 if (charge <= 0f) StartBreak(angle);
+                else BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodHit, pawn);
             }
             return true;
         }
@@ -102,7 +103,7 @@ namespace Bloodfiends.Mantle
             base.PostTick();
             if (!pawn.Spawned || !pawn.IsHashIntervalTick(ThreatCheckIntervalTicks)) return;
             MantleRibbons ribbons = Ribbons;
-            if (ribbons != null && charge > 0f && TryFindThreat(out float angle)) ribbons.Threat(angle, Settings);
+            if (ribbons != null && charge > 0f && TryFindThreat(out float angle) && ribbons.Threat(angle, Settings)) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodForming, pawn);
         }
 
         private bool TryFindThreat(out float angle)
@@ -173,12 +174,14 @@ namespace Bloodfiends.Mantle
                 }
             });
             MapComponent_BrushLines.Start(map, effect);
+            BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, pawn);
         }
 
         public override void PostRemoved()
         {
             base.PostRemoved();
             removed = true;
+            if (charge > 0f) BloodfiendsSounds.PlayDissolve(pawn);   // a broken mantle already shattered
         }
 
         public override void ExposeData()

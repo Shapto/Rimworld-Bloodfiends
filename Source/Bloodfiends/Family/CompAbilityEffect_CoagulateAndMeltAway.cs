@@ -77,7 +77,11 @@ namespace Bloodfiends.Family
             targetPawn.Kill(new DamageInfo(DamageDefOf.Cut, 99999f, 999f, -1f, parent.pawn));
             targetPawn.Corpse?.Destroy();
 
-            if (map != null) BurstIntoGore(position, map);
+            if (map != null)
+            {
+                BurstIntoGore(position, map);
+                BloodfiendsSounds.PlayDissolve(position.ToVector3Shifted(), map);
+            }
         }
 
         private void BurstIntoGore(IntVec3 position, Map map)

@@ -162,6 +162,7 @@ namespace Bloodfiends.Hardblood
 
         private LineStrikeSettings strikeFromPoint;   // worked out once per charge
 
+        private bool targetPierced;
         protected override LineStrikeSettings StrikeSettings => strikeFromPoint ?? (strikeFromPoint = HardbloodLance.ChargeStrikeFor(pawn, DashProps.strikeSettings));
 
         protected override LocalTargetInfo MainTarget => job.targetB;   // targetA is the cell it ends on
@@ -174,7 +175,11 @@ namespace Bloodfiends.Hardblood
             {
                 Toil windUp = Toils_General.Wait(windupTicks);
                 windUp.handlingFacing = true;
-                windUp.AddPreInitAction(() => pawn.pather.StopDead());
+                windUp.AddPreInitAction(() =>
+                {
+                    pawn.pather.StopDead();
+                    BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceChargeWindup, pawn);
+                });
                 windUp.AddPreTickAction(FaceCharge);
                 yield return windUp;
             }
@@ -183,8 +188,26 @@ namespace Bloodfiends.Hardblood
             {
                 toil.handlingFacing = true;
                 toil.AddPreTickAction(FaceCharge);
+                toil.AddPreTickAction(CheckPierce);
                 yield return toil;
             }
+        }
+
+        /// <summary>
+        /// The pierce sound, once, as the slide reaches the target.
+        /// </summary>
+        private void CheckPierce()
+        {
+            if (targetPierced || !Dashing || !(job.targetB.Thing is Pawn target) || !target.Spawned) return;
+            if (pawn.Position.DistanceToSquared(target.Position) > 2) return;
+            targetPierced = true;
+            BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceChargeHit, target);
+        }
+
+        public override void ExposeData()
+        {
+            base.ExposeData();
+            Scribe_Values.Look(ref targetPierced, "targetPierced");
         }
 
         /// <summary>
@@ -223,6 +246,7 @@ namespace Bloodfiends.Hardblood
             job.targetA = endCell;
             pawn.rotationTracker.FaceTarget(target);
             pawn.Drawer.Notify_MeleeAttackOn(target);
+            BloodfiendsSounds.PlayBloodRush(pawn.DrawPos, pawn.Map);
         }
     }
 

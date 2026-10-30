@@ -32,6 +32,12 @@ namespace Bloodfiends
         public static ThoughtDef Bloodfiends_KilledElder;
         public static ThingDef Bloodfiends_HardbloodLance;
         public static JobDef Bloodfiends_HardbloodLanceCharge;
+        public static SoundDef Bloodfiends_HardbloodForming;
+        public static SoundDef Bloodfiends_HardbloodHit;
+        public static SoundDef Bloodfiends_HardbloodShatter;
+        public static SoundDef Bloodfiends_LanceForming;
+        public static SoundDef Bloodfiends_LanceChargeWindup;
+        public static SoundDef Bloodfiends_LanceChargeHit;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

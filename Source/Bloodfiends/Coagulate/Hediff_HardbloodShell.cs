@@ -42,24 +42,33 @@ namespace Bloodfiends.Coagulate
             if (disappears != null) disappears.ticksToDisappear = disappears.Props.disappearsAfterTicks.RandomInRange;
         }
 
+        private bool brokenByDamage;
+
         public bool TryAbsorb(DamageInfo damageInfo)
         {
             if (shellPoints <= 0f || damageInfo.Def == null || !damageInfo.Def.harmsHealth || damageInfo.Def.armorCategory == null) return false;
             shellPoints -= damageInfo.Amount;
             if (pawn.Spawned) FleckMaker.Static(pawn.DrawPos, pawn.Map, FleckDefOf.ShotFlash, 0.6f);
             if (shellPoints <= 0f) Shatter();
+            else BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodHit, pawn);
             return true;
         }
 
         private void Shatter()
         {
+            brokenByDamage = true;
             pawn.health.RemoveHediff(this);
         }
 
         public override void PostRemoved()
         {
             base.PostRemoved();
-            if (pawn.Spawned) StartShatter();
+            if (pawn.Spawned)
+            {
+                StartShatter();
+                if (brokenByDamage) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, pawn);
+                else BloodfiendsSounds.PlayDissolve(pawn);
+            }
             HardbloodGraphics.ForgetMask(pawn);
         }
 

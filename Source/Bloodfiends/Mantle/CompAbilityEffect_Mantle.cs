@@ -31,6 +31,7 @@ namespace Bloodfiends.Mantle
                 caster.health.AddHediff(mantle);
             }
             mantle.Refresh();
+            BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodForming, caster);
         }
     }
 }

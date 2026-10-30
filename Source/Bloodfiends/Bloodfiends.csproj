@@ -86,6 +86,7 @@
     <Compile Include="BloodCommand\MapComponent_BloodCommand.cs" />
     <Compile Include="BloodfiendsDefOf.cs" />
     <Compile Include="BloodfiendsMod.cs" />
+    <Compile Include="BloodfiendsSounds.cs" />
     <Compile Include="Coagulate\CompAbilityEffect_Coagulate.cs" />
     <Compile Include="Coagulate\Hediff_HardbloodShell.cs" />
     <Compile Include="Coagulate\Patch_PawnHealthTracker_PreApplyDamage_HardbloodShell.cs" />

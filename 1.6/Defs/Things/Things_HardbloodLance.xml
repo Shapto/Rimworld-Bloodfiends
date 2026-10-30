@@ -10,6 +10,7 @@
 			<drawSize>(3.0, 0.65)</drawSize>
 		</graphicData>
 		<equippedAngleOffset>-20</equippedAngleOffset>
+		<meleeHitSound>Bloodfiends_LanceAttack</meleeHitSound>
 		<techLevel>Archotech</techLevel>
 		<recipeMaker IsNull="True" />
 		<smeltable>false</smeltable>

@@ -52,6 +52,7 @@ namespace Bloodfiends.Hardblood
             WeaponFormingEffect.DefaultEnds(out Vector3 gripOffset, out Vector3 tipOffset);
             var effect = new WeaponFormingEffect(MapComponent_BloodCommand.BloodPalette, holder, replica, () => HardbloodReplicaGraphics.GripOf(replica), () => HardbloodReplicaGraphics.TipOf(replica), gripOffset, tipOffset, lineWidth, false, replica.thingIDNumber, formSeconds);
             MapComponent_BrushLines.Start(holder.Map, effect);
+            BloodfiendsSounds.PlayAt(lance != null ? BloodfiendsDefOf.Bloodfiends_LanceForming : BloodfiendsDefOf.Bloodfiends_HardbloodForming, holder);
         }
 
         public override void GameComponentTick()
@@ -131,6 +132,7 @@ namespace Bloodfiends.Hardblood
 
         private void StartDissolving(Thing replica, Pawn holder)
         {
+            BloodfiendsSounds.PlayDissolve(holder);
             Vector2 grip = HardbloodReplicaGraphics.GripOf(replica);
             Vector2 tip = HardbloodReplicaGraphics.TipOf(replica);
             if (!WeaponFormingEffect.TryGetWeaponEnds(holder, replica, grip, tip, out Vector3 gripOffset, out Vector3 tipOffset))

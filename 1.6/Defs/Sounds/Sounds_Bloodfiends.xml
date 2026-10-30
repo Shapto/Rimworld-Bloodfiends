@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- hardblood hardening: armor, mantle, replicas, the cocoon -->
+  <SoundDef>
+    <defName>Bloodfiends_HardbloodForming</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Hardblood/Forming</clipPath>
+          </li>
+        </grains>
+        <volumeRange>30~35</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the shell or mantle taking a blow: frequent, so quieter -->
+  <SoundDef>
+    <defName>Bloodfiends_HardbloodHit</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>3</maxSimultaneous>
+    <subSounds>
+      <li>
+	    <grains>
+		    <li Class="AudioGrain_Folder">
+			    <clipFolderPath>Hardblood/Hit</clipFolderPath>
+			</li>
+		</grains>
+        <volumeRange>22~26</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- hardblood broken: shell, mantle, the air cocoon -->
+  <SoundDef>
+    <defName>Bloodfiends_HardbloodShatter</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Hardblood/ShatterFromDamage</clipPath>
+          </li>
+        </grains>
+        <volumeRange>30~35</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Bloodfiends_LanceForming</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Lance/Forming</clipPath>
+          </li>
+        </grains>
+        <volumeRange>32~36</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the lance's melee hits on pawns: a random clip from the folder each time -->
+  <SoundDef>
+    <defName>Bloodfiends_LanceAttack</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>3</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Folder">
+            <clipFolderPath>Lance/Attack</clipFolderPath>
+          </li>
+        </grains>
+        <volumeRange>30~35</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Bloodfiends_LanceChargeWindup</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Lance/ChargeWindup</clipPath>
+          </li>
+        </grains>
+        <volumeRange>28~32</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <SoundDef>
+    <defName>Bloodfiends_LanceChargeHit</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>Lance/ChargeHit</clipPath>
+          </li>
+        </grains>
+        <volumeRange>32~36</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the big one, but still map-only and capped -->
+  <SoundDef>
+    <defName>Bloodfiends_SangreImpact</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>SangreImpact</clipPath>
+          </li>
+        </grains>
+        <volumeRange>35~38</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>

@@ -40,6 +40,7 @@
 				<cameraShake>4</cameraShake>
 				<lanceGripFraction>0.18</lanceGripFraction>
 				<lanceGuardFraction>0.38</lanceGuardFraction>
+				<impactSound>Bloodfiends_SangreImpact</impactSound>
 				<tendrilRadiusByAlong>
 					<points>
 						<li>(0.38, 0.47)</li>

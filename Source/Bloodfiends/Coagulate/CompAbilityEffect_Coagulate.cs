@@ -61,6 +61,7 @@ namespace Bloodfiends.Coagulate
                 newShell.regenerationMultiplier = multiplier;
                 targetPawn.health.AddHediff(newShell);
             }
+            BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodForming, targetPawn);
 
             if (targetPawn != caster && caster.Spawned)
             {
