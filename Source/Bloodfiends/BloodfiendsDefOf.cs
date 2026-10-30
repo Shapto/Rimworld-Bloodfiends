@@ -26,6 +26,10 @@ namespace Bloodfiends
         public static AbilityDef Bloodfiends_Mantle;
         public static AbilityDef Bloodfiends_LaSangre;
         public static ThingDef Bloodfiends_LaSangreFlight;
+        public static ThoughtDef Bloodfiends_ChastisedByElder;
+        public static ThoughtDef Bloodfiends_SiblingQuarrel;
+        public static ThoughtDef Bloodfiends_StruckByLesserKindred;
+        public static ThoughtDef Bloodfiends_KilledElder;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

@@ -50,6 +50,37 @@
 		</stages>
 	</ThoughtDef>
 
+	<!-- an elder struck me: discipline, a small sting -->
+	<ThoughtDef>
+		<defName>Bloodfiends_ChastisedByElder</defName>
+		<thoughtClass>Thought_Memory</thoughtClass>
+		<durationDays>1</durationDays>
+		<stackLimit>3</stackLimit>
+		<stages>
+			<li>
+				<label>chastised by an elder</label>
+				<description>TODO</description>
+				<baseMoodEffect>-2</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<!-- I struck a Kindred of my own tier -->
+	<ThoughtDef>
+		<defName>Bloodfiends_SiblingQuarrel</defName>
+		<thoughtClass>Thought_Memory</thoughtClass>
+		<durationDays>2</durationDays>
+		<stackLimit>3</stackLimit>
+		<stages>
+			<li>
+				<label>quarrelled with a sibling</label>
+				<description>TODO</description>
+				<baseMoodEffect>-4</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<!-- I struck an elder: stage by how far above me (1 tier, 2 tiers, 3 or more) -->
 	<ThoughtDef>
 		<defName>Bloodfiends_FamilialImpiety</defName>
 		<thoughtClass>Thought_Memory</thoughtClass>
@@ -57,9 +88,49 @@
 		<stackLimit>3</stackLimit>
 		<stages>
 			<li>
-				<label>Familial impiety</label>
+				<label>filial impiety</label>
 				<description>TODO</description>
-				<baseMoodEffect>-15</baseMoodEffect>
+				<baseMoodEffect>-12</baseMoodEffect>
+			</li>
+			<li>
+				<label>grave impiety</label>
+				<description>TODO</description>
+				<baseMoodEffect>-18</baseMoodEffect>
+			</li>
+			<li>
+				<label>unforgivable impiety</label>
+				<description>TODO</description>
+				<baseMoodEffect>-25</baseMoodEffect>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<!-- a lower Kindred struck me: the elder holds it against them -->
+	<ThoughtDef>
+		<defName>Bloodfiends_StruckByLesserKindred</defName>
+		<thoughtClass>Thought_MemorySocial</thoughtClass>
+		<durationDays>10</durationDays>
+		<stackLimit>3</stackLimit>
+		<stackedEffectMultiplier>0.9</stackedEffectMultiplier>
+		<stages>
+			<li>
+				<label>struck by a lesser Kindred</label>
+				<baseOpinionOffset>-20</baseOpinionOffset>
+			</li>
+		</stages>
+	</ThoughtDef>
+
+	<!-- I killed an elder of my own Family -->
+	<ThoughtDef>
+		<defName>Bloodfiends_KilledElder</defName>
+		<thoughtClass>Thought_Memory</thoughtClass>
+		<durationDays>20</durationDays>
+		<stackLimit>1</stackLimit>
+		<stages>
+			<li>
+				<label>killed an elder</label>
+				<description>TODO</description>
+				<baseMoodEffect>-30</baseMoodEffect>
 			</li>
 		</stages>
 	</ThoughtDef>

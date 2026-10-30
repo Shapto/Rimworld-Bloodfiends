@@ -17,6 +17,7 @@
 		<biostatMet>4</biostatMet>
 		<modExtensions>
 			<li Class="Bloodfiends.Aquaphobia.AquaphobiaExtension">
+				<sightRadius>6.9</sightRadius>
 				<weakTerrains>
 					<li>Marsh</li>
 					<li>Mud</li>

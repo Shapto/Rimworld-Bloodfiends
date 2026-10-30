@@ -33,6 +33,9 @@ namespace Bloodfiends.LaSangre
     {
         public new CompProperties_AbilityLaSangre Props => (CompProperties_AbilityLaSangre)props;
 
+        private static readonly Color ImpactRingColor = new Color(0.85f, 0.1f, 0.1f);
+        private static readonly Color FamilyRingColor = new Color(1f, 0.6f, 0.6f, 0.6f);
+
         public override bool GizmoDisabled(out string reason)
         {
             Gene_Hemogen hemogenGene = parent.pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
@@ -42,6 +45,14 @@ namespace Bloodfiends.LaSangre
                 return true;
             }
             return base.GizmoDisabled(out reason);
+        }
+
+        public override void DrawEffectPreview(LocalTargetInfo target)
+        {
+            base.DrawEffectPreview(target);
+            if (!target.IsValid) return;
+            GenDraw.DrawRadiusRing(target.Cell, Props.impactRadius, ImpactRingColor);
+            GenDraw.DrawRadiusRing(target.Cell, Props.familyRadius, FamilyRingColor);
         }
 
         public override void Apply(LocalTargetInfo target, LocalTargetInfo dest)

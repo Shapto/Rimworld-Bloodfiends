@@ -53,10 +53,6 @@ namespace Bloodfiends.Family
             if (feastingHediff != null) pawn.health.RemoveHediff(feastingHediff);
         }
 
-        /// <summary>
-        /// Gives a Bloodfiend who wasn't embraced a place in the world: an offscreen ancestor of a player Bloodfiend
-        /// if the claim roll succeeds, otherwise a new Family at a rolled tier.
-        /// </summary>
         public void RegisterAsNewBloodfiend()
         {
             GameComponent_BloodfiendFamilies registry = GameComponent_BloodfiendFamilies.Instance;
@@ -95,6 +91,7 @@ namespace Bloodfiends.Family
             BloodfiendFamilyNode node = LineageHediff?.Node;
             if (registry == null || node == null) return;
 
+            Bloodfiends.SharedThirst.FamilialImpiety.Notify_ElderKilled(pawn, node, dinfo);
             GameComponent_BloodfiendFamilies.SyncPromotedPawns(registry.Notify_BloodfiendDied(node));
         }
 
