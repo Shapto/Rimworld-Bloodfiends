@@ -73,7 +73,7 @@ namespace Bloodfiends.Hardblood
         {
             get
             {
-                if (cachedIcon == null) cachedIcon = ContentFinder<Texture2D>.Get("UI/Gizmos/Bloodfiends_HardbloodWeaponry", false) ?? BaseContent.BadTex;
+                if (cachedIcon == null) cachedIcon = ContentFinder<Texture2D>.Get("Icons/HardbloodWeaponry", false) ?? BaseContent.BadTex;
                 return cachedIcon;
             }
         }
