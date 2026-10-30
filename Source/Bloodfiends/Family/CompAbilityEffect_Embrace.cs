@@ -130,10 +130,10 @@ namespace Bloodfiends.Family
             BloodfiendFamilyNode kindredNode = GameComponent_BloodfiendFamilies.Instance?.CreateKindredNode(CasterNode, kindredPawn);
             if (kindredNode == null) return;
 
+            kindredPawn.genes.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodfiend);
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
             lineageHediff.nodeId = kindredNode.nodeId;
             kindredPawn.health.AddHediff(lineageHediff);
-            kindredPawn.genes.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodfiend);
 
             if (kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
 

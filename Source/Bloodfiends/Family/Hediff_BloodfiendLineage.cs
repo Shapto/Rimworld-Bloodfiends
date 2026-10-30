@@ -20,6 +20,7 @@ namespace Bloodfiends.Family
     {
         public int nodeId = -1;
         private float appliedHemogenMaxOffset;
+        private Gene_Hemogen appliedHemogenGene;
         public BloodfiendFamilyNode Node => GameComponent_BloodfiendFamilies.Instance?.GetNode(nodeId);
         public override void PostAdd(DamageInfo? dinfo)
         {
@@ -60,11 +61,25 @@ namespace Bloodfiends.Family
             Gene_Hemogen hemogenGene = pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
             if (hemogenGene == null) return;
 
+            if (appliedHemogenGene != hemogenGene)
+            {
+                bool olderSaveAlreadyApplied = appliedHemogenGene == null && hemogenGene.Max >= 1f + appliedHemogenMaxOffset - 0.01f;
+                if (!olderSaveAlreadyApplied) appliedHemogenMaxOffset = 0f;
+                appliedHemogenGene = hemogenGene;
+            }
+
             float targetOffset = def.GetModExtension<LineageHemogenExtension>()?.hemogenMaxOffsetByGeneration?.Evaluate(node.generationNumber) ?? 0f;
             if (Mathf.Approximately(targetOffset, appliedHemogenMaxOffset)) return;
 
             hemogenGene.SetMax(hemogenGene.Max - appliedHemogenMaxOffset + targetOffset);
             appliedHemogenMaxOffset = targetOffset;
+        }
+        public override void PostTick()
+        {
+            base.PostTick();
+            if (!pawn.IsHashIntervalTick(250)) return;
+            BloodfiendFamilyNode node = Node;
+            if (node != null) RefreshHemogenMax(node);
         }
 
         public override void PostRemoved()
@@ -72,7 +87,8 @@ namespace Bloodfiends.Family
             base.PostRemoved();
 
             Gene_Hemogen hemogenGene = pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
-            if (hemogenGene != null && appliedHemogenMaxOffset != 0f) hemogenGene.SetMax(hemogenGene.Max - appliedHemogenMaxOffset);
+            if (hemogenGene != null && hemogenGene == appliedHemogenGene && appliedHemogenMaxOffset != 0f) hemogenGene.SetMax(hemogenGene.Max - appliedHemogenMaxOffset);
+            appliedHemogenGene = null;
             if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_Coagulate) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_Coagulate);
             if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_Mantle) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_Mantle);
             if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_LaSangre) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_LaSangre);
@@ -84,6 +100,7 @@ namespace Bloodfiends.Family
             base.ExposeData();
             Scribe_Values.Look(ref nodeId, "nodeId", -1);
             Scribe_Values.Look(ref appliedHemogenMaxOffset, "appliedHemogenMaxOffset");
+            Scribe_References.Look(ref appliedHemogenGene, "appliedHemogenGene");
         }
     }
 }
