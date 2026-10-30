@@ -5,7 +5,7 @@
 		<label>shared thirst</label>
 		<description>TODO</description>
 		<geneClass>Bloodfiends.SharedThirst.Gene_SharedThirst</geneClass>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/SharedThirst</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
 		<resourceLossPerDay>0.08</resourceLossPerDay>

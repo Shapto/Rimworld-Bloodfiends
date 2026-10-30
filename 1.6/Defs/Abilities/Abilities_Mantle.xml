@@ -4,7 +4,7 @@
 		<defName>Bloodfiends_Mantle</defName>
 		<label>mantle</label>
 		<description>TODO</description>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/HardbloodMantle</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>101</displayOrder>
 		<hostile>false</hostile>

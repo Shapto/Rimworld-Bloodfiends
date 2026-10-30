@@ -4,7 +4,7 @@
 		<defName>Bloodfiends_Coagulate</defName>
 		<label>hardblood armor</label>
 		<description>TODO</description>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/HardbloodArmor</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>100</displayOrder>
 		<cooldownTicksRange>7500</cooldownTicksRange>

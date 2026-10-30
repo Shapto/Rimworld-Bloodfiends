@@ -5,7 +5,7 @@
 		<label>withering</label>
 		<description>TODO</description>
 		<geneClass>Bloodfiends.Hunger.Gene_Withering</geneClass>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/Withering</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Hemogenic</prerequisite>
 		<disablesNeeds>
