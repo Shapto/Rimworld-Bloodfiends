@@ -92,6 +92,7 @@ namespace Bloodfiends.Hardblood
         private static bool StillHeld(Thing replica, Pawn holder)
         {
             if (holder == null || holder.Dead || holder.Downed || holder.equipment?.Primary != replica) return false;
+            if (holder.IsColonistPlayerControlled && !holder.Drafted) return false;
             return holder.genes?.GetFirstGeneOfType<Gene_Bloodfiend>()?.Active == true;
         }
 

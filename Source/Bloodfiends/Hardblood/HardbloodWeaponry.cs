@@ -64,6 +64,17 @@ namespace Bloodfiends.Hardblood
         public Material Material => material ?? (material = MaterialPool.MatFrom(texturePath, ShaderDatabase.Transparent));
     }
 
+    [StaticConstructorOnStartup]
+    public class Command_HardbloodWeaponry : Command_Action
+    {
+        private static readonly Texture2D AbilityBackground = ContentFinder<Texture2D>.Get("UI/Widgets/AbilityButBG");
+        private static readonly Texture2D AbilityBackgroundShrunk = ContentFinder<Texture2D>.Get("UI/Widgets/AbilityButBGShrunk");
+
+        public override Texture2D BGTexture => AbilityBackground;
+
+        public override Texture2D BGTextureShrunk => AbilityBackgroundShrunk;
+    }
+
     public class HardbloodWeaponry : IExposable
     {
         public List<MimickedWeapon> repertoire = new List<MimickedWeapon>();
@@ -138,16 +149,33 @@ namespace Bloodfiends.Hardblood
 
         public Gizmo GetGizmo(Pawn pawn)
         {
-            var command = new Command_Action
+            var command = new Command_HardbloodWeaponry
             {
                 defaultLabel = "Bloodfiends_HardbloodWeaponry".Translate(),
                 defaultDesc = "Bloodfiends_HardbloodWeaponryDesc".Translate(repertoire.Count, SlotsFor(pawn)),
                 icon = Icon,
-                action = () => OpenMenu(pawn)
+                action = () => OpenMenu(pawn),
+                Order = OrderAfterAbilities(pawn)
             };
             if (pawn.Downed) command.Disable("Bloodfiends_WeaponryDowned".Translate(pawn.LabelShort));
             return command;
         }
+
+        /// <summary>
+        /// Just past the pawn's last ability button, so it's drawn at the end of their abilities.
+        /// </summary>
+        private static float OrderAfterAbilities(Pawn pawn)
+        {
+            float lastAbilityOrder = 5f;
+            List<Ability> abilities = pawn.abilities?.AllAbilitiesForReading;
+            if (abilities != null) foreach (Ability ability in abilities) lastAbilityOrder = Mathf.Max(lastAbilityOrder, AbilityOrder(ability.def));
+            return lastAbilityOrder + 0.00001f;
+        }
+
+        /// <summary>
+        /// The order vanilla gives an ability's button (Command_Ability's constructor).
+        /// </summary>
+        private static float AbilityOrder(AbilityDef def) => 5f + (def.category?.displayOrder ?? 0) / 100f + def.displayOrder / 1000f + def.level / 10000f;
 
         private void OpenMenu(Pawn pawn)
         {

@@ -10,7 +10,7 @@
 		<cooldownTicksRange>7500</cooldownTicksRange>
 		<hostile>false</hostile>
 		<casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
-		<displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
+		<displayGizmoWhileUndrafted>false</displayGizmoWhileUndrafted>
 		<disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
 		<verbProperties>
 			<verbClass>Verb_CastAbility</verbClass>

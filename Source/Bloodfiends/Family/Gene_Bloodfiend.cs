@@ -99,7 +99,7 @@ namespace Bloodfiends.Family
         {
             IEnumerable<Gizmo> baseGizmos = base.GetGizmos();
             if (baseGizmos != null) foreach (Gizmo gizmo in baseGizmos) yield return gizmo;
-            if (Active && pawn.IsColonistPlayerControlled) yield return weaponry.GetGizmo(pawn);
+            if (Active && pawn.IsColonistPlayerControlled && pawn.Drafted) yield return weaponry.GetGizmo(pawn);
         }
 
         public override void ExposeData()
