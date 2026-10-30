@@ -5,12 +5,10 @@ using SingularityFramework.Sequences;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using UnityEngine;
 using Verse;
 using Verse.AI;
-using Verse.Sound;
 
 namespace Bloodfiends.Hardblood
 {
@@ -19,132 +17,75 @@ namespace Bloodfiends.Hardblood
         public int maximumGeneration = 2;                  // Second Kindred and above can manifest it
         public float manifestCost = 0.8f;                  // 80 hemogen
         public float hemogenPerDamage = 0.01f;             // blood drunk back per point of damage it deals
-        public Vector2 gripOnSprite = new Vector2(-0.48f, 0f);   
+        public Vector2 gripOnSprite = new Vector2(-0.48f, 0f);
         public Vector2 tipOnSprite = new Vector2(0.48f, 0f);
         public float formSeconds = 0.8f;
         public float formLineWidth = 0.24f;
 
-        public float reachRange = 2.9f;
-        public DamageDef thrustDamageDef;
-        public float thrustDamage = 38f;
-        public float thrustArmorPenetration = 0.8f;
-        public int thrustWarmupTicks = 24;
-        public int thrustCooldownTicks = 120;
+        public float reachRange = 2.9f;                    // its melee attacks land this far away (vanilla melee is adjacent only)
 
         public float chargeMinimumRange = 3f;
         public float chargeMaximumRange = 8f;
         public int cellsPastTarget = 2;
+        public int chargeWindupTicks = 22;                 // the lance raised overhead before the slide (the animation's raise and hold)
         public CompProperties_AbilityLineDash charge;
-
-        public SoundDef thrustHitSound;                     // played on the thrust's hit
-
-        public int chargeWindupTicks = 22;                  // the lance raised overhead before the slide (the animation's raise and hold)
     }
 
     public class MapComponent_HardbloodLances : MapComponent
     {
         private const int CheckIntervalTicks = 6;
-        private const int CleanupIntervalTicks = 250;
-
-        private class ChaseOrder
-        {
-            public Pawn target;
-            public bool playerForced;
-            public bool killIncappedTarget;
-
-            public bool StillValid(Pawn pawn) => target != null && !target.Dead && target.Spawned && target.Map == pawn.Map && (!target.Downed || killIncappedTarget);
-        }
-
-        private readonly Dictionary<Pawn, ChaseOrder> chaseOrders = new Dictionary<Pawn, ChaseOrder>();
 
         public MapComponent_HardbloodLances(Map map) : base(map)
         {
         }
 
-        public void RememberChase(Pawn pawn, Job attack)
-        {
-            if (attack.maxNumMeleeAttacks <= 1 || !(attack.targetA.Thing is Pawn target)) return;
-            chaseOrders[pawn] = new ChaseOrder
-            {
-                target = target,
-                playerForced = attack.playerForced,
-                killIncappedTarget = attack.killIncappedTarget
-            };
-        }
-
         public override void MapComponentTick()
         {
-            int ticksGame = Find.TickManager.TicksGame;
-            if (ticksGame % CleanupIntervalTicks == 0) ForgetPawnsThatLeft();
-            if (ticksGame % CheckIntervalTicks != 0) return;
-
+            if (Find.TickManager.TicksGame % CheckIntervalTicks != 0) return;
             IReadOnlyList<Pawn> pawns = map.mapPawns.AllPawnsSpawned;
             for (int index = 0; index < pawns.Count; index++)
             {
                 Pawn pawn = pawns[index];
                 HardbloodLanceExtension lance = HardbloodLance.LanceOf(pawn);
                 if (lance == null) continue;
-
-                Job currentJob = pawn.CurJob;
-                Job attack = null;
-                if (currentJob?.def == JobDefOf.AttackMelee)
-                {
-                    RememberChase(pawn, currentJob);
-                    attack = WalkingAttack(pawn, lance);
-                }
-                else if (ResumeChase(pawn))
-                {
-                    continue;
-                }
-                else if (currentJob?.def == JobDefOf.Wait_Combat)
-                {
-                    attack = StandingAttack(pawn, lance);
-                }
-                if (attack == null) continue;
-                attack.playerForced = currentJob.playerForced;
-                pawn.jobs.StartJob(attack, JobCondition.InterruptForced);
+                JobDef currentJob = pawn.CurJobDef;
+                if (currentJob == JobDefOf.AttackMelee) TryCharge(pawn, lance);
+                else if (currentJob == JobDefOf.Wait_Combat) TryAutoAttackInReach(pawn, lance);
             }
         }
 
-        private bool ResumeChase(Pawn pawn)
+        /// <summary>
+        /// A Kindred chasing a target that's in charge range charges it instead. The vanilla attack is queued to pick up
+        /// right where the charge ends.
+        /// </summary>
+        private void TryCharge(Pawn pawn, HardbloodLanceExtension lance)
         {
-            if (!chaseOrders.TryGetValue(pawn, out ChaseOrder order)) return false;
-            JobDef currentJob = pawn.CurJobDef;
-            if (currentJob == BloodfiendsDefOf.Bloodfiends_HardbloodLanceThrust || currentJob == BloodfiendsDefOf.Bloodfiends_HardbloodLanceCharge) return false;
-            bool idle = currentJob == null || currentJob == JobDefOf.Wait_Combat || currentJob == JobDefOf.Wait;
-            if (!idle || !order.StillValid(pawn))
-            {
-                chaseOrders.Remove(pawn);
-                return false;
-            }
+            Job chase = pawn.CurJob;
+            if (lance.charge == null || pawn.stances.FullBodyBusy || !(chase.targetA.Thing is Pawn target)) return;
+            if (!target.Spawned || target.Map != map || target.Downed) return;
+            float distance = pawn.Position.DistanceTo(target.Position);
+            if (distance < lance.chargeMinimumRange || distance > lance.chargeMaximumRange) return;
+            IntVec3 endCell = HardbloodLance.ChargeEndCell(pawn, target, lance);
+            if (!endCell.IsValid) return;
 
-            Job chase = JobMaker.MakeJob(JobDefOf.AttackMelee, order.target);
-            chase.playerForced = order.playerForced;
-            chase.killIncappedTarget = order.killIncappedTarget;
-            pawn.jobs.StartJob(chase, JobCondition.InterruptForced);
-            return true;
+            Job continuation = JobMaker.MakeJob(JobDefOf.AttackMelee, target);
+            continuation.playerForced = chase.playerForced;
+            continuation.killIncappedTarget = chase.killIncappedTarget;
+            continuation.maxNumMeleeAttacks = chase.maxNumMeleeAttacks;
+            Job charge = JobMaker.MakeJob(BloodfiendsDefOf.Bloodfiends_HardbloodLanceCharge, endCell, target);
+            charge.playerForced = chase.playerForced;
+            pawn.jobs.jobQueue.EnqueueFirst(continuation);
+            pawn.jobs.StartJob(charge, JobCondition.InterruptForced);
         }
 
-        private void ForgetPawnsThatLeft()
+        /// <summary>
+        /// Vanilla's drafted auto-attack (JobDriver_Wait.CheckForAutoAttack) only swings at adjacent enemies; this is
+        /// the same swing for enemies the lance can reach.
+        /// </summary>
+        private void TryAutoAttackInReach(Pawn pawn, HardbloodLanceExtension lance)
         {
-            List<Pawn> gone = chaseOrders.Keys
-                .Where(pawn => !pawn.Spawned || pawn.Map != map)
-                .ToList();
-            foreach (Pawn pawn in gone) chaseOrders.Remove(pawn);
-        }
-
-        private Job WalkingAttack(Pawn pawn, HardbloodLanceExtension lance)
-        {
-            Pawn target = pawn.CurJob.targetA.Pawn;
-            if (target == null || !target.Spawned || target.Map != map) return null;
-            if (target.Downed && !pawn.CurJob.killIncappedTarget) return null;
-            return HardbloodLance.AttackJobFor(pawn, target, lance);
-        }
-
-        private Job StandingAttack(Pawn pawn, HardbloodLanceExtension lance)
-        {
-            if (pawn.Downed || pawn.WorkTagIsDisabled(WorkTags.Violent) || pawn.stances.FullBodyBusy) return null;
-            if (pawn.Drafted && !pawn.drafter.FireAtWill) return null;
+            if (pawn.Faction == null || pawn.Downed || pawn.stances.FullBodyBusy || pawn.WorkTagIsDisabled(WorkTags.Violent)) return;
+            if (pawn.drafter != null && !pawn.drafter.FireAtWill) return;
 
             Pawn nearest = null;
             float nearestDistance = float.MaxValue;
@@ -152,11 +93,11 @@ namespace Bloodfiends.Hardblood
             {
                 if (!(thing is Pawn enemy) || enemy.Dead || enemy.Downed || !enemy.HostileTo(pawn)) continue;
                 float distance = pawn.Position.DistanceTo(enemy.Position);
-                if (distance <= 1.5f || distance >= nearestDistance || !GenSight.LineOfSight(pawn.Position, enemy.Position, map)) continue;
+                if (distance >= nearestDistance || pawn.CanReachImmediate(enemy, PathEndMode.Touch) || !HardbloodLance.WithinReach(pawn, pawn.Position, enemy)) continue;
                 nearest = enemy;
                 nearestDistance = distance;
             }
-            return nearest == null ? null : JobMaker.MakeJob(BloodfiendsDefOf.Bloodfiends_HardbloodLanceThrust, nearest);
+            if (nearest != null) pawn.meleeVerbs.TryMeleeAttack(nearest);
         }
     }
 
@@ -164,21 +105,40 @@ namespace Bloodfiends.Hardblood
     {
         public static HardbloodLanceExtension LanceOf(Pawn pawn) => pawn?.equipment?.Primary?.def.GetModExtension<HardbloodLanceExtension>();
 
-        public static readonly bool MeleeAnimationActive = ModsConfig.IsActive("co.uk.epicguru.meleeanimation");
-
-        public static Job AttackJobFor(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
+        /// <summary>
+        /// Whether a Kindred standing at root can hit the target with its lance: within reach, with nothing in the way.
+        /// </summary>
+        public static bool WithinReach(Pawn pawn, IntVec3 root, Thing target)
         {
-            float distance = pawn.Position.DistanceTo(target.Position);
-            if (lance.charge != null && distance >= lance.chargeMinimumRange && distance <= lance.chargeMaximumRange)
-            {
-                IntVec3 endCell = ChargeEndCell(pawn, target, lance);
-                if (endCell.IsValid) return JobMaker.MakeJob(BloodfiendsDefOf.Bloodfiends_HardbloodLanceCharge, endCell, target);
-            }
-            if (distance > 1.5f && distance <= lance.reachRange && GenSight.LineOfSight(pawn.Position, target.Position, pawn.Map))
-            {
-                return JobMaker.MakeJob(BloodfiendsDefOf.Bloodfiends_HardbloodLanceThrust, target);
-            }
-            return null;
+            HardbloodLanceExtension lance = LanceOf(pawn);
+            if (lance == null || target == null || !target.Spawned || target.Map != pawn.Map) return false;
+            if (target is Pawn targetPawn && targetPawn.IsPsychologicallyInvisible()) return false;
+            IntVec3 targetCell = target.OccupiedRect().ClosestCellTo(root);
+            return root.DistanceTo(targetCell) <= lance.reachRange && GenSight.LineOfSight(root, targetCell, pawn.Map);
+        }
+
+        /// <summary>
+        /// The charge's strike, dealt with the lance's point: the same damage and armour penetration its normal stab
+        /// deals (quality and the Kindred's melee damage included). The def's settings are kept for everything else.
+        /// </summary>
+        public static LineStrikeSettings ChargeStrikeFor(Pawn pawn, LineStrikeSettings baseSettings)
+        {
+            LineStrikeSettings settings = baseSettings.Copy();
+            Verb point = PointVerbOf(pawn);
+            if (point == null) return settings;
+            settings.damageDefinition = point.verbProps.meleeDamageDef ?? settings.damageDefinition;
+            settings.damageAmount = point.verbProps.AdjustedMeleeDamageAmount(point, pawn);
+            settings.armorPenetration = point.verbProps.AdjustedArmorPenetration(point, pawn);
+            return settings;
+        }
+
+        private static Verb PointVerbOf(Pawn pawn)
+        {
+            List<Verb> verbs = pawn.equipment?.PrimaryEq?.AllVerbs;
+            if (verbs == null) return null;
+            return verbs
+                .Where(verb => verb.tool?.capacities != null)
+                .FirstOrDefault(verb => verb.tool.capacities.Any(capacity => capacity.defName == "Stab"));
         }
 
         public static IntVec3 ChargeEndCell(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
@@ -194,32 +154,18 @@ namespace Bloodfiends.Hardblood
             }
             return IntVec3.Invalid;
         }
-
-        public static void Prefix(Pawn ___pawn, ref Job newJob)
-        {
-            if (newJob == null || newJob.def != JobDefOf.AttackMelee || ___pawn == null || !___pawn.Spawned) return;
-            HardbloodLanceExtension lance = HardbloodLance.LanceOf(___pawn);
-            Pawn target = newJob.targetA.Pawn;
-            if (lance == null || target == null || !target.Spawned || target.Map != ___pawn.Map) return;
-            if (target.Downed && !newJob.killIncappedTarget) return;
-
-            Job replacement = HardbloodLance.AttackJobFor(___pawn, target, lance);
-            if (replacement == null) return;
-            replacement.playerForced = newJob.playerForced;
-            ___pawn.Map.GetComponent<MapComponent_HardbloodLances>()?.RememberChase(___pawn, newJob);
-            newJob = replacement;
-        }
     }
 
     public class JobDriver_HardbloodLanceCharge : JobDriver_LineDash
     {
         protected override CompProperties_AbilityLineDash DashProps => HardbloodLance.LanceOf(pawn)?.charge;
 
-        private void FaceCharge()
-        {
-            if (Dashing) pawn.rotationTracker.FaceCell(job.targetA.Cell);
-            else if (job.targetB.IsValid) pawn.rotationTracker.FaceTarget(job.targetB);
-        }
+        private LineStrikeSettings strikeFromPoint;   // worked out once per charge
+
+        protected override LineStrikeSettings StrikeSettings => strikeFromPoint ?? (strikeFromPoint = HardbloodLance.ChargeStrikeFor(pawn, DashProps.strikeSettings));
+
+        protected override LocalTargetInfo MainTarget => job.targetB;   // targetA is the cell it ends on
+
         protected override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOn(() => HardbloodLance.LanceOf(pawn) == null);
@@ -241,6 +187,20 @@ namespace Bloodfiends.Hardblood
             }
         }
 
+        /// <summary>
+        /// Faces the target while winding up, then down the line it's sliding along, so it never turns around after
+        /// piercing through.
+        /// </summary>
+        private void FaceCharge()
+        {
+            if (Dashing) pawn.rotationTracker.FaceCell(job.targetA.Cell);
+            else if (job.targetB.IsValid) pawn.rotationTracker.FaceTarget(job.targetB);
+        }
+
+        /// <summary>
+        /// The target kept moving during the wind-up, so the line is picked again from where it stands now. If it's
+        /// out of charge range now, the charge is called off and the queued vanilla attack takes over.
+        /// </summary>
         private void AimAtTarget()
         {
             HardbloodLanceExtension lance = HardbloodLance.LanceOf(pawn);
@@ -256,9 +216,7 @@ namespace Bloodfiends.Hardblood
             IntVec3 endCell = inChargeRange ? HardbloodLance.ChargeEndCell(pawn, target, lance) : IntVec3.Invalid;
             if (!endCell.IsValid)
             {
-                Job fallback = HardbloodLance.AttackJobFor(pawn, target, lance) ?? JobMaker.MakeJob(JobDefOf.AttackMelee, target);
-                fallback.playerForced = job.playerForced;
-                pawn.jobs.StartJob(fallback, JobCondition.InterruptForced);
+                EndJobWith(JobCondition.Incompletable);
                 return;
             }
 
@@ -268,59 +226,81 @@ namespace Bloodfiends.Hardblood
         }
     }
 
-    public class JobDriver_HardbloodLanceThrust : JobDriver
+    /// <summary>
+    /// The vanilla attack job walks until the target is adjacent, then hits. A Kindred with the lance stops and hits
+    /// as soon as the target is in reach; otherwise vanilla runs as normal (including chasing a target that leaves).
+    /// </summary>
+    [HarmonyPatch]
+    public static class Patch_ToilsCombat_FollowAndMeleeAttack_HardbloodLance
     {
-        public override bool TryMakePreToilReservations(bool errorOnFailed) => true;
+        private static FieldInfo toilField;
+        private static FieldInfo hitActionField;
+        private static FieldInfo targetIndexField;
+        private static FieldInfo standPositionIndexField;
 
-        protected override IEnumerable<Toil> MakeNewToils()
+        public static MethodBase TargetMethod()
         {
-            this.FailOnDespawnedOrNull(TargetIndex.A);
-            HardbloodLanceExtension lance = HardbloodLance.LanceOf(pawn);
-            this.FailOn(() => HardbloodLance.LanceOf(pawn) == null);
-
-            Toil windUp = Toils_General.Wait(lance?.thrustWarmupTicks ?? 24);
-            windUp.AddFailCondition(() => job.targetA.Pawn is Pawn target && pawn.Position.DistanceTo(target.Position) > (HardbloodLance.LanceOf(pawn)?.reachRange ?? 0f) + 0.5f);
-            windUp.AddPreInitAction(() =>
-            {
-                pawn.pather.StopDead();
-                pawn.rotationTracker.FaceTarget(job.targetA);
-                if (HardbloodLance.MeleeAnimationActive) pawn.Drawer.Notify_MeleeAttackOn(job.targetA.Thing);   // its clip has its own lead-in to the stab
-            });
-            windUp.AddPreTickAction(() => pawn.rotationTracker.FaceTarget(job.targetA));
-            yield return windUp;
-            yield return Toils_General.Do(Strike);
-            yield return Toils_General.Wait(lance?.thrustCooldownTicks ?? 120);
+            Type closureType = typeof(Toils_Combat).GetNestedTypes(AccessTools.all)
+                .First(type => AccessTools.Field(type, "hitAction") != null && AccessTools.Field(type, "followAndAttack") != null);
+            toilField = AccessTools.Field(closureType, "followAndAttack");
+            hitActionField = AccessTools.Field(closureType, "hitAction");
+            targetIndexField = AccessTools.Field(closureType, "targetInd");
+            standPositionIndexField = AccessTools.Field(closureType, "standPositionInd");
+            return AccessTools.GetDeclaredMethods(closureType)
+                .First(method => method.Name.Contains("FollowAndMeleeAttack"));
         }
 
-        private void Strike()
+        public static bool Prefix(object __instance)
         {
-            HardbloodLanceExtension lance = HardbloodLance.LanceOf(pawn);
-            Pawn target = job.targetA.Pawn;
-            if (lance == null || target == null || target.Dead || !target.Spawned) return;
-            if (pawn.Position.DistanceTo(target.Position) > lance.reachRange + 0.5f) return;
+            Pawn pawn = ((Toil)toilField.GetValue(__instance))?.actor;
+            if (HardbloodLance.LanceOf(pawn) == null) return true;
+            Job job = pawn.CurJob;
+            if (job.GetTarget((TargetIndex)standPositionIndexField.GetValue(__instance)).IsValid) return true;   // told where to stand: vanilla
+            Thing target = job.GetTarget((TargetIndex)targetIndexField.GetValue(__instance)).Thing;
+            if (target == null || pawn.CanReachImmediate(target, PathEndMode.Touch)) return true;                 // adjacent: vanilla
+            if (target is Pawn targetPawn && targetPawn.Downed && !job.killIncappedTarget) return true;            // vanilla ends the attack
+            if (!HardbloodLance.WithinReach(pawn, pawn.Position, target)) return true;                             // out of reach: vanilla walks closer
 
-            if (!HardbloodLance.MeleeAnimationActive) pawn.Drawer.Notify_MeleeAttackOn(target);
-            lance.thrustHitSound?.PlayOneShot(new TargetInfo(target.Position, target.Map));
-            float angle = (target.Position - pawn.Position).AngleFlat;
-            target.TakeDamage(new DamageInfo(lance.thrustDamageDef ?? DamageDefOf.Stab, lance.thrustDamage, lance.thrustArmorPenetration, angle, pawn, null, pawn.equipment?.Primary?.def));
-            pawn.stances.SetStance(new Stance_Cooldown(lance.thrustCooldownTicks, target, null));
+            if (pawn.pather.Moving) pawn.pather.StopDead();
+            ((Action)hitActionField.GetValue(__instance)).Invoke();
+            return false;
         }
     }
 
-    [HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.StartJob))]
-    public static class Patch_PawnJobTracker_StartJob_HardbloodLance
+    /// <summary>
+    /// Vanilla melee verbs can only hit adjacent targets; the lance's own verbs can hit anything within its reach.
+    /// </summary>
+    [HarmonyPatch(typeof(Verb), nameof(Verb.TryFindShootLineFromTo))]
+    public static class Patch_Verb_TryFindShootLineFromTo_HardbloodLance
     {
-        public static void Prefix(Pawn ___pawn, ref Job newJob)
+        public static void Postfix(Verb __instance, IntVec3 root, LocalTargetInfo targ, ref ShootLine resultingLine, ref bool __result)
         {
-            if (newJob == null || newJob.def != JobDefOf.AttackMelee || ___pawn == null || !___pawn.Spawned) return;
-            HardbloodLanceExtension lance = HardbloodLance.LanceOf(___pawn);
-            Pawn target = newJob.targetA.Pawn;
-            if (lance == null || target == null || !target.Spawned || target.Map != ___pawn.Map) return;
+            if (__result || !__instance.verbProps.IsMeleeAttack || !targ.HasThing || !(__instance.caster is Pawn pawn)) return;
+            if (__instance.EquipmentSource?.def.GetModExtension<HardbloodLanceExtension>() == null) return;
+            if (!HardbloodLance.WithinReach(pawn, root, targ.Thing)) return;
+            resultingLine = new ShootLine(root, targ.Cell);
+            __result = true;
+        }
+    }
 
-            Job replacement = HardbloodLance.AttackJobFor(___pawn, target, lance);
-            if (replacement == null) return;
-            replacement.playerForced = newJob.playerForced;
-            newJob = replacement;
+    /// <summary>
+    /// A melee attack picks from all the pawn's melee verbs (kicks, head butts too). From beyond arm's length, only the
+    /// lance's own attacks reach, so one of those is picked, weighted the same way vanilla weighs them.
+    /// </summary>
+    [HarmonyPatch(typeof(Pawn_MeleeVerbs), nameof(Pawn_MeleeVerbs.TryGetMeleeVerb))]
+    public static class Patch_PawnMeleeVerbs_TryGetMeleeVerb_HardbloodLance
+    {
+        public static void Postfix(Pawn_MeleeVerbs __instance, Thing target, ref Verb __result)
+        {
+            Pawn pawn = __instance.Pawn;
+            ThingWithComps weapon = pawn?.equipment?.Primary;
+            if (target == null || HardbloodLance.LanceOf(pawn) == null || __result?.EquipmentSource == weapon) return;
+            if (!pawn.Spawned || pawn.CanReachImmediate(target, PathEndMode.Touch)) return;
+
+            bool found = __instance.GetUpdatedAvailableVerbsList(false)
+                .Where(entry => entry.verb.EquipmentSource == weapon)
+                .TryRandomElementByWeight(entry => entry.GetSelectionWeight(target), out VerbEntry chosen);
+            if (found) __result = chosen.verb;
         }
     }
 

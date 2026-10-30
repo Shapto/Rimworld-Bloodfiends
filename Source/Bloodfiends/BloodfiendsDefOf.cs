@@ -32,7 +32,6 @@ namespace Bloodfiends
         public static ThoughtDef Bloodfiends_KilledElder;
         public static ThingDef Bloodfiends_HardbloodLance;
         public static JobDef Bloodfiends_HardbloodLanceCharge;
-        public static JobDef Bloodfiends_HardbloodLanceThrust;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

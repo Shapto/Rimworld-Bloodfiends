@@ -6,10 +6,4 @@
 		<reportString>charging TargetB.</reportString>
 		<casualInterruptible>false</casualInterruptible>
 	</JobDef>
-	<JobDef>
-		<defName>Bloodfiends_HardbloodLanceThrust</defName>
-		<driverClass>Bloodfiends.Hardblood.JobDriver_HardbloodLanceThrust</driverClass>
-		<reportString>thrusting at TargetA.</reportString>
-		<casualInterruptible>false</casualInterruptible>
-	</JobDef>
 </Defs>

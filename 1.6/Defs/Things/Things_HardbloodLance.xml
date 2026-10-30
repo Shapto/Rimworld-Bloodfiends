@@ -44,16 +44,10 @@
 				<manifestCost>0.8</manifestCost>
 				<hemogenPerDamage>0.01</hemogenPerDamage>
 				<reachRange>2.9</reachRange>
-				<thrustDamageDef>Stab</thrustDamageDef>
-				<thrustDamage>38</thrustDamage>
-				<thrustArmorPenetration>0.8</thrustArmorPenetration>
-				<thrustWarmupTicks>12</thrustWarmupTicks>
 				<chargeWindupTicks>22</chargeWindupTicks>
-				<thrustCooldownTicks>120</thrustCooldownTicks>
 				<chargeMinimumRange>3</chargeMinimumRange>
 				<chargeMaximumRange>8</chargeMaximumRange>
 				<cellsPastTarget>2</cellsPastTarget>
-				<thrustHitSound>MeleeHit_Metal_Sharp</thrustHitSound>
 				<charge>
 					<cellsPerTick>0.6</cellsPerTick>
 					<easingPower>3</easingPower>
