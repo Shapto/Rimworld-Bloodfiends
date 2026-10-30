@@ -10,11 +10,6 @@ using Verse;
 
 namespace Bloodfiends.Hardblood
 {
-    /// <summary>
-    /// Settings for Hardblood Weaponry, on the Bloodfiend gene: how many weapons a Bloodfiend can keep, what manifesting
-    /// and holding a replica costs, and how good the replicas are. Hemogen is in the points shown in game (100 = a full
-    /// default bar).
-    /// </summary>
     public class HardbloodWeaponryExtension : DefModExtension
     {
         public SimpleCurve slotsByGeneration = new SimpleCurve { new CurvePoint(1f, 4f), new CurvePoint(2f, 3f), new CurvePoint(3f, 2f), new CurvePoint(4f, 2f), new CurvePoint(5f, 1f), new CurvePoint(7f, 1f) };
@@ -34,9 +29,6 @@ namespace Bloodfiends.Hardblood
         public float shardAngleOffset = -54f;                                       
     }
 
-    /// <summary>
-    /// A weapon type a Bloodfiend has mimicked: what it is and what it was made of.
-    /// </summary>
     public class MimickedWeapon : IExposable
     {
         public ThingDef weaponDef;
@@ -53,11 +45,6 @@ namespace Bloodfiends.Hardblood
         }
     }
 
-    /// <summary>
-    /// A Bloodfiend's Hardblood Weaponry: the weapons they've mimicked, and the gizmo that mimics and manifests them.
-    /// Saving a weapon only records its type; the real weapon is untouched. Manifesting makes a hardblood replica of it in
-    /// their hands (the weapon they were holding goes into their inventory), which dissolves when it leaves their hands.
-    /// </summary>
     public class HardbloodWeaponry : IExposable
     {
         public List<MimickedWeapon> repertoire = new List<MimickedWeapon>();
@@ -85,9 +72,6 @@ namespace Bloodfiends.Hardblood
 
         // ----- numbers -----
 
-        /// <summary>
-        /// The Bloodfiend's Kindred tier (1 = First Kindred). Unknown counts as the weakest.
-        /// </summary>
         public static int GenerationOf(Pawn pawn)
         {
             return pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.Node?.generationNumber ?? 7;
