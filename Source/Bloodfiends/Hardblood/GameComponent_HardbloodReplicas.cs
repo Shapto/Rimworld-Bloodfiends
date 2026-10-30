@@ -85,9 +85,7 @@ namespace Bloodfiends.Hardblood
             HardbloodReplicaGraphics.FreeRetired();
             foreach (Thing replica in replicas)
             {
-                if (!(replica is ThingWithComps weapon) || weapon.Destroyed) continue;
-                if (weapon.def.GetModExtension<HardbloodLanceExtension>() != null) HardbloodReplicaGraphics.SettleLance(weapon);
-                else HardbloodReplicaGraphics.EnsureApplied(weapon);
+                if (replica is ThingWithComps weapon && !weapon.Destroyed && weapon.def.GetModExtension<HardbloodLanceExtension>() == null) HardbloodReplicaGraphics.EnsureApplied(weapon);
             }
         }
 

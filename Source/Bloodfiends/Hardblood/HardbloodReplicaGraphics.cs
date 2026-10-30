@@ -43,7 +43,6 @@ namespace Bloodfiends.Hardblood
             public Vector2 grip;   // the weapon's ends on its sprite (-0.5 to 0.5), for the blood lines
             public Vector2 tip;
             public int retiredFrame;
-            public int grownTick = -1;   // the lance: when its growing copy is done and it goes back to its own graphic
         }
 
         private class ReplicaBuild
@@ -198,29 +197,7 @@ namespace Bloodfiends.Hardblood
             };
             entry.graphic = HardbloodReplicaGraphic.Create(entry.material, original.drawSize, name);
             GraphicField.SetValue(lance, entry.graphic);
-            int formTicks = Mathf.RoundToInt(settings.formSeconds * GenTicks.TicksPerRealSecond);
-            entry.grownTick = Find.TickManager.TicksGame + formTicks;
-            KitbashGrowth.Start(new[] { entry.material }, formTicks);
-        }
-
-        /// <summary>
-        /// Once the lance has grown in, it goes back to drawing as its own def graphic (soft edges, quality colours
-        /// intact) and the growing copy is freed a few frames later, like a dissolved replica's. Called every frame.
-        /// </summary>
-        public static void SettleLance(ThingWithComps lance)
-        {
-            if (!entriesByReplica.TryGetValue(lance.thingIDNumber, out ReplicaEntry entry) || entry.texture == null) return;
-            if (Find.TickManager.TicksGame < entry.grownTick) return;
-            GraphicField.SetValue(lance, null);   // Thing.Graphic rebuilds the def's own graphic on next draw
-            retired.Add(new ReplicaEntry
-            {
-                material = entry.material,
-                texture = entry.texture,
-                retiredFrame = Time.frameCount
-            });
-            entry.graphic = null;
-            entry.material = null;
-            entry.texture = null;
+            KitbashGrowth.Start(new[] { entry.material }, Mathf.RoundToInt(settings.formSeconds * GenTicks.TicksPerRealSecond));
         }
 
         /// <summary>

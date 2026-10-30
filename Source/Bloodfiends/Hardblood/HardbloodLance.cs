@@ -134,6 +134,11 @@ namespace Bloodfiends.Hardblood
     {
         protected override CompProperties_AbilityLineDash DashProps => HardbloodLance.LanceOf(pawn)?.charge;
 
+        private void FaceCharge()
+        {
+            if (Dashing) pawn.rotationTracker.FaceCell(job.targetA.Cell);
+            else if (job.targetB.IsValid) pawn.rotationTracker.FaceTarget(job.targetB);
+        }
         protected override IEnumerable<Toil> MakeNewToils()
         {
             this.FailOn(() => HardbloodLance.LanceOf(pawn) == null);
@@ -141,12 +146,18 @@ namespace Bloodfiends.Hardblood
             if (windupTicks > 0)
             {
                 Toil windUp = Toils_General.Wait(windupTicks);
+                windUp.handlingFacing = true;
                 windUp.AddPreInitAction(() => pawn.pather.StopDead());
-                windUp.AddPreTickAction(() => pawn.rotationTracker.FaceTarget(job.targetB.IsValid ? job.targetB : job.targetA));
+                windUp.AddPreTickAction(FaceCharge);
                 yield return windUp;
             }
             yield return Toils_General.Do(AimAtTarget);
-            foreach (Toil toil in base.MakeNewToils()) yield return toil;
+            foreach (Toil toil in base.MakeNewToils())
+            {
+                toil.handlingFacing = true;
+                toil.AddPreTickAction(FaceCharge);
+                yield return toil;
+            }
         }
 
         private void AimAtTarget()
