@@ -21,7 +21,7 @@ namespace Bloodfiends.Family
         public override void PostAdd()
         {
             base.PostAdd();
-            if (LineageHediff == null) RegisterAsNewBloodfiend();
+            if (LineageHediff == null && GameComponent_BloodfiendFamilies.Instance?.GetNodeForPawn(pawn) == null) RegisterAsNewBloodfiend();
         }
 
         public override void TickInterval(int delta)
