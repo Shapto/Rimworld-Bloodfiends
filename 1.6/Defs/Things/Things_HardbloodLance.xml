@@ -11,6 +11,7 @@
 		</graphicData>
 		<equippedAngleOffset>-20</equippedAngleOffset>
 		<techLevel>Archotech</techLevel>
+		<recipeMaker IsNull="True" />
 		<smeltable>false</smeltable>
 		<tradeability>None</tradeability>
 		<statBases>

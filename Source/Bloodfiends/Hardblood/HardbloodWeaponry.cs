@@ -157,6 +157,7 @@ namespace Bloodfiends.Hardblood
             }
 
             float hemogen = HemogenOf(pawn);
+            AddLanceOption(pawn, options, held, holdingReplica, hemogen);
             foreach (MimickedWeapon mimicked in repertoire)
             {
                 float cost = CostOf(pawn, mimicked);

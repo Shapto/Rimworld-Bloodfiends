@@ -55,7 +55,7 @@ namespace Bloodfiends.SharedThirst
     {
         public static void Postfix(Pawn ___pawn, DamageInfo dinfo, float totalDamageDealt)
         {
-            if (totalDamageDealt <= 0f || dinfo.IntendedTarget != ___pawn) return;
+            if (totalDamageDealt <= 0f || dinfo.IntendedTarget != null && dinfo.IntendedTarget != ___pawn) return;
             FamilialImpiety.TryApply(dinfo.Instigator as Pawn, ___pawn);
         }
     }

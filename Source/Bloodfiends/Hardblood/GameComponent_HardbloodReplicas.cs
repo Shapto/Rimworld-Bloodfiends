@@ -34,10 +34,9 @@ namespace Bloodfiends.Hardblood
         /// </summary>
         public void Register(ThingWithComps replica, bool growsIn)
         {
-            if (replica.def.GetModExtension<HardbloodLanceExtension>() == null) HardbloodReplicaGraphics.Apply(replica, growsIn);
             if (!replicaSet.Add(replica)) return;
             replicas.Add(replica);
-            HardbloodReplicaGraphics.Apply(replica, growsIn);
+            if (replica.def.GetModExtension<HardbloodLanceExtension>() == null) HardbloodReplicaGraphics.Apply(replica, growsIn);
         }
 
         /// <summary>

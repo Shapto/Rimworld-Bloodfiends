@@ -21,7 +21,6 @@ namespace Bloodfiends.Hardblood
         public Vector2 gripOnSprite = new Vector2(-0.14f, 0f);
         public Vector2 tipOnSprite = new Vector2(0.48f, 0f);
 
-        // reach: a thrust that hits from beyond the adjacent cell
         public float reachRange = 2.9f;
         public DamageDef thrustDamageDef;
         public float thrustDamage = 38f;
@@ -29,24 +28,69 @@ namespace Bloodfiends.Hardblood
         public int thrustWarmupTicks = 24;
         public int thrustCooldownTicks = 120;
 
-        // charge: ordered onto an enemy in this range, run them through and stop past them
         public float chargeMinimumRange = 3f;
         public float chargeMaximumRange = 8f;
         public int cellsPastTarget = 2;
-        public CompProperties_AbilityLineDash charge;      // the framework's dash: speed, easing, trail and what it hits
+        public CompProperties_AbilityLineDash charge;      // the framework's dash
     }
 
-    /// <summary>
-    /// Picks how a lance wielder attacks an enemy: a charge through them from range, a thrust from just out of arm's
-    /// reach, or the ordinary melee attack when they're adjacent.
-    /// </summary>
+    public class MapComponent_HardbloodLances : MapComponent
+    {
+        private const int CheckIntervalTicks = 6;
+
+        public MapComponent_HardbloodLances(Map map) : base(map)
+        {
+        }
+
+        public override void MapComponentTick()
+        {
+            if (Find.TickManager.TicksGame % CheckIntervalTicks != 0) return;
+            IReadOnlyList<Pawn> pawns = map.mapPawns.AllPawnsSpawned;
+            for (int index = 0; index < pawns.Count; index++)
+            {
+                Pawn pawn = pawns[index];
+                JobDef currentJob = pawn.CurJobDef;
+                if (currentJob != JobDefOf.AttackMelee && currentJob != JobDefOf.Wait_Combat) continue;
+                HardbloodLanceExtension lance = HardbloodLance.LanceOf(pawn);
+                if (lance == null) continue;
+
+                Job attack = currentJob == JobDefOf.AttackMelee ? WalkingAttack(pawn, lance) : StandingAttack(pawn, lance);
+                if (attack == null) continue;
+                attack.playerForced = pawn.CurJob.playerForced;
+                pawn.jobs.StartJob(attack, JobCondition.InterruptForced);
+            }
+        }
+
+        private Job WalkingAttack(Pawn pawn, HardbloodLanceExtension lance)
+        {
+            Pawn target = pawn.CurJob.targetA.Pawn;
+            if (target == null || !target.Spawned || target.Map != map) return null;
+            return HardbloodLance.AttackJobFor(pawn, target, lance);
+        }
+
+        private Job StandingAttack(Pawn pawn, HardbloodLanceExtension lance)
+        {
+            if (pawn.Downed || pawn.WorkTagIsDisabled(WorkTags.Violent) || pawn.stances.FullBodyBusy) return null;
+            if (pawn.Drafted && !pawn.drafter.FireAtWill) return null;
+
+            Pawn nearest = null;
+            float nearestDistance = float.MaxValue;
+            foreach (Thing thing in GenRadial.RadialDistinctThingsAround(pawn.Position, map, lance.reachRange, false))
+            {
+                if (!(thing is Pawn enemy) || enemy.Dead || enemy.Downed || !enemy.HostileTo(pawn)) continue;
+                float distance = pawn.Position.DistanceTo(enemy.Position);
+                if (distance <= 1.5f || distance >= nearestDistance || !GenSight.LineOfSight(pawn.Position, enemy.Position, map)) continue;
+                nearest = enemy;
+                nearestDistance = distance;
+            }
+            return nearest == null ? null : JobMaker.MakeJob(BloodfiendsDefOf.Bloodfiends_HardbloodLanceThrust, nearest);
+        }
+    }
+
     public static class HardbloodLance
     {
         public static HardbloodLanceExtension LanceOf(Pawn pawn) => pawn?.equipment?.Primary?.def.GetModExtension<HardbloodLanceExtension>();
 
-        /// <summary>
-        /// The job to use instead of walking up to "target", or null to attack normally.
-        /// </summary>
         public static Job AttackJobFor(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
         {
             float distance = pawn.Position.DistanceTo(target.Position);
@@ -62,10 +106,6 @@ namespace Bloodfiends.Hardblood
             return null;
         }
 
-        /// <summary>
-        /// Where the charge stops: the set number of cells past the target, or as close to that as can be stood on and
-        /// reached in a straight line. Invalid if there's nowhere.
-        /// </summary>
         private static IntVec3 ChargeEndCell(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
         {
             Map map = pawn.Map;
@@ -81,17 +121,11 @@ namespace Bloodfiends.Hardblood
         }
     }
 
-    /// <summary>
-    /// The charge: the framework's line dash, with its settings taken from the lance instead of an ability.
-    /// </summary>
     public class JobDriver_HardbloodLanceCharge : JobDriver_LineDash
     {
         protected override CompProperties_AbilityLineDash DashProps => HardbloodLance.LanceOf(pawn)?.charge;
     }
 
-    /// <summary>
-    /// The reach thrust: stand, face the enemy, drive the lance into them from up to a few cells away, recover.
-    /// </summary>
     public class JobDriver_HardbloodLanceThrust : JobDriver
     {
         public override bool TryMakePreToilReservations(bool errorOnFailed) => true;
@@ -121,10 +155,6 @@ namespace Bloodfiends.Hardblood
         }
     }
 
-    /// <summary>
-    /// A lance wielder told to melee someone (by the player or by their own fighting) charges or thrusts instead of
-    /// walking up, when the distance is right.
-    /// </summary>
     [HarmonyPatch(typeof(Pawn_JobTracker), nameof(Pawn_JobTracker.StartJob))]
     public static class Patch_PawnJobTracker_StartJob_HardbloodLance
     {
@@ -142,9 +172,6 @@ namespace Bloodfiends.Hardblood
         }
     }
 
-    /// <summary>
-    /// The lance drinks: every point of damage it deals (melee, thrust or charge) gives its wielder blood back.
-    /// </summary>
     [HarmonyPatch(typeof(Pawn_HealthTracker), nameof(Pawn_HealthTracker.PostApplyDamage))]
     public static class Patch_PawnHealthTracker_PostApplyDamage_HardbloodLance
     {
