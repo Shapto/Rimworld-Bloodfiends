@@ -46,7 +46,8 @@
 			</li>
 			<li Class="Bloodfiends.BloodCommand.BloodCommandExtension">
 				<absorbIntervalTicks>60</absorbIntervalTicks>
-				<hemogenPerFilthThickness>0.01</hemogenPerFilthThickness>
+				<hemogenPerFilthThickness>0.003</hemogenPerFilthThickness>
+				<maximumFilthHemogenPerPass>0.02</maximumFilthHemogenPerPass>
 				<hemogenPerCorpseBodySize>0.3</hemogenPerCorpseBodySize>
 				<radiusByGeneration>
 					<points>
