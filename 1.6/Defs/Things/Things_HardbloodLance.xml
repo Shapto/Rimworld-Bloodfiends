@@ -53,6 +53,7 @@
 				<chargeMinimumRange>3</chargeMinimumRange>
 				<chargeMaximumRange>8</chargeMaximumRange>
 				<cellsPastTarget>2</cellsPastTarget>
+				<thrustHitSound>MeleeHit_Metal_Sharp</thrustHitSound>
 				<charge>
 					<cellsPerTick>0.6</cellsPerTick>
 					<easingPower>3</easingPower>

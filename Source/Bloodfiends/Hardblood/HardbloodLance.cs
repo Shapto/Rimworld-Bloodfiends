@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
 using Verse.AI;
+using Verse.Sound;
 
 namespace Bloodfiends.Hardblood
 {
@@ -34,6 +35,8 @@ namespace Bloodfiends.Hardblood
         public float chargeMaximumRange = 8f;
         public int cellsPastTarget = 2;
         public CompProperties_AbilityLineDash charge;
+
+        public SoundDef thrustHitSound;                     // played on the thrust's hit
 
         public int chargeWindupTicks = 22;                  // the lance raised overhead before the slide (the animation's raise and hold)
     }
@@ -95,6 +98,8 @@ namespace Bloodfiends.Hardblood
     {
         public static HardbloodLanceExtension LanceOf(Pawn pawn) => pawn?.equipment?.Primary?.def.GetModExtension<HardbloodLanceExtension>();
 
+        public static readonly bool MeleeAnimationActive = ModsConfig.IsActive("co.uk.epicguru.meleeanimation");
+
         public static Job AttackJobFor(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
         {
             float distance = pawn.Position.DistanceTo(target.Position);
@@ -110,7 +115,7 @@ namespace Bloodfiends.Hardblood
             return null;
         }
 
-        private static IntVec3 ChargeEndCell(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
+        public static IntVec3 ChargeEndCell(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
         {
             Map map = pawn.Map;
             Vector3 direction = (target.Position - pawn.Position).ToVector3();
@@ -131,6 +136,7 @@ namespace Bloodfiends.Hardblood
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
+            this.FailOn(() => HardbloodLance.LanceOf(pawn) == null);
             int windupTicks = HardbloodLance.LanceOf(pawn)?.chargeWindupTicks ?? 0;
             if (windupTicks > 0)
             {
@@ -139,7 +145,34 @@ namespace Bloodfiends.Hardblood
                 windUp.AddPreTickAction(() => pawn.rotationTracker.FaceTarget(job.targetB.IsValid ? job.targetB : job.targetA));
                 yield return windUp;
             }
+            yield return Toils_General.Do(AimAtTarget);
             foreach (Toil toil in base.MakeNewToils()) yield return toil;
+        }
+
+        private void AimAtTarget()
+        {
+            HardbloodLanceExtension lance = HardbloodLance.LanceOf(pawn);
+            Pawn target = job.targetB.Pawn;
+            if (lance == null || target == null || target.Dead || !target.Spawned || target.Map != pawn.Map)
+            {
+                EndJobWith(JobCondition.Incompletable);
+                return;
+            }
+
+            float distance = pawn.Position.DistanceTo(target.Position);
+            bool inChargeRange = distance >= lance.chargeMinimumRange && distance <= lance.chargeMaximumRange;
+            IntVec3 endCell = inChargeRange ? HardbloodLance.ChargeEndCell(pawn, target, lance) : IntVec3.Invalid;
+            if (!endCell.IsValid)
+            {
+                Job fallback = HardbloodLance.AttackJobFor(pawn, target, lance) ?? JobMaker.MakeJob(JobDefOf.AttackMelee, target);
+                fallback.playerForced = job.playerForced;
+                pawn.jobs.StartJob(fallback, JobCondition.InterruptForced);
+                return;
+            }
+
+            job.targetA = endCell;
+            pawn.rotationTracker.FaceTarget(target);
+            pawn.Drawer.Notify_MeleeAttackOn(target);
         }
     }
 
@@ -154,7 +187,12 @@ namespace Bloodfiends.Hardblood
             this.FailOn(() => HardbloodLance.LanceOf(pawn) == null);
 
             Toil windUp = Toils_General.Wait(lance?.thrustWarmupTicks ?? 24);
-            windUp.AddPreInitAction(() => pawn.pather.StopDead());
+            windUp.AddPreInitAction(() =>
+            {
+                pawn.pather.StopDead();
+                pawn.rotationTracker.FaceTarget(job.targetA);
+                if (HardbloodLance.MeleeAnimationActive) pawn.Drawer.Notify_MeleeAttackOn(job.targetA.Thing);   // its clip has its own lead-in to the stab
+            });
             windUp.AddPreTickAction(() => pawn.rotationTracker.FaceTarget(job.targetA));
             yield return windUp;
             yield return Toils_General.Do(Strike);
@@ -167,8 +205,12 @@ namespace Bloodfiends.Hardblood
             Pawn target = job.targetA.Pawn;
             if (lance == null || target == null || target.Dead || !target.Spawned) return;
             if (pawn.Position.DistanceTo(target.Position) > lance.reachRange + 0.5f) return;
+
+            if (!HardbloodLance.MeleeAnimationActive) pawn.Drawer.Notify_MeleeAttackOn(target);
+            lance.thrustHitSound?.PlayOneShot(new TargetInfo(target.Position, target.Map));
             float angle = (target.Position - pawn.Position).AngleFlat;
             target.TakeDamage(new DamageInfo(lance.thrustDamageDef ?? DamageDefOf.Stab, lance.thrustDamage, lance.thrustArmorPenetration, angle, pawn, null, pawn.equipment?.Primary?.def));
+            pawn.stances.SetStance(new Stance_Cooldown(lance.thrustCooldownTicks, target, null));
         }
     }
 
