@@ -44,29 +44,93 @@ namespace Bloodfiends.Hardblood
     public class MapComponent_HardbloodLances : MapComponent
     {
         private const int CheckIntervalTicks = 6;
+        private const int CleanupIntervalTicks = 250;
+
+        private class ChaseOrder
+        {
+            public Pawn target;
+            public bool playerForced;
+            public bool killIncappedTarget;
+
+            public bool StillValid(Pawn pawn) => target != null && !target.Dead && target.Spawned && target.Map == pawn.Map && (!target.Downed || killIncappedTarget);
+        }
+
+        private readonly Dictionary<Pawn, ChaseOrder> chaseOrders = new Dictionary<Pawn, ChaseOrder>();
 
         public MapComponent_HardbloodLances(Map map) : base(map)
         {
         }
 
+        public void RememberChase(Pawn pawn, Job attack)
+        {
+            if (attack.maxNumMeleeAttacks <= 1 || !(attack.targetA.Thing is Pawn target)) return;
+            chaseOrders[pawn] = new ChaseOrder
+            {
+                target = target,
+                playerForced = attack.playerForced,
+                killIncappedTarget = attack.killIncappedTarget
+            };
+        }
+
         public override void MapComponentTick()
         {
-            if (Find.TickManager.TicksGame % CheckIntervalTicks != 0) return;
+            int ticksGame = Find.TickManager.TicksGame;
+            if (ticksGame % CleanupIntervalTicks == 0) ForgetPawnsThatLeft();
+            if (ticksGame % CheckIntervalTicks != 0) return;
+
             IReadOnlyList<Pawn> pawns = map.mapPawns.AllPawnsSpawned;
             for (int index = 0; index < pawns.Count; index++)
             {
                 Pawn pawn = pawns[index];
-                JobDef currentJob = pawn.CurJobDef;
-                if (currentJob != JobDefOf.AttackMelee && currentJob != JobDefOf.Wait_Combat) continue;
                 HardbloodLanceExtension lance = HardbloodLance.LanceOf(pawn);
                 if (lance == null) continue;
 
-                Job attack = currentJob == JobDefOf.AttackMelee ? WalkingAttack(pawn, lance) : StandingAttack(pawn, lance);
+                Job currentJob = pawn.CurJob;
+                Job attack = null;
+                if (currentJob?.def == JobDefOf.AttackMelee)
+                {
+                    RememberChase(pawn, currentJob);
+                    attack = WalkingAttack(pawn, lance);
+                }
+                else if (ResumeChase(pawn))
+                {
+                    continue;
+                }
+                else if (currentJob?.def == JobDefOf.Wait_Combat)
+                {
+                    attack = StandingAttack(pawn, lance);
+                }
                 if (attack == null) continue;
-                attack.playerForced = pawn.CurJob.playerForced;
-                if (currentJob == JobDefOf.AttackMelee) HardbloodLance.KeepChasing(pawn, attack.targetA.Pawn ?? attack.targetB.Pawn, pawn.CurJob);
+                attack.playerForced = currentJob.playerForced;
                 pawn.jobs.StartJob(attack, JobCondition.InterruptForced);
             }
+        }
+
+        private bool ResumeChase(Pawn pawn)
+        {
+            if (!chaseOrders.TryGetValue(pawn, out ChaseOrder order)) return false;
+            JobDef currentJob = pawn.CurJobDef;
+            if (currentJob == BloodfiendsDefOf.Bloodfiends_HardbloodLanceThrust || currentJob == BloodfiendsDefOf.Bloodfiends_HardbloodLanceCharge) return false;
+            bool idle = currentJob == null || currentJob == JobDefOf.Wait_Combat || currentJob == JobDefOf.Wait;
+            if (!idle || !order.StillValid(pawn))
+            {
+                chaseOrders.Remove(pawn);
+                return false;
+            }
+
+            Job chase = JobMaker.MakeJob(JobDefOf.AttackMelee, order.target);
+            chase.playerForced = order.playerForced;
+            chase.killIncappedTarget = order.killIncappedTarget;
+            pawn.jobs.StartJob(chase, JobCondition.InterruptForced);
+            return true;
+        }
+
+        private void ForgetPawnsThatLeft()
+        {
+            List<Pawn> gone = chaseOrders.Keys
+                .Where(pawn => !pawn.Spawned || pawn.Map != map)
+                .ToList();
+            foreach (Pawn pawn in gone) chaseOrders.Remove(pawn);
         }
 
         private Job WalkingAttack(Pawn pawn, HardbloodLanceExtension lance)
@@ -117,14 +181,6 @@ namespace Bloodfiends.Hardblood
             return null;
         }
 
-        public static void KeepChasing(Pawn pawn, Pawn target, Job chase)
-        {
-            Job followUp = JobMaker.MakeJob(JobDefOf.AttackMelee, target);
-            followUp.playerForced = chase.playerForced;
-            followUp.killIncappedTarget = chase.killIncappedTarget;
-            pawn.jobs.jobQueue.EnqueueFirst(followUp);
-        }
-
         public static IntVec3 ChargeEndCell(Pawn pawn, Pawn target, HardbloodLanceExtension lance)
         {
             Map map = pawn.Map;
@@ -150,7 +206,7 @@ namespace Bloodfiends.Hardblood
             Job replacement = HardbloodLance.AttackJobFor(___pawn, target, lance);
             if (replacement == null) return;
             replacement.playerForced = newJob.playerForced;
-            HardbloodLance.KeepChasing(___pawn, target, newJob);
+            ___pawn.Map.GetComponent<MapComponent_HardbloodLances>()?.RememberChase(___pawn, newJob);
             newJob = replacement;
         }
     }
