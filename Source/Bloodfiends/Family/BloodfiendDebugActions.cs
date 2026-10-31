@@ -28,7 +28,7 @@ namespace Bloodfiends.Family
                 return;
             }
 
-            GameComponent_BloodfiendFamilies.SyncPromotedPawns(registry.Notify_BloodfiendDied(embracerNode));
+            GameComponent_BloodfiendFamilies.SyncPromotedPawns(registry.Notify_BloodfiendDied(embracerNode), embracerNode.bloodfiendPawn);
         }
 
         [DebugAction("Bloodfiends", "Log family tree", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]

@@ -112,7 +112,7 @@ namespace Bloodfiends.Family
             if (targetPawn == null || targetPawn.Dead || !targetPawn.RaceProps.Humanlike) return "Bloodfiends_EmbraceOnlyLivingHumans".Translate();
             if (targetPawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() != null) return "Bloodfiends_AlreadyBloodfiend".Translate();
             if (targetPawn.IsMutant) return "Bloodfiends_AlreadyMutant".Translate();
-            if (!targetPawn.Downed && !targetPawn.IsPrisonerOfColony && targetPawn.Faction != parent.pawn.Faction) return "Bloodfiends_EmbraceInvalidTarget".Translate();
+            if (!targetPawn.Downed && !targetPawn.IsPrisonerOfColony && targetPawn.Faction != parent.pawn.Faction && !IsSeeker(targetPawn)) return "Bloodfiends_EmbraceInvalidTarget".Translate();
             return null;
         }
 
@@ -137,15 +137,17 @@ namespace Bloodfiends.Family
                     PassOnXenogenes(casterPawn, targetPawn);
                     break;
             }
-            AffectOutsider(casterPawn, targetPawn, originalFaction);
+            bool seeker = IsSeeker(targetPawn);
+            if (!seeker) AffectOutsider(casterPawn, targetPawn, originalFaction);
+            if (seeker && targetPawn.Faction == casterPawn.Faction) RemoveHediff(targetPawn, BloodfiendsDefOf.Bloodfiends_SeekingEmbrace);
             if (Props.historyEvent != null) Find.HistoryEventsManager.RecordEvent(new HistoryEvent(Props.historyEvent, casterPawn.Named(HistoryEventArgsNames.Doer)));
         }
 
-        private void MakeKindred(Pawn casterPawn, Pawn kindredPawn)
+        private void MakeKindred(Pawn casterPawn, Pawn kindredPawn, bool joinsEmbracer = true)
         {
             BloodfiendFamilyNode kindredNode = GameComponent_BloodfiendFamilies.Instance?.CreateKindredNode(CasterNode, kindredPawn);
             if (kindredNode == null) return;
-            bool willing = IsWilling(casterPawn, kindredPawn);
+            bool willing = !joinsEmbracer || IsWilling(casterPawn, kindredPawn);
 
             kindredPawn.genes.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodfiend);
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
@@ -154,17 +156,21 @@ namespace Bloodfiends.Family
 
             TakeUnder(kindredPawn);
             DrainEmbracer(casterPawn);
-            if (kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
+            if (joinsEmbracer && kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
             GiveTurningThoughts(casterPawn, kindredPawn, willing);
 
             FilthMaker.TryMakeFilth(kindredPawn.PositionHeld, kindredPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
             Messages.Message("Bloodfiends_Embraced".Translate(casterPawn.Named("CASTER"), kindredPawn.Named("KINDRED")), kindredPawn, MessageTypeDefOf.PositiveEvent);
         }
 
-        /// <summary>
-        /// A hemogenic biter without the crimson curse passes on their xenogenes, at the same cost as making a Kindred:
-        /// the target goes under and the biter is drained. Vanilla's own coma and recovery are replaced by these.
-        /// </summary>
+        public bool CanMakeKindredNow => CasterNode != null && GameComponent_BloodfiendFamilies.Instance?.CanEmbraceKindred(CasterNode) == true;
+
+        public void EmbraceForPlayer(Pawn colonist)
+        {
+            if (!CanMakeKindredNow) return;
+            MakeKindred(parent.pawn, colonist, joinsEmbracer: false);
+        }
+
         private void PassOnXenogenes(Pawn casterPawn, Pawn targetPawn)
         {
             bool willing = IsWilling(casterPawn, targetPawn);
@@ -180,7 +186,9 @@ namespace Bloodfiends.Family
             Messages.Message("Bloodfiends_EmbracedXenogenes".Translate(casterPawn.Named("CASTER"), targetPawn.Named("TARGET")), targetPawn, MessageTypeDefOf.NeutralEvent);
         }
 
-        private static bool IsWilling(Pawn casterPawn, Pawn targetPawn) => targetPawn.Faction == casterPawn.Faction && !targetPawn.IsPrisoner;
+        private static bool IsWilling(Pawn casterPawn, Pawn targetPawn) => IsSeeker(targetPawn) || targetPawn.Faction == casterPawn.Faction && !targetPawn.IsPrisoner;
+
+        private static bool IsSeeker(Pawn pawn) => pawn.health.hediffSet.HasHediff(BloodfiendsDefOf.Bloodfiends_SeekingEmbrace);
 
         private void TakeUnder(Pawn targetPawn)
         {

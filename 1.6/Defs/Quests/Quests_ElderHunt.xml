@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<QuestScriptDef>
+		<defName>Bloodfiends_ElderHunt</defName>
+		<rootSelectionWeight>0.3</rootSelectionWeight>
+		<rootMinPoints>400</rootMinPoints>
+		<expireDaysRange>4~8</expireDaysRange>
+		<defaultChallengeRating>3</defaultChallengeRating>
+		<questNameRules>
+			<rulesStrings>
+				<li>questName->The Hunt for [elder_nameDef]</li>
+				<li>questName->[elder_nameDef]'s Lair</li>
+				<li>questName->Blood of the [elderWord]</li>
+				<li>elderWord->Elder</li>
+				<li>elderWord->Ancestor</li>
+			</rulesStrings>
+		</questNameRules>
+		<questDescriptionRules>
+			<rulesStrings>
+				<!-- TODO  -->
+				<li>questDescription(ownFamily==True)->[descendant_nameDef] has caught the scent of [descendant_possessive] own blood. [elder_nameFull], an elder of [descendant_possessive] Family, has made a lair nearby, guarded by [elder_possessive] thralls.\n\nIf [elder_nameDef] dies, every Kindred of [elder_possessive] line will rise a generation.</li>
+				<li>questDescription(ownFamily==False)->An elder Bloodfiend, [elder_nameFull], has made a lair nearby, guarded by [elder_possessive] thralls. Elders hoard what they take.\n\nKill or capture [elder_nameDef] before [elder_pronoun] moves on.</li>
+			</rulesStrings>
+		</questDescriptionRules>
+		<root Class="Bloodfiends.Quests.QuestNode_Root_ElderHunt" />
+	</QuestScriptDef>
+
+	<SitePartDef>
+		<defName>Bloodfiends_ElderLair</defName>
+		<label>elder's lair</label>
+		<description>TODO</description>
+		<workerClass>SitePartWorker</workerClass>
+		<siteTexture>World/WorldObjects/Sites/GenericSite</siteTexture>
+		<expandingIconTexture>World/WorldObjects/Expanding/Sites/DownedRefugee</expandingIconTexture>
+		<approachOrderString>Hunt {0}</approachOrderString>
+		<approachingReportString>Hunting {0}.</approachingReportString>
+		<considerEnteringAsAttack>true</considerEnteringAsAttack>
+		<arrivedLetterDef>ThreatBig</arrivedLetterDef>
+		<wantsThreatPoints>true</wantsThreatPoints>
+		<tags>
+			<li>Bloodfiends_ElderLair</li>
+		</tags>
+	</SitePartDef>
+
+	<GenStepDef>
+		<defName>Bloodfiends_ElderLair</defName>
+		<linkWithSite>Bloodfiends_ElderLair</linkWithSite>
+		<order>470</order>
+		<genStep Class="Bloodfiends.Quests.GenStep_ElderLair" />
+	</GenStepDef>
+
+</Defs>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<QuestScriptDef>
+		<defName>Bloodfiends_Seeker</defName>
+		<rootSelectionWeight>0.4</rootSelectionWeight>
+		<rootIncreasesPopulation>true</rootIncreasesPopulation>
+		<expireDaysRange>2</expireDaysRange>
+		<minRefireDays>60</minRefireDays>
+		<questNameRules>
+			<rulesStrings>
+				<li>questName->The [seekerNoun]</li>
+				<li>seekerNoun->seeker</li>
+				<li>seekerNoun->supplicant</li>
+				<li>seekerNoun->pilgrim</li>
+				<li>seekerNoun->thirsting</li>
+			</rulesStrings>
+		</questNameRules>
+		<questDescriptionRules>
+			<rulesStrings>
+				<li>questDescription->[seeker_nameFull] of [faction_name] has heard of the Bloodfiends at [map_definite] and wants to be Embraced. If you accept, [seeker_pronoun] will come and wait near the colony for [stayDuration].\n\nEmbrace [seeker_objective] and [seeker_pronoun] will become one of your Kindred, gladly. If nobody does, [seeker_pronoun] will leave disappointed, and [faction_name] will think less of you.</li>
+			</rulesStrings>
+		</questDescriptionRules>
+		<questContentRules>
+			<rulesStrings>
+				<li>seekerArrivedLetterLabel->Seeker arrived</li>
+				<li>seekerArrivedLetterText->[seeker_nameFull] has arrived and will wait near the colony for [stayDuration], hoping to be Embraced.</li>
+				<li>embracedLetterLabel->Seeker embraced</li>
+				<li>embracedLetterText->[seeker_nameDef] has been Embraced, as [seeker_pronoun] wished.</li>
+			</rulesStrings>
+		</questContentRules>
+		<root Class="Bloodfiends.Quests.QuestNode_Root_Seeker" />
+	</QuestScriptDef>
+</Defs>

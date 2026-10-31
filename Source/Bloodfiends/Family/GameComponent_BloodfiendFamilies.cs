@@ -255,16 +255,43 @@ namespace Bloodfiends.Family
             }
         }
 
-        /// <summary>
-        /// Updates the tier hediff on every living pawn among the promoted nodes.
-        /// </summary>
-        public static void SyncPromotedPawns(List<BloodfiendFamilyNode> promotedNodes)
+        public static void SyncPromotedPawns(List<BloodfiendFamilyNode> promotedNodes, Pawn deadBloodfiend = null)
         {
+            List<Pawn> promotedColonists = new List<Pawn>();
+            StringBuilder builder = new StringBuilder();
+
             foreach (BloodfiendFamilyNode promotedNode in promotedNodes)
             {
                 if (!promotedNode.HasLivingPawn) continue;
-                promotedNode.bloodfiendPawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>()?.SyncFromNode();
+                Pawn promotedPawn = promotedNode.bloodfiendPawn;
+                Hediff_BloodfiendLineage lineageHediff = promotedPawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>();
+                if (lineageHediff == null) continue;
+
+                string previousTierLabel = lineageHediff.CurStage?.label;
+                List<AbilityDef> previousAbilities = promotedPawn.abilities?.abilities
+                    .Select(ability => ability.def)
+                    .ToList() ?? new List<AbilityDef>();
+
+                lineageHediff.SyncFromNode();
+
+                string newTierLabel = lineageHediff.CurStage?.label;
+                if (promotedPawn.Faction != Faction.OfPlayer || previousTierLabel == newTierLabel) continue;
+
+                promotedColonists.Add(promotedPawn);
+                builder.AppendLine();
+                builder.Append("Bloodfiends_PromotionLine".Translate(promotedPawn.Named("PAWN"), previousTierLabel.Named("OLD"), newTierLabel.Named("NEW")));
+
+                List<string> learnedAbilityLabels = promotedPawn.abilities?.abilities
+                    .Where(ability => !previousAbilities.Contains(ability.def))
+                    .Select(ability => ability.def.label)
+                    .ToList() ?? new List<string>();
+                if (learnedAbilityLabels.Count > 0) builder.Append(" " + "Bloodfiends_PromotionLearned".Translate(learnedAbilityLabels.ToCommaList(useAnd: true)));
             }
+
+            if (promotedColonists.Count == 0) return;
+
+            string introduction = deadBloodfiend != null ? "Bloodfiends_PromotionTextDeath".Translate(deadBloodfiend.Named("ELDER")).Resolve() : "Bloodfiends_PromotionText".Translate().Resolve();
+            Find.LetterStack.ReceiveLetter("Bloodfiends_PromotionLabel".Translate(), introduction + "\n" + builder, LetterDefOf.PositiveEvent, new LookTargets(promotedColonists));
         }
 
         public bool AreSameFamily(Pawn firstPawn, Pawn secondPawn)
@@ -273,6 +300,109 @@ namespace Bloodfiends.Family
             BloodfiendFamilyNode secondNode = GetNodeForPawn(secondPawn);
             return firstNode != null && secondNode != null && firstNode != secondNode && firstNode.familyId == secondNode.familyId;
         }
+
+        public static bool placingLostKindred;
+
+        public bool CanPlaceLostKindred() => LostKindredPlaces().Count > 0;
+
+        public BloodfiendFamilyNode TryPlaceLostKindred(Pawn lostPawn)
+        {
+            List<(BloodfiendFamilyNode node, bool claimNode)> places = LostKindredPlaces();
+            if (places.Count == 0) return null;
+            (BloodfiendFamilyNode chosen, bool claimNode) = places.RandomElement();
+            if (!claimNode) return CreateNodeUnder(chosen, chosen.familyId, chosen.generationNumber + 1, lostPawn);
+            chosen.bloodfiendPawn = lostPawn;
+            nodeIdsByPawn[lostPawn] = chosen.nodeId;
+            playerAncestorCacheTick = -1;
+            return chosen;
+        }
+
+        private List<(BloodfiendFamilyNode node, bool claimNode)> LostKindredPlaces()
+        {
+            var bestPlayerGenerationByFamily = new Dictionary<int, int>();
+            foreach (BloodfiendFamilyNode node in nodesById.Values.Where(IsPlayerMember))
+            {
+                bool known = bestPlayerGenerationByFamily.TryGetValue(node.familyId, out int bestGeneration);
+                if (!known || node.generationNumber < bestGeneration) bestPlayerGenerationByFamily[node.familyId] = node.generationNumber;
+            }
+
+            var places = new List<(BloodfiendFamilyNode node, bool claimNode)>();
+            foreach (BloodfiendFamilyNode node in nodesById.Values)
+            {
+                if (!IsOutsideMember(node) || !bestPlayerGenerationByFamily.TryGetValue(node.familyId, out int bestPlayerGeneration)) continue;
+                if (node.bloodfiendPawn == null && node.generationNumber >= bestPlayerGeneration) places.Add((node, true));
+                if (CanEmbraceKindred(node) && node.generationNumber + 1 >= bestPlayerGeneration) places.Add((node, false));
+            }
+            return places;
+        }
+
+        public Pawn PlayerRelativeIn(int familyId) => nodesById.Values
+            .Where(node => node.familyId == familyId && IsPlayerMember(node))
+            .OrderBy(node => node.generationNumber)
+            .FirstOrDefault()?.bloodfiendPawn;
+
+        public bool PlayerCanEmbraceKindred() => nodesById.Values.Any(node => IsPlayerMember(node) && CanEmbraceKindred(node));
+
+        public static int placingIntoFamily = -1;
+
+        public BloodfiendFamilyNode TryPlaceInFamily(Pawn pawn, int familyId)
+        {
+            List<BloodfiendFamilyNode> embracers = nodesById.Values
+                .Where(node => node.familyId == familyId && CanEmbraceKindred(node))
+                .ToList();
+            if (embracers.Count == 0) return null;
+            BloodfiendFamilyNode embracer = embracers.RandomElement();
+            return CreateNodeUnder(embracer, familyId, embracer.generationNumber + 1, pawn);
+        }
+
+        public static int claimingNodeId = -1;
+
+        public static int foundingGeneration = 0;
+
+        public bool AnyPlayerBloodfiend() => nodesById.Values.Any(IsPlayerMember);
+
+        public BloodfiendFamilyNode TryClaimNode(Pawn pawn, int nodeId)
+        {
+            BloodfiendFamilyNode node = GetNode(nodeId);
+            if (node == null || node.bloodfiendPawn != null) return null;
+
+            node.bloodfiendPawn = pawn;
+            nodeIdsByPawn[pawn] = node.nodeId;
+            playerAncestorCacheTick = -1;
+            return node;
+        }
+
+        public void ReleaseClaim(Pawn pawn)
+        {
+            BloodfiendFamilyNode node = GetNodeForPawn(pawn);
+            if (node == null) return;
+
+            node.bloodfiendPawn = null;
+            nodeIdsByPawn.Remove(pawn);
+            playerAncestorCacheTick = -1;
+        }
+
+        public List<BloodfiendFamilyNode> UnclaimedAncestorsOfPlayer()
+        {
+            HashSet<int> visitedNodeIds = new HashSet<int>();
+            List<BloodfiendFamilyNode> unclaimedAncestors = new List<BloodfiendFamilyNode>();
+
+            foreach (BloodfiendFamilyNode playerNode in nodesById.Values.Where(IsPlayerMember))
+            {
+                BloodfiendFamilyNode ancestorNode = GetNode(playerNode.embracerNodeId);
+                while (ancestorNode != null && visitedNodeIds.Add(ancestorNode.nodeId))
+                {
+                    if (ancestorNode.bloodfiendPawn == null) unclaimedAncestors.Add(ancestorNode);
+                    ancestorNode = GetNode(ancestorNode.embracerNodeId);
+                }
+            }
+            return unclaimedAncestors;
+        }
+
+        public Pawn PlayerDescendantOf(BloodfiendFamilyNode ancestorNode) => GetDescendants(ancestorNode)
+            .Where(IsPlayerMember)
+            .Select(node => node.bloodfiendPawn)
+            .FirstOrDefault();
 
         public override void ExposeData()
         {
