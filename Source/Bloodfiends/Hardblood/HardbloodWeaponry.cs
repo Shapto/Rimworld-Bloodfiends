@@ -22,7 +22,7 @@ namespace Bloodfiends.Hardblood
         public QualityCategory maximumQuality = QualityCategory.Masterwork;
         public float formSeconds = 0.8f;
         public float lineWidth = 0.12f;
-        public float hemogenPerShotDamage = 0.05f;                                   
+        public float hemogenPerShotDamage = 0.15f;                             
         public List<string> extraMimicableCompClasses = new List<string>();
         public List<HardbloodShardVariant> shardVariants = new List<HardbloodShardVariant>
         {
