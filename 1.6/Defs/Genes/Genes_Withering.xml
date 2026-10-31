@@ -3,7 +3,7 @@
 	<GeneDef>
 		<defName>Bloodfiends_Withering</defName>
 		<label>withering</label>
-		<description>TODO</description>
+		<description>Carriers of this gene forego standard digestion, their metabolism is instead driven entirely by an endless thirst for hemogen. Dropping below a hemogen supply threshold of 5% causes withering: an extremely painful, debilitating condition analogous to starvation. If a carrier is subjected to long periods under this condition, they will revert to primal predatory instincts and become indiscriminately hostile, seeking to feed on any source of hemogen to quench themselves. Rising above a 25% hemogen supply threshold will rapidly reverse withering.</description>
 		<geneClass>Bloodfiends.Hunger.Gene_Withering</geneClass>
 		<iconPath>Icons/Withering</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
