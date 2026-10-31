@@ -32,9 +32,11 @@ namespace Bloodfiends.LaSangre
         public CompProperties_AbilityLaSangre() => compClass = typeof(CompAbilityEffect_LaSangre);
     }
 
-    public class CompAbilityEffect_LaSangre : CompAbilityEffect
+    public class CompAbilityEffect_LaSangre : CompAbilityEffect, IExtraHemogenCost
     {
         public new CompProperties_AbilityLaSangre Props => (CompProperties_AbilityLaSangre)props;
+
+        public float ExtraHemogenCost => parent.pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>()?.Value ?? 0f;
 
         private static readonly Color ImpactRingColor = new Color(0.85f, 0.1f, 0.1f);
         private static readonly Color FamilyRingColor = new Color(1f, 0.6f, 0.6f, 0.6f);

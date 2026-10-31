@@ -161,9 +161,6 @@ namespace Bloodfiends.Hardblood
             return command;
         }
 
-        /// <summary>
-        /// Just past the pawn's last ability button, so it's drawn at the end of their abilities.
-        /// </summary>
         private static float OrderAfterAbilities(Pawn pawn)
         {
             float lastAbilityOrder = 5f;

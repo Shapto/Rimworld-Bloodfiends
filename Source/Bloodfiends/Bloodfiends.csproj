@@ -111,6 +111,7 @@
     <Compile Include="Hardblood\HardbloodReplicaGraphics.cs" />
     <Compile Include="Hardblood\HardbloodWeaponry.cs" />
     <Compile Include="Hardblood\HardbloodWeapons.cs" />
+    <Compile Include="HemogenCostPreview.cs" />
     <Compile Include="Hunger\Gene_Withering.cs" />
     <Compile Include="Hunger\MentalState_Bloodfrenzy.cs" />
     <Compile Include="Hunger\Patch_IngestionOutcomeDoer_OffsetHemogen_StaleBlood.cs" />

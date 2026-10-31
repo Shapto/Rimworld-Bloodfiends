@@ -17,9 +17,10 @@ namespace Bloodfiends.Family
         public ThoughtDef unwillingKindredOpinionThought; // and what they think of the one who did it
         public int kindredComaTicks = 30000;              // a new Kindred lies in vanilla's xenogermination coma this long (half a day); 0 for none
         public CompProperties_AbilityEmbrace() => compClass = typeof(CompAbilityEffect_Embrace);
+
     }
 
-    public class CompAbilityEffect_Embrace : CompAbilityEffect
+    public class CompAbilityEffect_Embrace : CompAbilityEffect, IExtraHemogenCost
     {
         private enum EmbraceResult
         {
@@ -35,6 +36,16 @@ namespace Bloodfiends.Family
         private bool CasterIsBloodbag => BloodbagUtility.IsBloodbag(parent.pawn);
 
         private bool CasterIsCursed => parent.pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() != null;
+
+        public float ExtraHemogenCost
+        {
+            get
+            {
+                if (Result != EmbraceResult.Kindred) return 0f;
+                Gene_Hemogen hemogenGene = parent.pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+                return (hemogenGene?.Max ?? 0f) * Props.embracerHemogenFraction;
+            }
+        }
 
         private EmbraceResult Result
         {
