@@ -22,6 +22,9 @@ namespace Bloodfiends.LaSangre
         public float lanceLength = 4.6f;                   // cells
         public float lanceGripFraction = 0.18f;            // where along the texture (left to right) the hands are: the middle of the haft
         public float lanceGuardFraction = 0.38f;           // the tendrils wrap from here to the tip
+        public Vector2 lanceButtOnTexture = new Vector2(0f, 0.5f);    // UV of the butt, on the lance's axis
+        public Vector2 lanceTipOnTexture = new Vector2(1f, 0.5f);     // UV of the tip, on the same axis
+        public float lanceHalfWidthOnTexture = 0.5f;                  // UV distance from the axis to the art's widest edge
         public SimpleCurve tendrilRadiusByAlong;           // how far out the tendrils wind (cells), by how far along the lance: just outside its outline
         public float cameraShake = 4f;
         public SoundDef impactSound;

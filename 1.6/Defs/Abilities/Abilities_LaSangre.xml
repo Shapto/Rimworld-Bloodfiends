@@ -24,6 +24,7 @@
 		<comps>
 			<li Class="Bloodfiends.LaSangre.CompProperties_AbilityLaSangre">
 				<maximumCasterGeneration>1</maximumCasterGeneration>
+				<impactSound>Bloodfiends_SangreImpact</impactSound>
 				<minimumHemogenFraction>0.5</minimumHemogenFraction>
 				<maximumStrength>3</maximumStrength>
 				<damageDef>Stab</damageDef>
@@ -35,20 +36,23 @@
 				<familyRadius>14</familyRadius>
 				<airDistance>7</airDistance>
 				<airHeight>3.5</airHeight>
-				<lanceTexturePath>Items/SanchoLanceAsc</lanceTexturePath>
+				<lanceTexturePath>Items/Enhanced_La_Sangre</lanceTexturePath>
+				<lanceButtOnTexture>(0.075, 0.086)</lanceButtOnTexture>
+				<lanceTipOnTexture>(0.921, 0.931)</lanceTipOnTexture>
+				<lanceHalfWidthOnTexture>0.121</lanceHalfWidthOnTexture>
+				<lanceTextureAngle>45</lanceTextureAngle>
 				<lanceLength>4.6</lanceLength>
-				<cameraShake>4</cameraShake>
-				<lanceGripFraction>0.18</lanceGripFraction>
-				<lanceGuardFraction>0.38</lanceGuardFraction>
-				<impactSound>Bloodfiends_SangreImpact</impactSound>
+				<lanceGripFraction>0.185</lanceGripFraction>
+				<lanceGuardFraction>0.39</lanceGuardFraction>
 				<tendrilRadiusByAlong>
 					<points>
-						<li>(0.38, 0.47)</li>
-						<li>(0.45, 0.36)</li>
-						<li>(0.6, 0.33)</li>
-						<li>(0.7, 0.27)</li>
-						<li>(0.8, 0.24)</li>
-						<li>(0.9, 0.19)</li>
+						<li>(0.39, 0.45)</li>
+						<li>(0.45, 0.41)</li>
+						<li>(0.55, 0.43)</li>
+						<li>(0.6, 0.35)</li>
+						<li>(0.7, 0.33)</li>
+						<li>(0.8, 0.3)</li>
+						<li>(0.9, 0.23)</li>
 						<li>(1.0, 0.08)</li>
 					</points>
 				</tendrilRadiusByAlong>

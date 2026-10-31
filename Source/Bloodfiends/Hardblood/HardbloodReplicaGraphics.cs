@@ -174,12 +174,16 @@ namespace Bloodfiends.Hardblood
             int height = originalTexture.height;
             Color32[] topFirst = KitbashTextures.ReadPixels(originalTexture, width, height, false);
             var bottomFirst = new Color32[topFirst.Length];
+            Vector2 axis = settings.tipOnSprite - settings.gripOnSprite;
+            float axisLengthSquared = Mathf.Max(0.0001f, axis.sqrMagnitude);
             for (int row = 0; row < height; row++)
             {
                 for (int column = 0; column < width; column++)
                 {
                     Color32 pixel = topFirst[row * width + column];
-                    pixel.a = pixel.a < 64 ? (byte)0 : KitbashGrowth.EncodeArrival(column / (float)Mathf.Max(1, width - 1));
+                    Vector2 spritePoint = new Vector2(column / (float)Mathf.Max(1, width - 1) - 0.5f, 0.5f - row / (float)Mathf.Max(1, height - 1));
+                    float arrival = Mathf.Clamp01(Vector2.Dot(spritePoint - settings.gripOnSprite, axis) / axisLengthSquared);   // 0 at the butt, 1 at the tip
+                    pixel.a = pixel.a < 64 ? (byte)0 : KitbashGrowth.EncodeArrival(arrival);
                     bottomFirst[(height - 1 - row) * width + column] = pixel;
                 }
             }
