@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<QuestScriptDef>
+		<defName>Bloodfiends_BloodfiendTransport</defName>
+		<hideInvolvedFactionsInfo>true</hideInvolvedFactionsInfo>
+		<expireDaysRange>2</expireDaysRange>
+		<rootMinPoints>300</rootMinPoints>
+		<rootSelectionWeight>0.5</rootSelectionWeight>
+		<minRefireDays>200</minRefireDays>
+		<questNameRules>
+			<rulesStrings>
+				<li>questName->[shipAdjective] [shipNoun]</li>
+				<li>shipAdjective->bloodfiend</li>
+				<li>shipAdjective->crimson</li>
+				<li>shipAdjective->hardblood</li>
+				<li>shipAdjective->thirsting</li>
+				<li>shipAdjective->scarlet</li>
+				<li>shipNoun->shuttle</li>
+				<li>shipNoun->craft</li>
+				<li>shipNoun->wreck</li>
+				<li>shipNoun->crash</li>
+			</rulesStrings>
+		</questNameRules>
+		<questDescriptionRules>
+			<rulesStrings>
+				<li>questDescription->You have intercepted a distress signal! A hostile shuttle carrying a Bloodfiend and [escortCount] [escortNoun] is having trouble with its engines. You can use signals to draw it down to a crash near [map_definite].\n\nOnce the ship has crashed, you can fight the Bloodfiend and [bloodfiend_possessive] escort. If you capture the Bloodfiend, one of your colonists can be Embraced by [bloodfiend_objective] and become a Kindred.</li>
+			</rulesStrings>
+		</questDescriptionRules>
+		<questContentRules>
+			<rulesStrings>
+				<li>shuttleCrashedLetterLabel->Crashed shuttle</li>
+				<li>shuttleCrashedLetterText->A shuttle carrying a Bloodfiend and [escortCount] [escortNoun] has crashed nearby. They will exit the crashed craft and prepare to fight.</li>
+				<li>reinforcementsArrivedLetterLabel->Reinforcements</li>
+				<li>reinforcementsArrivedLetterText->More of the Bloodfiend's [escortNoun] are arriving in drop pods.</li>
+				<li>assaultBeginLetterLabel->Assault begun</li>
+				<li>assaultBeginLetterText->The Bloodfiend's [escortNoun] have begun an assault on the colony!</li>
+			</rulesStrings>
+		</questContentRules>
+		<root Class="Bloodfiends.Quests.QuestNode_Root_BloodfiendTransport" />
+	</QuestScriptDef>
+</Defs>

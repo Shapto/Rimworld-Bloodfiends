@@ -17,9 +17,10 @@ namespace Bloodfiends.Family
         public ThoughtDef unwillingKindredOpinionThought; // and what they think of the one who did it
         public int kindredComaTicks = 30000;              // a new Kindred lies in vanilla's xenogermination coma this long (half a day); 0 for none
         public CompProperties_AbilityEmbrace() => compClass = typeof(CompAbilityEffect_Embrace);
+
     }
 
-    public class CompAbilityEffect_Embrace : CompAbilityEffect
+    public class CompAbilityEffect_Embrace : CompAbilityEffect, IExtraHemogenCost
     {
         private enum EmbraceResult
         {
@@ -35,6 +36,16 @@ namespace Bloodfiends.Family
         private bool CasterIsBloodbag => BloodbagUtility.IsBloodbag(parent.pawn);
 
         private bool CasterIsCursed => parent.pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() != null;
+
+        public float ExtraHemogenCost
+        {
+            get
+            {
+                if (Result == EmbraceResult.Bloodbag) return 0f;
+                Gene_Hemogen hemogenGene = parent.pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+                return (hemogenGene?.Max ?? 0f) * Props.embracerHemogenFraction;
+            }
+        }
 
         private EmbraceResult Result
         {
@@ -101,7 +112,7 @@ namespace Bloodfiends.Family
             if (targetPawn == null || targetPawn.Dead || !targetPawn.RaceProps.Humanlike) return "Bloodfiends_EmbraceOnlyLivingHumans".Translate();
             if (targetPawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() != null) return "Bloodfiends_AlreadyBloodfiend".Translate();
             if (targetPawn.IsMutant) return "Bloodfiends_AlreadyMutant".Translate();
-            if (!targetPawn.Downed && !targetPawn.IsPrisonerOfColony && targetPawn.Faction != parent.pawn.Faction) return "Bloodfiends_EmbraceInvalidTarget".Translate();
+            if (!targetPawn.Downed && !targetPawn.IsPrisonerOfColony && targetPawn.Faction != parent.pawn.Faction && !IsSeeker(targetPawn)) return "Bloodfiends_EmbraceInvalidTarget".Translate();
             return null;
         }
 
@@ -126,61 +137,84 @@ namespace Bloodfiends.Family
                     PassOnXenogenes(casterPawn, targetPawn);
                     break;
             }
-            AffectOutsider(casterPawn, targetPawn, originalFaction);
+            bool seeker = IsSeeker(targetPawn);
+            if (!seeker) AffectOutsider(casterPawn, targetPawn, originalFaction);
+            if (seeker && targetPawn.Faction == casterPawn.Faction) RemoveHediff(targetPawn, BloodfiendsDefOf.Bloodfiends_SeekingEmbrace);
             if (Props.historyEvent != null) Find.HistoryEventsManager.RecordEvent(new HistoryEvent(Props.historyEvent, casterPawn.Named(HistoryEventArgsNames.Doer)));
         }
 
-        private void MakeKindred(Pawn casterPawn, Pawn kindredPawn)
+        private void MakeKindred(Pawn casterPawn, Pawn kindredPawn, bool joinsEmbracer = true)
         {
             BloodfiendFamilyNode kindredNode = GameComponent_BloodfiendFamilies.Instance?.CreateKindredNode(CasterNode, kindredPawn);
             if (kindredNode == null) return;
-            bool willing = kindredPawn.Faction == casterPawn.Faction && !kindredPawn.IsPrisoner;
+            bool willing = !joinsEmbracer || IsWilling(casterPawn, kindredPawn);
 
             kindredPawn.genes.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodfiend);
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
             lineageHediff.nodeId = kindredNode.nodeId;
             kindredPawn.health.AddHediff(lineageHediff);
 
-            // born starving
-            Gene_Hemogen kindredHemogen = kindredPawn.genes.GetFirstGeneOfType<Gene_Hemogen>();
-            if (kindredHemogen != null) kindredHemogen.Value = 0f;
-
-            // the turning takes them under for a while; they wake to the hunger
-            if (Props.kindredComaTicks > 0)
-            {
-                Hediff coma = HediffMaker.MakeHediff(HediffDefOf.XenogerminationComa, kindredPawn);
-                kindredPawn.health.AddHediff(coma);
-                HediffComp_Disappears comaTimer = coma.TryGetComp<HediffComp_Disappears>();
-                if (comaTimer != null) comaTimer.ticksToDisappear = Props.kindredComaTicks;
-            }
-
-            // the embracer's blood
-            Gene_Hemogen casterHemogen = casterPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
-            if (casterHemogen != null) casterHemogen.Value -= casterHemogen.Max * Props.embracerHemogenFraction;
-            if (Props.embracerWeaknessHediff != null) casterPawn.health.AddHediff(Props.embracerWeaknessHediff);
-
-            if (kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
-
-            MemoryThoughtHandler memories = kindredPawn.needs?.mood?.thoughts.memories;
-            if (willing && Props.willingKindredThought != null) memories?.TryGainMemory(Props.willingKindredThought, casterPawn);
-            if (!willing)
-            {
-                if (Props.unwillingKindredThought != null) memories?.TryGainMemory(Props.unwillingKindredThought, casterPawn);
-                if (Props.unwillingKindredOpinionThought != null) memories?.TryGainMemory(Props.unwillingKindredOpinionThought, casterPawn);
-            }
+            TakeUnder(kindredPawn);
+            DrainEmbracer(casterPawn);
+            if (joinsEmbracer && kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
+            GiveTurningThoughts(casterPawn, kindredPawn, willing);
 
             FilthMaker.TryMakeFilth(kindredPawn.PositionHeld, kindredPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
             Messages.Message("Bloodfiends_Embraced".Translate(casterPawn.Named("CASTER"), kindredPawn.Named("KINDRED")), kindredPawn, MessageTypeDefOf.PositiveEvent);
         }
 
-        private static void PassOnXenogenes(Pawn casterPawn, Pawn targetPawn)
+        public bool CanMakeKindredNow => CasterNode != null && GameComponent_BloodfiendFamilies.Instance?.CanEmbraceKindred(CasterNode) == true;
+
+        public void EmbraceForPlayer(Pawn colonist)
         {
+            if (!CanMakeKindredNow) return;
+            MakeKindred(parent.pawn, colonist, joinsEmbracer: false);
+        }
+
+        private void PassOnXenogenes(Pawn casterPawn, Pawn targetPawn)
+        {
+            bool willing = IsWilling(casterPawn, targetPawn);
             GeneUtility.ReimplantXenogerm(casterPawn, targetPawn);
             RemoveHediff(targetPawn, HediffDefOf.XenogerminationComa);
             RemoveHediff(casterPawn, HediffDefOf.XenogermReplicating);
 
+            TakeUnder(targetPawn);
+            DrainEmbracer(casterPawn);
+            GiveTurningThoughts(casterPawn, targetPawn, willing);
+
             FilthMaker.TryMakeFilth(targetPawn.PositionHeld, targetPawn.MapHeld, ThingDefOf.Filth_Blood, 2);
             Messages.Message("Bloodfiends_EmbracedXenogenes".Translate(casterPawn.Named("CASTER"), targetPawn.Named("TARGET")), targetPawn, MessageTypeDefOf.NeutralEvent);
+        }
+
+        private static bool IsWilling(Pawn casterPawn, Pawn targetPawn) => IsSeeker(targetPawn) || targetPawn.Faction == casterPawn.Faction && !targetPawn.IsPrisoner;
+
+        private static bool IsSeeker(Pawn pawn) => pawn.health.hediffSet.HasHediff(BloodfiendsDefOf.Bloodfiends_SeekingEmbrace);
+
+        private void TakeUnder(Pawn targetPawn)
+        {
+            Gene_Hemogen targetHemogen = targetPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+            if (targetHemogen != null) targetHemogen.Value = 0f;
+            if (Props.kindredComaTicks <= 0) return;
+            Hediff coma = HediffMaker.MakeHediff(HediffDefOf.XenogerminationComa, targetPawn);
+            targetPawn.health.AddHediff(coma);
+            HediffComp_Disappears comaTimer = coma.TryGetComp<HediffComp_Disappears>();
+            if (comaTimer != null) comaTimer.ticksToDisappear = Props.kindredComaTicks;
+        }
+
+        private void DrainEmbracer(Pawn casterPawn)
+        {
+            Gene_Hemogen casterHemogen = casterPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+            if (casterHemogen != null) casterHemogen.Value -= casterHemogen.Max * Props.embracerHemogenFraction;
+            if (Props.embracerWeaknessHediff != null) casterPawn.health.AddHediff(Props.embracerWeaknessHediff);
+        }
+
+        private void GiveTurningThoughts(Pawn casterPawn, Pawn targetPawn, bool willing)
+        {
+            MemoryThoughtHandler memories = targetPawn.needs?.mood?.thoughts.memories;
+            if (willing && Props.willingKindredThought != null) memories?.TryGainMemory(Props.willingKindredThought, casterPawn);
+            if (willing) return;
+            if (Props.unwillingKindredThought != null) memories?.TryGainMemory(Props.unwillingKindredThought, casterPawn);
+            if (Props.unwillingKindredOpinionThought != null) memories?.TryGainMemory(Props.unwillingKindredOpinionThought, casterPawn);
         }
 
         private static void RemoveHediff(Pawn pawn, HediffDef hediffDef)

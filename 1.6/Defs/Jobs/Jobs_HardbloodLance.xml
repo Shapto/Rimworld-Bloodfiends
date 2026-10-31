@@ -6,4 +6,11 @@
 		<reportString>charging TargetB.</reportString>
 		<casualInterruptible>false</casualInterruptible>
 	</JobDef>
+
+	<JobDef>
+		<defName>Bloodfiends_ReceiveEmbrace</defName>
+		<driverClass>Bloodfiends.Family.JobDriver_ReceiveEmbrace</driverClass>
+		<reportString>being Embraced by TargetA.</reportString>
+		<casualInterruptible>false</casualInterruptible>
+	</JobDef>
 </Defs>

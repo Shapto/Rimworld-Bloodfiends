@@ -16,6 +16,8 @@
   <Bloodfiends_EmbraceNextXenogenes>The next embrace passes on your xenogenes.</Bloodfiends_EmbraceNextXenogenes>
   <Bloodfiends_NoXenogenesToPass>No xenogenes to pass on.</Bloodfiends_NoXenogenesToPass>
   <Bloodfiends_EmbracedXenogenes>{CASTER_labelShort} has passed on their genes to {TARGET_labelShort}.</Bloodfiends_EmbracedXenogenes>
+  <Bloodfiends_ReceiveEmbrace>Be Embraced by {EMBRACER_labelShort}</Bloodfiends_ReceiveEmbrace>
+  <Bloodfiends_CaptiveNoKindredSlots>{EMBRACER_labelShort} cannot make any more Kindred</Bloodfiends_CaptiveNoKindredSlots>
 
   <!-- misc -->
   <Bloodfiends_BloodbagMasterless>Their Family is gone; nothing steers the blood any more.</Bloodfiends_BloodbagMasterless>
@@ -28,6 +30,13 @@
 
   <Bloodfiends_CannotMimicSpecial>This weapon is too complex to mimic.</Bloodfiends_CannotMimicSpecial>
 
+  <!-- Promotion -->
+  <Bloodfiends_PromotionLabel>Blood rises</Bloodfiends_PromotionLabel>
+  <Bloodfiends_PromotionTextDeath>{ELDER_nameFull} is dead. Every Kindred of {ELDER_possessive} line has risen a generation:</Bloodfiends_PromotionTextDeath>
+  <Bloodfiends_PromotionText>A line has fallen. Every Kindred below it has risen a generation:</Bloodfiends_PromotionText>
+  <Bloodfiends_PromotionLine>  - {PAWN_nameDef}: {OLD} → {NEW}</Bloodfiends_PromotionLine>
+  <Bloodfiends_PromotionLearned>(learned {0})</Bloodfiends_PromotionLearned>
+
   <!-- Coagulate and Melt Away -->
   <Bloodfiends_MustTargetLivingBloodfiend>Must target a living Bloodfiend.</Bloodfiends_MustTargetLivingBloodfiend>
   <Bloodfiends_OnlyWorksOnBloodfiends>Only works on Bloodfiends and Bloodbags.</Bloodfiends_OnlyWorksOnBloodfiends>
@@ -37,7 +46,7 @@
   <!-- Coagulate -->
   <Bloodfiends_CoagulateOnlyAllies>Can only coagulate yourself or a living ally.</Bloodfiends_CoagulateOnlyAllies>
 
-    <!-- Hardblood Weaponry -->
+  <!-- Hardblood Weaponry -->
   <Bloodfiends_HardbloodWeaponry>Hardblood Weaponry</Bloodfiends_HardbloodWeaponry>
   <Bloodfiends_HardbloodWeaponryDesc>TODO\n\nRepertoire: {0} / {1}</Bloodfiends_HardbloodWeaponryDesc>
   <Bloodfiends_WeaponryDowned>{0} is downed.</Bloodfiends_WeaponryDowned>
@@ -50,4 +59,42 @@
   <Bloodfiends_DissolveReplica>Dissolve {0}</Bloodfiends_DissolveReplica>
   <Bloodfiends_ForgetWeapon>Forget {0}</Bloodfiends_ForgetWeapon>
   <Bloodfiends_NothingToMimic>Hold a weapon to mimic it.</Bloodfiends_NothingToMimic>
+
+  <!-- Quests: Lost Kindred -->
+  <Bloodfiends_LetterLabelLostKindred>Lost Kindred: {PAWN_nameDef}</Bloodfiends_LetterLabelLostKindred>
+  <Bloodfiends_LetterLostKindred>{PAWN_nameFull}, {TIER} of {RELATIVE_nameDef}'s Family, has followed the call of the blood to your colony. Lost and alone, {PAWN_pronoun} asks to join {RELATIVE_objective} here.</Bloodfiends_LetterLostKindred>
+
+  <!-- Quests: Family gathering -->
+  <Bloodfiends_GatheringArrivingSoon>The Bloodfiends will arrive soon.</Bloodfiends_GatheringArrivingSoon>
+  <Bloodfiends_GatheringBegun>The Bloodfiends have begun their gathering.</Bloodfiends_GatheringBegun>
+  <Bloodfiends_GatheringLeavingTemperature>The Bloodfiends are leaving because of the temperature.</Bloodfiends_GatheringLeavingTemperature>
+  <Bloodfiends_RewardFamilyEmbraceLabel>Embrace</Bloodfiends_RewardFamilyEmbraceLabel>
+  <Bloodfiends_RewardFamilyEmbraceDesc>One of the Bloodfiends will Embrace a colonist of your choice, making them a Kindred of their Family.</Bloodfiends_RewardFamilyEmbraceDesc>
+  <Bloodfiends_LetterLabelWaitingToEmbrace>Bloodfiend waiting to Embrace</Bloodfiends_LetterLabelWaitingToEmbrace>
+  <Bloodfiends_LetterWaitingToEmbrace>{PAWN_nameDef} is waiting to Embrace one of your colonists. Right-click {PAWN_objective} with the colonist you choose. {PAWN_pronoun} will wait for {DURATION}.</Bloodfiends_LetterWaitingToEmbrace>
+
+  <!-- Quests: Elder hunt -->
+  <Bloodfiends_ElderHuntExpiredLabel>Elder moved on</Bloodfiends_ElderHuntExpiredLabel>
+  <Bloodfiends_ElderHuntExpiredText>{ELDER_nameDef} has left {ELDER_possessive} lair. The trail has gone cold.</Bloodfiends_ElderHuntExpiredText>
+  <Bloodfiends_ElderHuntAbandonedLabel>Lair abandoned</Bloodfiends_ElderHuntAbandonedLabel>
+  <Bloodfiends_ElderHuntAbandonedText>{ELDER_nameDef} has abandoned {ELDER_possessive} lair and vanished.</Bloodfiends_ElderHuntAbandonedText>
+  <Bloodfiends_ElderHuntEscapedLabel>Elder escaped</Bloodfiends_ElderHuntEscapedLabel>
+  <Bloodfiends_ElderHuntEscapedText>{ELDER_nameDef} has slipped away.</Bloodfiends_ElderHuntEscapedText>
+  <Bloodfiends_ElderHuntSlainLabel>Elder slain</Bloodfiends_ElderHuntSlainLabel>
+  <Bloodfiends_ElderHuntSlainText>{ELDER_nameDef} is dead. {ELDER_possessive} hoard is yours for the taking.</Bloodfiends_ElderHuntSlainText>
+  <Bloodfiends_ElderHuntCapturedLabel>Elder captured</Bloodfiends_ElderHuntCapturedLabel>
+  <Bloodfiends_ElderHuntCapturedText>{ELDER_nameDef} has been taken alive. What becomes of {ELDER_objective} is up to you.</Bloodfiends_ElderHuntCapturedText>
+
+  <!-- Quests: Hunted kindred -->
+  <Bloodfiends_HuntedKindredArrivedLabel>{JOINER_nameDef} arrives</Bloodfiends_HuntedKindredArrivedLabel>
+  <Bloodfiends_HuntedKindredArrivedText>{JOINER_nameDef} has arrived and joined you. {HUNTER_nameDef} won't be far behind.</Bloodfiends_HuntedKindredArrivedText>
+  <Bloodfiends_HuntedKindredHunterArrivedLabel>{HUNTER_nameDef} is here</Bloodfiends_HuntedKindredHunterArrivedLabel>
+  <Bloodfiends_HuntedKindredHunterArrivedText>{HUNTER_nameFull} has come to take back {JOINER_nameDef}, and brought {HUNTER_possessive} thralls.</Bloodfiends_HuntedKindredHunterArrivedText>
+  <Bloodfiends_HuntedKindredCapturedLabel>Hunter captured</Bloodfiends_HuntedKindredCapturedLabel>
+  <Bloodfiends_HuntedKindredCapturedText>{HUNTER_nameDef} has been taken alive. {JOINER_nameDef} is safe, for now.</Bloodfiends_HuntedKindredCapturedText>
+  <Bloodfiends_HuntedKindredRepelledLabel>Hunter repelled</Bloodfiends_HuntedKindredRepelledLabel>
+  <Bloodfiends_HuntedKindredRepelledText>{HUNTER_nameDef} has given up the chase. {JOINER_nameDef} is safe, for now.</Bloodfiends_HuntedKindredRepelledText>
+  <Bloodfiends_HuntedKindredCaughtLabel>{JOINER_nameDef} died</Bloodfiends_HuntedKindredCaughtLabel>
+  <Bloodfiends_HuntedKindredCaughtText>{HUNTER_nameDef} got what {HUNTER_pronoun} came for.</Bloodfiends_HuntedKindredCaughtText>
+
 </LanguageData>

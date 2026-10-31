@@ -20,6 +20,7 @@ namespace Bloodfiends.Mantle
         public float minimumWallAngle = 35f;                 // degrees a new threat must be off the wall before the wall re-forms
         public float noticeRadius = 7f;                      // cells out it notices projectiles coming at the Bloodfiend
         public float wallHoldSeconds = 1.2f;                 // how long the wall holds after the last threat
+        public float decayPerHour = 0.25f;                   // share of the maximum it loses per in-game hour (a fresh cast at half lasts 2 hours unfed)
     }
 
     public class Hediff_Mantle : HediffWithComps
@@ -27,6 +28,10 @@ namespace Bloodfiends.Mantle
         private const int ThreatCheckIntervalTicks = 3;
         private const float WallRadius = 0.56f;
         private const float WallMiddleHeight = 0.26f;
+        private const int ReformSoundCooldownTicks = 30;   // half a second between swishes, however fast threats switch sides
+        private int lastReformSoundTick = -9999;
+        private const int DecayIntervalTicks = 60;
+        private bool brokenByDamage;
 
         private static readonly MantleExtension DefaultSettings = new MantleExtension();
 
@@ -71,8 +76,6 @@ namespace Bloodfiends.Mantle
         public void Refresh()
         {
             charge = Mathf.Max(charge, MaximumCharge * Settings.chargeOnCast);
-            HediffComp_Disappears disappears = this.TryGetComp<HediffComp_Disappears>();
-            if (disappears != null) disappears.ticksToDisappear = disappears.Props.disappearsAfterTicks.RandomInRange;
         }
 
         public float TakeCut(float hemogenGained)
@@ -87,6 +90,7 @@ namespace Bloodfiends.Mantle
         {
             if (charge <= 0f || damageInfo.Def == null || !damageInfo.Def.harmsHealth || damageInfo.Def.armorCategory == null) return false;
             charge = Mathf.Max(0f, charge - damageInfo.Amount);
+            if (charge <= 0f) brokenByDamage = true;
             float angle = AngleTowardSource(damageInfo);
             if (pawn.Spawned)
             {
@@ -101,9 +105,18 @@ namespace Bloodfiends.Mantle
         public override void PostTick()
         {
             base.PostTick();
+            if (pawn.IsHashIntervalTick(DecayIntervalTicks)) charge = Mathf.Max(0f, charge - MaximumCharge * Settings.decayPerHour * DecayIntervalTicks / GenDate.TicksPerHour);
             if (!pawn.Spawned || !pawn.IsHashIntervalTick(ThreatCheckIntervalTicks)) return;
             MantleRibbons ribbons = Ribbons;
-            if (ribbons != null && charge > 0f && TryFindThreat(out float angle) && ribbons.Threat(angle, Settings)) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodForming, pawn);
+            if (ribbons != null && charge > 0f && TryFindThreat(out float angle) && ribbons.Threat(angle, Settings)) PlayReformSound();
+        }
+
+        private void PlayReformSound()
+        {
+            int now = Find.TickManager.TicksGame;
+            if (now - lastReformSoundTick < ReformSoundCooldownTicks) return;
+            lastReformSoundTick = now;
+            BloodfiendsSounds.PlayAt(SoundDefOf.Pawn_Melee_Punch_Miss, pawn, 0.6f);
         }
 
         private bool TryFindThreat(out float angle)
@@ -177,17 +190,20 @@ namespace Bloodfiends.Mantle
             BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, pawn);
         }
 
+        public override bool ShouldRemove => base.ShouldRemove || charge <= 0f;
+
         public override void PostRemoved()
         {
             base.PostRemoved();
             removed = true;
-            if (charge > 0f) BloodfiendsSounds.PlayDissolve(pawn);   // a broken mantle already shattered
+            if (!brokenByDamage) BloodfiendsSounds.PlayDissolve(pawn);
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look(ref charge, "charge");
+            Scribe_Values.Look(ref brokenByDamage, "brokenByDamage");
         }
     }
 }

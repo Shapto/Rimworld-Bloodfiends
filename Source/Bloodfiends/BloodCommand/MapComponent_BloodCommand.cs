@@ -22,6 +22,7 @@ namespace Bloodfiends.BloodCommand
         public float lineSeconds = 1.4f;        // how long one stream of blood takes to be pulled in
         public float lineWidth = 0.16f;         // how wide a stream is, in cells
         public float risingThickness = 2f;      // filth at least this thick (a pool) rises in streaks before it's pulled in
+        public float maximumFilthHemogenPerPass = 0.02f;   // at most this much hemogen from splatters per pull (2 hemogen per second at normal speed)
 
         public SimpleCurve radiusByGeneration;
 
@@ -86,16 +87,19 @@ namespace Bloodfiends.BloodCommand
             float radius = Settings.radiusByGeneration?.Evaluate(generation) ?? 10f;
             float radiusSquared = radius * radius;
 
+            float filthHemogenThisPass = 0f;
             foreach (ThingDef bloodFilthDef in BloodFilthDefs)
             {
                 List<Thing> bloodFilth = map.listerThings.ThingsOfDef(bloodFilthDef);
                 for (int filthIndex = bloodFilth.Count - 1; filthIndex >= 0; filthIndex--)
                 {
                     if (hemogenGene.Value >= hemogenGene.Max) return;
+                    if (filthHemogenThisPass >= Settings.maximumFilthHemogenPerPass) break;   // the rest waits for the next pull
                     if (!(bloodFilth[filthIndex] is Filth filth) || filth.Destroyed || filthBeingPulled.Contains(filth)) continue;
                     if ((filth.Position - bloodfiend.Position).LengthHorizontalSquared > radiusSquared) continue;
 
                     float hemogenGained = filth.thickness * Settings.hemogenPerFilthThickness;
+                    filthHemogenThisPass += hemogenGained;
                     GeneUtility.OffsetHemogen(bloodfiend, hemogenGained);
                     if (ShowAbsorb(filth.Position, bloodfiend, filth.thickness >= Settings.risingThickness, out StreamLineEffect stream))
                     {

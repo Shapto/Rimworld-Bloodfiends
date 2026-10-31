@@ -312,10 +312,17 @@ namespace Bloodfiends.LaSangre
             float back = -Props.lanceGripFraction * length;
             float front = (grown - Props.lanceGripFraction) * length;
             lanceMesh.vertices = new[] { new Vector3(back, 0f, -halfHeight), new Vector3(back, 0f, halfHeight), new Vector3(front, 0f, halfHeight), new Vector3(front, 0f, -halfHeight) };
-            lanceMesh.uv = new[] { new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(grown, 1f), new Vector2(grown, 0f) };
+            lanceMesh.uv = new[] { LanceUv(0f, -1f), LanceUv(0f, 1f), LanceUv(grown, 1f), LanceUv(grown, -1f) };
             lanceMesh.RecalculateBounds();
             Quaternion turn = Quaternion.FromToRotation(Vector3.right, diveDirection);
             Graphics.DrawMesh(lanceMesh, Matrix4x4.TRS(grip.WithY(altitude), turn, Vector3.one), material, 0);
+        }
+
+        private Vector2 LanceUv(float along, float side)
+        {
+            Vector2 axis = Props.lanceTipOnTexture - Props.lanceButtOnTexture;
+            Vector2 left = new Vector2(-axis.y, axis.x).normalized * Props.lanceHalfWidthOnTexture;
+            return Props.lanceButtOnTexture + axis * along + left * side;
         }
 
         private void DrawTendrils()
@@ -402,7 +409,11 @@ namespace Bloodfiends.LaSangre
             }
 
             Texture2D texture = ContentFinder<Texture2D>.Get(Props.lanceTexturePath, false) ?? BaseContent.BadTex;
-            lanceAspect = texture.height / (float)Mathf.Max(1, texture.width);
+            Vector2 axis = Props.lanceTipOnTexture - Props.lanceButtOnTexture;
+            Vector2 side = new Vector2(-axis.y, axis.x).normalized * Props.lanceHalfWidthOnTexture;
+            float axisPixels = new Vector2(axis.x * texture.width, axis.y * texture.height).magnitude;
+            float sidePixels = new Vector2(side.x * texture.width, side.y * texture.height).magnitude;
+            lanceAspect = 2f * sidePixels / Mathf.Max(1f, axisPixels);
             lanceMaterial = MaterialPool.MatFrom(new MaterialRequest(texture, ShaderDatabase.Transparent, Color.white));
             ghostMaterial = MaterialPool.MatFrom(new MaterialRequest(texture, ShaderDatabase.Transparent, new Color(1f, 1f, 1f, 0.15f)));
             lanceMesh = new Mesh();

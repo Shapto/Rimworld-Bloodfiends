@@ -7,7 +7,7 @@
 		<geneClass>Bloodfiends.SanguineRegeneration.Gene_SanguineRegeneration</geneClass>
 		<iconPath>Icons/Healing</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
-		<prerequisite>Bloodfiends_Bloodfiend</prerequisite>
+		<prerequisite>Hemogenic</prerequisite>
 		<biostatArc>1</biostatArc>
 		<modExtensions>
 			<li Class="Bloodfiends.SanguineRegeneration.SanguineRegenerationExtension">

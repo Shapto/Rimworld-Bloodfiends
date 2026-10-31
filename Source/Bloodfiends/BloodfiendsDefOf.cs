@@ -38,6 +38,10 @@ namespace Bloodfiends
         public static SoundDef Bloodfiends_LanceForming;
         public static SoundDef Bloodfiends_LanceChargeWindup;
         public static SoundDef Bloodfiends_LanceChargeHit;
+        public static HediffDef Bloodfiends_SeekingEmbrace;
+        public static AbilityDef Bloodfiends_Embrace;
+        public static JobDef Bloodfiends_ReceiveEmbrace;
+        public static SitePartDef Bloodfiends_ElderLair;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

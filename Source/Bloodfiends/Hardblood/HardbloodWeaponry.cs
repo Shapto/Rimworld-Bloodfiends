@@ -20,9 +20,9 @@ namespace Bloodfiends.Hardblood
         public SimpleCurve qualityByGeneration = new SimpleCurve { new CurvePoint(1f, 4f), new CurvePoint(4f, 2f), new CurvePoint(7f, 1f) };
         public int craftingLevelsPerQualityStep = 10;
         public QualityCategory maximumQuality = QualityCategory.Masterwork;
-        public float formSeconds = 3f;
+        public float formSeconds = 0.8f;
         public float lineWidth = 0.12f;
-        public float hemogenPerShotDamage = 0.05f;                                   
+        public float hemogenPerShotDamage = 0.15f;                             
         public List<string> extraMimicableCompClasses = new List<string>();
         public List<HardbloodShardVariant> shardVariants = new List<HardbloodShardVariant>
         {
@@ -161,9 +161,6 @@ namespace Bloodfiends.Hardblood
             return command;
         }
 
-        /// <summary>
-        /// Just past the pawn's last ability button, so it's drawn at the end of their abilities.
-        /// </summary>
         private static float OrderAfterAbilities(Pawn pawn)
         {
             float lastAbilityOrder = 5f;
@@ -233,7 +230,6 @@ namespace Bloodfiends.Hardblood
         {
             ThingDef lanceDef = BloodfiendsDefOf.Bloodfiends_HardbloodLance;
             var lance = (ThingWithComps)ThingMaker.MakeThing(lanceDef);
-            lance.TryGetComp<CompQuality>()?.SetQuality(QualityCategory.Legendary, ArtGenerationContext.Colony);
             Equip(pawn, lance, lanceDef.GetModExtension<HardbloodLanceExtension>().manifestCost);
         }
 
