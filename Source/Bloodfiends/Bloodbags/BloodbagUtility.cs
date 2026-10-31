@@ -35,7 +35,12 @@ namespace Bloodfiends.Bloodbags
 
             if (faction != null && pawn.Faction != faction) RecruitUtility.Recruit(pawn, faction, instigator);
             pawn.genes?.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodbag);
+            ThingWithComps heldWeapon = pawn.equipment?.Primary;
+            if (heldWeapon != null) pawn.equipment.Remove(heldWeapon);
+
             MutantUtility.SetPawnAsMutantInstantly(pawn, bloodbagDef);
+
+            if (heldWeapon != null) pawn.equipment.AddEquipment(heldWeapon);
 
             Gene_Hemogen hemogenGene = pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
             if (hemogenGene != null)
