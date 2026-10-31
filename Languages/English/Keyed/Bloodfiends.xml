@@ -89,7 +89,7 @@
   <Bloodfiends_HuntedKindredArrivedLabel>{JOINER_nameDef} arrives</Bloodfiends_HuntedKindredArrivedLabel>
   <Bloodfiends_HuntedKindredArrivedText>{JOINER_nameDef} has arrived and joined you. {HUNTER_nameDef} won't be far behind.</Bloodfiends_HuntedKindredArrivedText>
   <Bloodfiends_HuntedKindredHunterArrivedLabel>{HUNTER_nameDef} is here</Bloodfiends_HuntedKindredHunterArrivedLabel>
-  <Bloodfiends_HuntedKindredHunterArrivedText>{HUNTER_nameFull} has come to take back {JOINER_nameDef}, and brought {HUNTER_possessive} thralls.</Bloodfiends_HuntedKindredHunterArrivedText>
+  <Bloodfiends_HuntedKindredHunterArrivedText>{HUNTER_nameFull} has caught up with {JOINER_nameDef}, and brought {HUNTER_possessive} thralls.</Bloodfiends_HuntedKindredHunterArrivedText>
   <Bloodfiends_HuntedKindredCapturedLabel>Hunter captured</Bloodfiends_HuntedKindredCapturedLabel>
   <Bloodfiends_HuntedKindredCapturedText>{HUNTER_nameDef} has been taken alive. {JOINER_nameDef} is safe, for now.</Bloodfiends_HuntedKindredCapturedText>
   <Bloodfiends_HuntedKindredRepelledLabel>Hunter repelled</Bloodfiends_HuntedKindredRepelledLabel>
