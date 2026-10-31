@@ -3,7 +3,7 @@
 	<AbilityDef>
 		<defName>Bloodfiends_CoagulateAndMeltAway</defName>
 		<label>coagulate and melt away</label>
-		<description>TODO</description>
+		<description>Harden, then melt the cursed blood coursing through the veins of another progeny. Puts immense pressure on the target's body, violently expelling their blood outward and rupturing the body from the inside.</description>
 		<iconPath>Icons/MeltAway</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>120</displayOrder>
