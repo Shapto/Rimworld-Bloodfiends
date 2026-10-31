@@ -9,6 +9,7 @@
 		<displayOrder>120</displayOrder>
 		<cooldownTicksRange>60000</cooldownTicksRange>
 		<hostile>true</hostile>
+		<aiCanUse>true</aiCanUse>
 		<casterMustBeCapableOfViolence>true</casterMustBeCapableOfViolence>
 		<verbProperties>
 			<verbClass>Verb_CastAbility</verbClass>

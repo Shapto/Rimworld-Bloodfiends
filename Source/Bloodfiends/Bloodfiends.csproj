@@ -73,6 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\MapComponent_BloodfiendTactics.cs" />
     <Compile Include="Aquaphobia\Gene_Aquaphobia.cs" />
     <Compile Include="Aquaphobia\JobGiver_FleeWater.cs" />
     <Compile Include="Aquaphobia\MentalBreakWorker_AquaTerror.cs" />

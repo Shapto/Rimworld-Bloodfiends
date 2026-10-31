@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -36,10 +37,23 @@ namespace Bloodfiends.LaSangre
     {
         public new CompProperties_AbilityLaSangre Props => (CompProperties_AbilityLaSangre)props;
 
+        private const int MinimumEnemiesForAI = 2;
+
         public float ExtraHemogenCost => parent.pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>()?.Value ?? 0f;
 
         private static readonly Color ImpactRingColor = new Color(0.85f, 0.1f, 0.1f);
         private static readonly Color FamilyRingColor = new Color(1f, 0.6f, 0.6f, 0.6f);
+
+        public override bool AICanTargetNow(LocalTargetInfo target)
+        {
+            Pawn caster = parent.pawn;
+            Gene_Hemogen hemogenGene = caster.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+            if (hemogenGene == null || hemogenGene.Value < hemogenGene.Max * Props.minimumHemogenFraction || !target.IsValid || caster.Map == null) return false;
+            int enemiesInBlast = GenRadial.RadialDistinctThingsAround(target.Cell, caster.Map, Props.impactRadius, true)
+                .OfType<Pawn>()
+                .Count(pawn => !pawn.Dead && !pawn.Downed && pawn.HostileTo(caster));
+            return enemiesInBlast >= MinimumEnemiesForAI;
+        }
 
         public override bool GizmoDisabled(out string reason)
         {
