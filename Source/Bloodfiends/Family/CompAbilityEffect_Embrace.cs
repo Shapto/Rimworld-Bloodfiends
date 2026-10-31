@@ -41,7 +41,7 @@ namespace Bloodfiends.Family
         {
             get
             {
-                if (Result != EmbraceResult.Kindred) return 0f;
+                if (Result == EmbraceResult.Bloodbag) return 0f;
                 Gene_Hemogen hemogenGene = parent.pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
                 return (hemogenGene?.Max ?? 0f) * Props.embracerHemogenFraction;
             }
@@ -145,53 +145,68 @@ namespace Bloodfiends.Family
         {
             BloodfiendFamilyNode kindredNode = GameComponent_BloodfiendFamilies.Instance?.CreateKindredNode(CasterNode, kindredPawn);
             if (kindredNode == null) return;
-            bool willing = kindredPawn.Faction == casterPawn.Faction && !kindredPawn.IsPrisoner;
+            bool willing = IsWilling(casterPawn, kindredPawn);
 
             kindredPawn.genes.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodfiend);
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
             lineageHediff.nodeId = kindredNode.nodeId;
             kindredPawn.health.AddHediff(lineageHediff);
 
-            // born starving
-            Gene_Hemogen kindredHemogen = kindredPawn.genes.GetFirstGeneOfType<Gene_Hemogen>();
-            if (kindredHemogen != null) kindredHemogen.Value = 0f;
-
-            // the turning takes them under for a while; they wake to the hunger
-            if (Props.kindredComaTicks > 0)
-            {
-                Hediff coma = HediffMaker.MakeHediff(HediffDefOf.XenogerminationComa, kindredPawn);
-                kindredPawn.health.AddHediff(coma);
-                HediffComp_Disappears comaTimer = coma.TryGetComp<HediffComp_Disappears>();
-                if (comaTimer != null) comaTimer.ticksToDisappear = Props.kindredComaTicks;
-            }
-
-            // the embracer's blood
-            Gene_Hemogen casterHemogen = casterPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
-            if (casterHemogen != null) casterHemogen.Value -= casterHemogen.Max * Props.embracerHemogenFraction;
-            if (Props.embracerWeaknessHediff != null) casterPawn.health.AddHediff(Props.embracerWeaknessHediff);
-
+            TakeUnder(kindredPawn);
+            DrainEmbracer(casterPawn);
             if (kindredPawn.Faction != casterPawn.Faction) RecruitUtility.Recruit(kindredPawn, casterPawn.Faction, casterPawn);
-
-            MemoryThoughtHandler memories = kindredPawn.needs?.mood?.thoughts.memories;
-            if (willing && Props.willingKindredThought != null) memories?.TryGainMemory(Props.willingKindredThought, casterPawn);
-            if (!willing)
-            {
-                if (Props.unwillingKindredThought != null) memories?.TryGainMemory(Props.unwillingKindredThought, casterPawn);
-                if (Props.unwillingKindredOpinionThought != null) memories?.TryGainMemory(Props.unwillingKindredOpinionThought, casterPawn);
-            }
+            GiveTurningThoughts(casterPawn, kindredPawn, willing);
 
             FilthMaker.TryMakeFilth(kindredPawn.PositionHeld, kindredPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
             Messages.Message("Bloodfiends_Embraced".Translate(casterPawn.Named("CASTER"), kindredPawn.Named("KINDRED")), kindredPawn, MessageTypeDefOf.PositiveEvent);
         }
 
-        private static void PassOnXenogenes(Pawn casterPawn, Pawn targetPawn)
+        /// <summary>
+        /// A hemogenic biter without the crimson curse passes on their xenogenes, at the same cost as making a Kindred:
+        /// the target goes under and the biter is drained. Vanilla's own coma and recovery are replaced by these.
+        /// </summary>
+        private void PassOnXenogenes(Pawn casterPawn, Pawn targetPawn)
         {
+            bool willing = IsWilling(casterPawn, targetPawn);
             GeneUtility.ReimplantXenogerm(casterPawn, targetPawn);
             RemoveHediff(targetPawn, HediffDefOf.XenogerminationComa);
             RemoveHediff(casterPawn, HediffDefOf.XenogermReplicating);
 
+            TakeUnder(targetPawn);
+            DrainEmbracer(casterPawn);
+            GiveTurningThoughts(casterPawn, targetPawn, willing);
+
             FilthMaker.TryMakeFilth(targetPawn.PositionHeld, targetPawn.MapHeld, ThingDefOf.Filth_Blood, 2);
             Messages.Message("Bloodfiends_EmbracedXenogenes".Translate(casterPawn.Named("CASTER"), targetPawn.Named("TARGET")), targetPawn, MessageTypeDefOf.NeutralEvent);
+        }
+
+        private static bool IsWilling(Pawn casterPawn, Pawn targetPawn) => targetPawn.Faction == casterPawn.Faction && !targetPawn.IsPrisoner;
+
+        private void TakeUnder(Pawn targetPawn)
+        {
+            Gene_Hemogen targetHemogen = targetPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+            if (targetHemogen != null) targetHemogen.Value = 0f;
+            if (Props.kindredComaTicks <= 0) return;
+            Hediff coma = HediffMaker.MakeHediff(HediffDefOf.XenogerminationComa, targetPawn);
+            targetPawn.health.AddHediff(coma);
+            HediffComp_Disappears comaTimer = coma.TryGetComp<HediffComp_Disappears>();
+            if (comaTimer != null) comaTimer.ticksToDisappear = Props.kindredComaTicks;
+        }
+
+        private void DrainEmbracer(Pawn casterPawn)
+        {
+            Gene_Hemogen casterHemogen = casterPawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
+            if (casterHemogen != null) casterHemogen.Value -= casterHemogen.Max * Props.embracerHemogenFraction;
+            if (Props.embracerWeaknessHediff != null) casterPawn.health.AddHediff(Props.embracerWeaknessHediff);
+        }
+
+        private void GiveTurningThoughts(Pawn casterPawn, Pawn targetPawn, bool willing)
+        {
+            MemoryThoughtHandler memories = targetPawn.needs?.mood?.thoughts.memories;
+            if (willing && Props.willingKindredThought != null) memories?.TryGainMemory(Props.willingKindredThought, casterPawn);
+            if (willing) return;
+            if (Props.unwillingKindredThought != null) memories?.TryGainMemory(Props.unwillingKindredThought, casterPawn);
+            if (Props.unwillingKindredOpinionThought != null) memories?.TryGainMemory(Props.unwillingKindredOpinionThought, casterPawn);
         }
 
         private static void RemoveHediff(Pawn pawn, HediffDef hediffDef)
