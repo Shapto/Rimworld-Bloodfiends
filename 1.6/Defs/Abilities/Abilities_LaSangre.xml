@@ -40,7 +40,6 @@
 				<lanceButtOnTexture>(0.075, 0.086)</lanceButtOnTexture>
 				<lanceTipOnTexture>(0.921, 0.931)</lanceTipOnTexture>
 				<lanceHalfWidthOnTexture>0.121</lanceHalfWidthOnTexture>
-				<lanceTextureAngle>45</lanceTextureAngle>
 				<lanceLength>4.6</lanceLength>
 				<lanceGripFraction>0.185</lanceGripFraction>
 				<lanceGuardFraction>0.39</lanceGuardFraction>

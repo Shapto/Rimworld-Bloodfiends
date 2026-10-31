@@ -20,7 +20,7 @@ namespace Bloodfiends.Hardblood
         public SimpleCurve qualityByGeneration = new SimpleCurve { new CurvePoint(1f, 4f), new CurvePoint(4f, 2f), new CurvePoint(7f, 1f) };
         public int craftingLevelsPerQualityStep = 10;
         public QualityCategory maximumQuality = QualityCategory.Masterwork;
-        public float formSeconds = 3f;
+        public float formSeconds = 0.8f;
         public float lineWidth = 0.12f;
         public float hemogenPerShotDamage = 0.05f;                                   
         public List<string> extraMimicableCompClasses = new List<string>();

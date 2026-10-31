@@ -108,7 +108,7 @@
 				</qualityByGeneration>
 				<craftingLevelsPerQualityStep>10</craftingLevelsPerQualityStep>
 				<maximumQuality>Masterwork</maximumQuality>
-				<formSeconds>3</formSeconds>
+				<formSeconds>0.8</formSeconds>
 			</li>
 			<li Class="Bloodfiends.Hunger.StaleBloodExtension">
 				<hemogenFactor>0.25</hemogenFactor>
