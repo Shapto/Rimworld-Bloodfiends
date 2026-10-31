@@ -128,11 +128,13 @@
     <Compile Include="Mantle\Patch_GeneUtility_OffsetHemogen_MantleCut.cs" />
     <Compile Include="Mantle\Patch_PawnHealthTracker_PreApplyDamage_Mantle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quests\BloodfiendQuestUtility.cs" />
     <Compile Include="Quests\FamilyGatheringLords.cs" />
     <Compile Include="Quests\GenStep_ElderLair.cs" />
     <Compile Include="Quests\QuestNode_Root_BloodfiendTransport.cs" />
     <Compile Include="Quests\QuestNode_Root_ElderHunt.cs" />
     <Compile Include="Quests\QuestNode_Root_FamilyGathering.cs" />
+    <Compile Include="Quests\QuestNode_Root_HuntedKindred.cs" />
     <Compile Include="Quests\QuestNode_Root_LostKindred.cs" />
     <Compile Include="Quests\QuestNode_Root_Seeker.cs" />
     <Compile Include="SanguineRegeneration\Gene_SanguineRegeneration.cs" />

@@ -85,4 +85,16 @@
   <Bloodfiends_ElderHuntCapturedLabel>Elder captured</Bloodfiends_ElderHuntCapturedLabel>
   <Bloodfiends_ElderHuntCapturedText>{ELDER_nameDef} has been taken alive. What becomes of {ELDER_objective} is up to you.</Bloodfiends_ElderHuntCapturedText>
 
+  <!-- Quests: Hunted kindred -->
+  <Bloodfiends_HuntedKindredArrivedLabel>{JOINER_nameDef} arrives</Bloodfiends_HuntedKindredArrivedLabel>
+  <Bloodfiends_HuntedKindredArrivedText>{JOINER_nameDef} has arrived and joined you. {HUNTER_nameDef} won't be far behind.</Bloodfiends_HuntedKindredArrivedText>
+  <Bloodfiends_HuntedKindredHunterArrivedLabel>{HUNTER_nameDef} is here</Bloodfiends_HuntedKindredHunterArrivedLabel>
+  <Bloodfiends_HuntedKindredHunterArrivedText>{HUNTER_nameFull} has come to take back {JOINER_nameDef}, and brought {HUNTER_possessive} thralls.</Bloodfiends_HuntedKindredHunterArrivedText>
+  <Bloodfiends_HuntedKindredCapturedLabel>Hunter captured</Bloodfiends_HuntedKindredCapturedLabel>
+  <Bloodfiends_HuntedKindredCapturedText>{HUNTER_nameDef} has been taken alive. {JOINER_nameDef} is safe, for now.</Bloodfiends_HuntedKindredCapturedText>
+  <Bloodfiends_HuntedKindredRepelledLabel>Hunter repelled</Bloodfiends_HuntedKindredRepelledLabel>
+  <Bloodfiends_HuntedKindredRepelledText>{HUNTER_nameDef} has given up the chase. {JOINER_nameDef} is safe, for now.</Bloodfiends_HuntedKindredRepelledText>
+  <Bloodfiends_HuntedKindredCaughtLabel>{JOINER_nameDef} died</Bloodfiends_HuntedKindredCaughtLabel>
+  <Bloodfiends_HuntedKindredCaughtText>{HUNTER_nameDef} got what {HUNTER_pronoun} came for.</Bloodfiends_HuntedKindredCaughtText>
+
 </LanguageData>

@@ -25,6 +25,8 @@ namespace Bloodfiends.Family
         private readonly HashSet<Pawn> playerAncestorPawnsCache = new HashSet<Pawn>();
         private int playerAncestorCacheTick = -1;
 
+        public static int embracingNodeId = -1;
+
         public BloodfiendFamilyNode GetNodeForPawn(Pawn pawn) => pawn != null && nodeIdsByPawn.TryGetValue(pawn, out int nodeId) ? GetNode(nodeId) : null;
 
         private static bool IsPlayerMember(BloodfiendFamilyNode node) => node.HasLivingPawn && node.bloodfiendPawn.Faction == Faction.OfPlayer;

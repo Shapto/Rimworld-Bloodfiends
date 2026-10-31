@@ -1,11 +1,8 @@
-﻿using Bloodfiends.Bloodbags;
+﻿using System.Collections.Generic;
 using Bloodfiends.Family;
 using RimWorld;
 using RimWorld.Planet;
 using RimWorld.QuestGen;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using Verse;
 
 namespace Bloodfiends.Quests
@@ -36,16 +33,16 @@ namespace Bloodfiends.Quests
             float points = slate.Get("points", 0f);
             if (!TileFinder.TryFindNewSiteTile(out PlanetTile siteTile)) return;
 
-            Faction lairFaction = MakeLairFaction(quest);
+            Faction lairFaction = BloodfiendQuestUtility.MakeHostileTemporaryFaction();
 
             List<BloodfiendFamilyNode> ownFamilyAncestors = registry.UnclaimedAncestorsOfPlayer();
             BloodfiendFamilyNode targetNode = ownFamilyAncestors.Count > 0 && Rand.Chance(OwnElderChance) ? ownFamilyAncestors.RandomElementByWeight(node => 1f / node.generationNumber) : null;
 
-            Pawn elder = GenerateElder(lairFaction, siteTile, targetNode);
+            Pawn elder = BloodfiendQuestUtility.GenerateBloodfiend(PawnKindDefOf.Sanguophage, lairFaction, siteTile, claimingNodeId: targetNode?.nodeId ?? -1, foundingGeneration: targetNode == null ? GameComponent_BloodfiendFamilies.ElderGeneration : 0);
             BloodfiendFamilyNode elderNode = registry.GetNodeForPawn(elder);
             bool huntingOwnElder = targetNode != null && elderNode == targetNode;
 
-            List<Pawn> guards = GenerateGuards(lairFaction, siteTile, elder, elderNode?.familyId ?? -1, points);
+            List<Pawn> guards = BloodfiendQuestUtility.GenerateGuards(lairFaction, siteTile, elder, points - ElderCombatPoints, MaximumGuardCount);
             List<Thing> hoard = GenerateHoard(points, huntingOwnElder);
 
             SitePartParams lairParams = new SitePartParams { threatPoints = points };
@@ -84,52 +81,6 @@ namespace Bloodfiends.Quests
             AddEnding(quest, elderCapturedSignal, QuestEndOutcome.Success, LetterDefOf.PositiveEvent, "Bloodfiends_ElderHuntCaptured", elder);
         }
 
-        private static Faction MakeLairFaction(Quest quest)
-        {
-            List<FactionRelation> relations = Find.FactionManager.AllFactionsListForReading
-                .Select(faction => new FactionRelation(faction, FactionRelationKind.Hostile))
-                .ToList();
-            Faction lairFaction = FactionGenerator.NewGeneratedFactionWithRelations(FactionDefOf.Sanguophages, relations, hidden: true);
-            lairFaction.temporary = true;
-            Find.FactionManager.Add(lairFaction);
-            return lairFaction;
-        }
-
-        private static Pawn GenerateElder(Faction lairFaction, PlanetTile siteTile, BloodfiendFamilyNode targetNode)
-        {
-            PawnGenerationRequest elderRequest = new PawnGenerationRequest(PawnKindDefOf.Sanguophage, lairFaction, PawnGenerationContext.NonPlayer, siteTile, forceGenerateNewPawn: true, mustBeCapableOfViolence: true, forcedXenotype: BloodfiendsDefOf.Bloodfiends_Bloodfiend);
-
-            GameComponent_BloodfiendFamilies.claimingNodeId = targetNode?.nodeId ?? -1;
-            GameComponent_BloodfiendFamilies.foundingGeneration = targetNode == null ? GameComponent_BloodfiendFamilies.ElderGeneration : 0;
-            try
-            {
-                Pawn elder = PawnGenerator.GeneratePawn(elderRequest);
-                QuestGen.AddToGeneratedPawns(elder);
-                return elder;
-            }
-            finally
-            {
-                GameComponent_BloodfiendFamilies.claimingNodeId = -1;
-                GameComponent_BloodfiendFamilies.foundingGeneration = 0;
-            }
-        }
-
-        private static List<Pawn> GenerateGuards(Faction lairFaction, PlanetTile siteTile, Pawn elder, int familyId, float points)
-        {
-            PawnKindDef guardKind = PawnKindDefOf.SanguophageThrall;
-            int guardCount = Mathf.Clamp(Mathf.FloorToInt((points - ElderCombatPoints) / guardKind.combatPower), 1, MaximumGuardCount);
-
-            List<Pawn> guards = new List<Pawn>();
-            for (int guardIndex = 0; guardIndex < guardCount; guardIndex++)
-            {
-                Pawn guard = PawnGenerator.GeneratePawn(new PawnGenerationRequest(guardKind, lairFaction, PawnGenerationContext.NonPlayer, siteTile, forceGenerateNewPawn: true, mustBeCapableOfViolence: true));
-                if (BloodbagUtility.BloodbagDef != null) BloodbagUtility.MakeBloodbag(guard, lairFaction, elder, familyId);
-                QuestGen.AddToGeneratedPawns(guard);
-                guards.Add(guard);
-            }
-            return guards;
-        }
-
         private static List<Thing> GenerateHoard(float points, bool huntingOwnElder)
         {
             float hoardValue = points * HoardValueFactorRange.RandomInRange * (huntingOwnElder ? OwnElderHoardFactor : 1f);
@@ -161,7 +112,7 @@ namespace Bloodfiends.Quests
         {
             base.Cleanup();
             if (elder == null || elder.Dead) return;
-            if (!elder.Destroyed && !elder.Discarded && !(elder.ParentHolder is SitePart)) return;
+            if (!elder.Destroyed && !(elder.ParentHolder is SitePart)) return;
             GameComponent_BloodfiendFamilies.Instance?.ReleaseClaim(elder);
         }
 
