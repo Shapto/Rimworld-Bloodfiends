@@ -7,22 +7,22 @@
 		<stages>
 			<li>
 				<label>Burden of the Family</label>
-				<description>TODO</description>
+				<description>I long for a family of my own.</description>
 				<baseMoodEffect>-10</baseMoodEffect>
 			</li>
 			<li>
 				<label>Burden of the Family</label>
-				<description>TODO</description>
+				<description>The family is yet too small.</description>
 				<baseMoodEffect>-7</baseMoodEffect>
 			</li>
 			<li>
 				<label>Burden of the Family</label>
-				<description>TODO</description>
+				<description>The family must yet grow.</description>
 				<baseMoodEffect>-4</baseMoodEffect>
 			</li>
 			<li>
 				<label>Burden of the Family</label>
-				<description>TODO</description>
+				<description>The family nears its pinnacle.</description>
 				<baseMoodEffect>-2</baseMoodEffect>
 			</li>
 		</stages>
@@ -59,7 +59,7 @@
 		<stages>
 			<li>
 				<label>chastised by an elder</label>
-				<description>TODO</description>
+				<description>An elder has struck me! I must right my wrongs.</description>
 				<baseMoodEffect>-2</baseMoodEffect>
 			</li>
 		</stages>
@@ -74,7 +74,7 @@
 		<stages>
 			<li>
 				<label>quarrelled with a sibling</label>
-				<description>TODO</description>
+				<description>I've quarelled with my own blood. Whatever the reason may have been, it's not a good feeling.</description>
 				<baseMoodEffect>-4</baseMoodEffect>
 			</li>
 		</stages>
@@ -89,17 +89,17 @@
 		<stages>
 			<li>
 				<label>filial impiety</label>
-				<description>TODO</description>
+				<description>I've struck a superior! The shame!</description>
 				<baseMoodEffect>-12</baseMoodEffect>
 			</li>
 			<li>
 				<label>grave impiety</label>
-				<description>TODO</description>
+				<description>I've struck an elder! The impiety! The dishonor!</description>
 				<baseMoodEffect>-18</baseMoodEffect>
 			</li>
 			<li>
 				<label>unforgivable impiety</label>
-				<description>TODO</description>
+				<description>I have comitted an unforgivable sin against my brethren. I ask for no forgiveness as I deserve none...</description>
 				<baseMoodEffect>-25</baseMoodEffect>
 			</li>
 		</stages>
@@ -129,7 +129,7 @@
 		<stages>
 			<li>
 				<label>killed an elder</label>
-				<description>TODO</description>
+				<description>I have comitted the primordial sin against my own blood. My veins scream at me, my brethren shun me. I deserve nothing.</description>
 				<baseMoodEffect>-30</baseMoodEffect>
 			</li>
 		</stages>
@@ -143,7 +143,7 @@
 		<stages>
 			<li>
 				<label>embraced</label>
-				<description>TODO</description>
+				<description>What... is this? I feel younger, faster, sharper... I feel invincible!</description>
 				<baseMoodEffect>6</baseMoodEffect>
 			</li>
 		</stages>
@@ -157,7 +157,7 @@
 		<stages>
 			<li>
 				<label>turned against my will</label>
-				<description>TODO</description>
+				<description>What did they do to me? My eyes! My teeth! I've been made a monster!</description>
 				<baseMoodEffect>-15</baseMoodEffect>
 			</li>
 		</stages>
