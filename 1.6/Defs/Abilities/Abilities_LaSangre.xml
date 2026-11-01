@@ -4,7 +4,7 @@
 		<defName>Bloodfiends_LaSangre</defName>
 		<label>La Sangre</label>
 		<description>Surround the caster in a Hardblood cocoon, erupt forth from it and repurpose its shell into a massive lance. All hostiles in the radius will undergo bloodletting, feeding the caster and their progeny, while targets in the immediate vicinity of the impact will also take its full brunt.</description>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/LaSangre</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>120</displayOrder>
 		<cooldownTicksRange>60000</cooldownTicksRange>
