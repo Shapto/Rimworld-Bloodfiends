@@ -8,7 +8,7 @@
 		<iconPath>Icons/CrimsonCurse</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Hemogenic</prerequisite>
-		<biostatArc>1</biostatArc>
+		<biostatArc>10</biostatArc>
 		<abilities>
 			<li>Bloodfeed</li>
 			<li>Bloodfiends_CoagulateAndMeltAway</li>

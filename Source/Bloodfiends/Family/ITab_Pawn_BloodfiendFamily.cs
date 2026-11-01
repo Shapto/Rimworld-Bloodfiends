@@ -104,7 +104,7 @@ namespace Bloodfiends.Family
             LayOutTree(registry, rootNodes, topGeneration, bottomGeneration, out float treeWidth, out float treeHeight);
 
             Rect contentRect = new Rect(0f, 0f, size.x, size.y).ContractedBy(Margin);
-            DrawHeader(new Rect(contentRect.x, contentRect.y, contentRect.width, HeaderHeight), familyNodes, selectedIsBloodbag, selectedMaster);
+            DrawHeader(new Rect(contentRect.x, contentRect.y, contentRect.width, HeaderHeight), familyNodes, rootNodes, selectedIsBloodbag, selectedMaster);
 
             Rect treeOutRect = new Rect(contentRect.x, contentRect.y + HeaderHeight, contentRect.width, contentRect.height - HeaderHeight);
             Widgets.DrawBoxSolidWithOutline(treeOutRect, FamilyTreeTextures.TreeBackgroundColor, DividerColor);
@@ -186,14 +186,10 @@ namespace Bloodfiends.Family
             }
         }
 
-        private void DrawHeader(Rect headerRect, List<BloodfiendFamilyNode> familyNodes, bool selectedIsBloodbag, Pawn selectedMaster)
+        private void DrawHeader(Rect headerRect, List<BloodfiendFamilyNode> familyNodes, List<BloodfiendFamilyNode> rootNodes, bool selectedIsBloodbag, Pawn selectedMaster)
         {
-            Pawn eldestKnownMember = familyNodes
-                .Where(node => node.HasLivingPawn)
-                .OrderBy(node => node.generationNumber)
-                .Select(node => node.bloodfiendPawn)
-                .FirstOrDefault();
-            string title = eldestKnownMember != null ? "Bloodfiends_FamilyTabBloodlineOf".Translate(eldestKnownMember.Named("PAWN")).Resolve() : "Bloodfiends_FamilyTabUnknownBloodline".Translate().Resolve();
+            BloodfiendFamilyNode founderNode = rootNodes.FirstOrDefault();
+            string title = founderNode != null && founderNode.HasLivingPawn ? "Bloodfiends_FamilyTabBloodlineOf".Translate(founderNode.bloodfiendPawn.Named("PAWN")).Resolve() : "Bloodfiends_FamilyTabUnknownBloodline".Translate().Resolve();
 
             int metCount = familyNodes.Count(node => node.HasLivingPawn);
             int bloodbagCount = bloodbagsByMaster.Values.Sum(masterBloodbags => masterBloodbags.Count) + masterlessBloodbags.Count;

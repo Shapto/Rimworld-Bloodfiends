@@ -37,7 +37,7 @@ namespace Bloodfiends.Quests
             if (!RCellFinder.TryFindRandomPawnEntryCell(out IntVec3 walkInSpot, map, CellFinder.EdgeRoadChance_Hostile)) return;
 
             Faction hunterFaction = BloodfiendQuestUtility.MakeHostileTemporaryFaction();
-            Pawn hunter = BloodfiendQuestUtility.GenerateBloodfiend(PawnKindDefOf.Sanguophage, hunterFaction, map.Tile);
+            Pawn hunter = BloodfiendQuestUtility.GenerateBloodfiend(BloodfiendsDefOf.Bloodfiends_BloodfiendKind, hunterFaction, map.Tile);
             BloodfiendFamilyNode hunterNode = registry.GetNodeForPawn(hunter);
 
             int joinerEmbracerNodeId = hunterNode != null && Rand.Chance(EmbracedByHunterChance) ? hunterNode.nodeId : -1;

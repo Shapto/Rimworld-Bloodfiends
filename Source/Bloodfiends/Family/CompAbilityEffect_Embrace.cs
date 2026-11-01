@@ -149,7 +149,7 @@ namespace Bloodfiends.Family
             if (kindredNode == null) return;
             bool willing = !joinsEmbracer || IsWilling(casterPawn, kindredPawn);
 
-            kindredPawn.genes.SetXenotype(BloodfiendsDefOf.Bloodfiends_Bloodfiend);
+            PassOnBloodline(casterPawn, kindredPawn);
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, kindredPawn);
             lineageHediff.nodeId = kindredNode.nodeId;
             kindredPawn.health.AddHediff(lineageHediff);
@@ -161,6 +161,19 @@ namespace Bloodfiends.Family
 
             FilthMaker.TryMakeFilth(kindredPawn.PositionHeld, kindredPawn.MapHeld, ThingDefOf.Filth_Blood, 3);
             Messages.Message("Bloodfiends_Embraced".Translate(casterPawn.Named("CASTER"), kindredPawn.Named("KINDRED")), kindredPawn, MessageTypeDefOf.PositiveEvent);
+        }
+
+        private static void PassOnBloodline(Pawn casterPawn, Pawn kindredPawn)
+        {
+            GeneUtility.ReimplantXenogerm(casterPawn, kindredPawn);
+            RemoveHediff(kindredPawn, HediffDefOf.XenogerminationComa);
+            RemoveHediff(kindredPawn, HediffDefOf.XenogermReplicating);
+            RemoveHediff(casterPawn, HediffDefOf.XenogermReplicating);
+
+            if (kindredPawn.genes.GetFirstGeneOfType<Gene_Bloodfiend>() != null) return;
+            GeneDef dipsiaDef = casterPawn.genes.GetFirstGeneOfType<Gene_Bloodfiend>()?.def ?? DefDatabase<GeneDef>.GetNamed("Bloodfiends_Bloodfiend");
+            if (dipsiaDef.prerequisite != null && !kindredPawn.genes.HasActiveGene(dipsiaDef.prerequisite)) kindredPawn.genes.AddGene(dipsiaDef.prerequisite, xenogene: true);
+            kindredPawn.genes.AddGene(dipsiaDef, xenogene: true);
         }
 
         public bool CanMakeKindredNow => CasterNode != null && GameComponent_BloodfiendFamilies.Instance?.CanEmbraceKindred(CasterNode) == true;

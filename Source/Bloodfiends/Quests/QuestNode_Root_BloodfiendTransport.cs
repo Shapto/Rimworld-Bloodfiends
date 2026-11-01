@@ -60,7 +60,7 @@ namespace Bloodfiends.Quests
             quest.ReserveFaction(faction);
 
             var shuttlePawns = new List<Pawn>();
-            Pawn master = quest.GeneratePawn(new PawnGenerationRequest(PawnKindDefOf.Sanguophage, faction, PawnGenerationContext.NonPlayer, map.Tile, forceGenerateNewPawn: true, mustBeCapableOfViolence: true, allowPregnant: true, forcedXenotype: BloodfiendsDefOf.Bloodfiends_Bloodfiend));
+            Pawn master = quest.GeneratePawn(new PawnGenerationRequest(BloodfiendsDefOf.Bloodfiends_BloodfiendKind, faction, PawnGenerationContext.NonPlayer, map.Tile, forceGenerateNewPawn: true, mustBeCapableOfViolence: true, allowPregnant: true, forcedXenotype: BloodfiendsDefOf.Bloodfiends_Bloodfiend));
             master.health.forceDowned = true;   // goes down instead of dying, so the player can take them
             shuttlePawns.Add(master);
             slate.Set("bloodfiend", master);

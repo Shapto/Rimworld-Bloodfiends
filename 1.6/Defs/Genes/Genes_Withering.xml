@@ -8,6 +8,7 @@
 		<iconPath>Icons/Withering</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Hemogenic</prerequisite>
+		<biostatMet>4</biostatMet>
 		<disablesNeeds>
 			<li>Food</li>
 		</disablesNeeds>

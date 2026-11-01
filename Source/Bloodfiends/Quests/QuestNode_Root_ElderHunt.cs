@@ -38,7 +38,7 @@ namespace Bloodfiends.Quests
             List<BloodfiendFamilyNode> ownFamilyAncestors = registry.UnclaimedAncestorsOfPlayer();
             BloodfiendFamilyNode targetNode = ownFamilyAncestors.Count > 0 && Rand.Chance(OwnElderChance) ? ownFamilyAncestors.RandomElementByWeight(node => 1f / node.generationNumber) : null;
 
-            Pawn elder = BloodfiendQuestUtility.GenerateBloodfiend(PawnKindDefOf.Sanguophage, lairFaction, siteTile, claimingNodeId: targetNode?.nodeId ?? -1, foundingGeneration: targetNode == null ? GameComponent_BloodfiendFamilies.ElderGeneration : 0);
+            Pawn elder = BloodfiendQuestUtility.GenerateBloodfiend(BloodfiendsDefOf.Bloodfiends_BloodfiendKind, lairFaction, siteTile, claimingNodeId: targetNode?.nodeId ?? -1, foundingGeneration: targetNode == null ? GameComponent_BloodfiendFamilies.ElderGeneration : 0);
             BloodfiendFamilyNode elderNode = registry.GetNodeForPawn(elder);
             bool huntingOwnElder = targetNode != null && elderNode == targetNode;
 

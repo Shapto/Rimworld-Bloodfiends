@@ -69,8 +69,9 @@ namespace Bloodfiends.Family
 
             yield return Toils_General.Do(() =>
             {
-                ForcedEmbrace.EmbraceOf(Embracer)?.EmbraceForPlayer(pawn);
-                Bloodfiends.Quests.LordToil_FamilyEmbrace.Notify_Embraced(Embracer);
+                Pawn embracer = Embracer;
+                ForcedEmbrace.EmbraceOf(embracer)?.EmbraceForPlayer(pawn);
+                Bloodfiends.Quests.LordToil_FamilyEmbrace.Notify_Embraced(embracer);
             });
         }
     }
