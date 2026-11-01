@@ -119,7 +119,7 @@
 	<GeneDef>
 		<defName>Bloodfiends_PropagatingBite</defName>
 		<label>propagating bite</label>
-		<description>TODO</description>
+		<description>Carriers of this gene can implant a copy of their xenogerm by injecting their own blood into another person through their fangs. The quantity of blood necessary to insure implantion through transfusion combined with shedding of genetic material demands a recuperation period of three days.</description>
 		<iconPath>Icons/Embrace</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Hemogenic</prerequisite>
