@@ -39,6 +39,29 @@ namespace Bloodfiends.Family
 
         public static GameComponent_BloodfiendFamilies Instance => Current.Game?.GetComponent<GameComponent_BloodfiendFamilies>();
 
+        public IEnumerable<BloodfiendFamilyNode> NodesOfFamily(int familyId) => nodesById.Values.Where(node => node.familyId == familyId);
+
+        private const int TutorialCheckIntervalTicks = 250;
+
+        private bool tutorialLetterSent;
+
+        /// <summary>
+        /// Sends the Bloodfiend tutorial letter once per game, the first time one of the player's Bloodfiends is on a map.
+        /// </summary>
+        public override void GameComponentTick()
+        {
+            if (tutorialLetterSent || Find.TickManager.TicksGame % TutorialCheckIntervalTicks != 0) return;
+
+            Pawn firstBloodfiend = nodesById.Values
+                .Where(IsPlayerMember)
+                .Select(node => node.bloodfiendPawn)
+                .FirstOrDefault(pawn => pawn.Spawned);
+            if (firstBloodfiend == null) return;
+
+            tutorialLetterSent = true;
+            Find.LetterStack.ReceiveLetter("Bloodfiends_TutorialLabel".Translate(), "Bloodfiends_TutorialText".Translate(firstBloodfiend.Named("PAWN")), LetterDefOf.NeutralEvent, firstBloodfiend);
+        }
+
         /// <summary>
         /// RimWorld creates game components through reflection and needs exactly this constructor.
         /// </summary>
@@ -313,10 +336,7 @@ namespace Bloodfiends.Family
             if (places.Count == 0) return null;
             (BloodfiendFamilyNode chosen, bool claimNode) = places.RandomElement();
             if (!claimNode) return CreateNodeUnder(chosen, chosen.familyId, chosen.generationNumber + 1, lostPawn);
-            chosen.bloodfiendPawn = lostPawn;
-            nodeIdsByPawn[lostPawn] = chosen.nodeId;
-            playerAncestorCacheTick = -1;
-            return chosen;
+            return TryClaimNode(lostPawn, chosen.nodeId);
         }
 
         private List<(BloodfiendFamilyNode node, bool claimNode)> LostKindredPlaces()
@@ -412,7 +432,7 @@ namespace Bloodfiends.Family
             Scribe_Collections.Look(ref nodesById, "nodesById", LookMode.Value, LookMode.Deep, ref nodeIdsWorkingList, ref nodesWorkingList);
             Scribe_Values.Look(ref nextNodeId, "nextNodeId", 1);
             Scribe_Values.Look(ref nextFamilyId, "nextFamilyId", 1);
-
+            Scribe_Values.Look(ref tutorialLetterSent, "tutorialLetterSent");
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (nodesById == null) nodesById = new Dictionary<int, BloodfiendFamilyNode>();

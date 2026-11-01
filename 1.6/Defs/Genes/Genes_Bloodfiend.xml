@@ -5,7 +5,7 @@
 		<label>crimson curse</label>
 		<description>TODO</description>
 		<geneClass>Bloodfiends.Family.Gene_Bloodfiend</geneClass>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/CrimsonCurse</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Hemogenic</prerequisite>
 		<biostatArc>1</biostatArc>

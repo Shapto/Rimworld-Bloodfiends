@@ -4,7 +4,7 @@
 		<defName>Bloodfiends_LaSangre</defName>
 		<label>La Sangre</label>
 		<description>TODO</description>
-		<iconPath>TODO</iconPath>
+		<iconPath>Icons/LaSangre</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>120</displayOrder>
 		<cooldownTicksRange>60000</cooldownTicksRange>

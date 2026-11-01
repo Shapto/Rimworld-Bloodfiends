@@ -3,6 +3,7 @@ using RimWorld;
 using RimWorld.Planet;
 using RimWorld.QuestGen;
 using System;
+using System.Collections.Generic;
 using Verse;
 
 namespace Bloodfiends.Quests
@@ -20,6 +21,7 @@ namespace Bloodfiends.Quests
         {
             base.RunInt();
             Quest quest = QuestGen.quest;
+            quest.AddPart(new QuestPart_DiscardUnarrivedPawns { pawns = new List<Pawn> { QuestGen.slate.Get<Pawn>("pawn") } });
             quest.Delay(TimeoutTicks, () => QuestGen_End.End(quest, QuestEndOutcome.Fail));
         }
 

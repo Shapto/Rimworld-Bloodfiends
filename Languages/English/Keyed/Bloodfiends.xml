@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
+  <!-- Tutorial -->
+  <Bloodfiends_TutorialLabel>The crimson curse</Bloodfiends_TutorialLabel>
+  <Bloodfiends_TutorialText>{PAWN_nameDef} is a Bloodfiend. {PAWN_pronoun} hungers not for food but for blood, and for the emotions that run through it.\n\nBlood:\n- Bloodfiends run on hemogen. Fresh blood feeds them best; stale sources like hemogen packs barely sate them.\n- Their regeneration knits wounds and regrows limbs at the cost of hemogen, and can hold off death while there is blood to burn.\n\nThe Family:\n- Every Bloodfiend belongs to a Family, ranked from First Kindred down to Lesser Kindred. Higher Kindred are stronger and command greater blood arts. See the Family tab.\n- A Bloodfiend can Embrace others to make them Kindred, up to a limit. When an elder dies, everyone below them rises a generation.\n- Bloodfiends of one Family share a thirst: striking your own kin weighs on the mind, striking an elder most of all.\n\nWeaknesses:\n- Bloodfiends fear deep water.\n- Fire is their bane. Burns heal slowly, and a burning Bloodfiend cannot regenerate at all.</Bloodfiends_TutorialText>
+
   <!-- Embrace -->
   <Bloodfiends_NotInFamily>Not part of a Bloodfiend Family.</Bloodfiends_NotInFamily>
   <Bloodfiends_EmbraceOnlyLivingHumans>Only living pawns can be embraced.</Bloodfiends_EmbraceOnlyLivingHumans>
@@ -59,6 +63,20 @@
   <Bloodfiends_DissolveReplica>Dissolve {0}</Bloodfiends_DissolveReplica>
   <Bloodfiends_ForgetWeapon>Forget {0}</Bloodfiends_ForgetWeapon>
   <Bloodfiends_NothingToMimic>Hold a weapon to mimic it.</Bloodfiends_NothingToMimic>
+
+  <!-- Blood of the Primogenitor -->
+  <Bloodfiends_PrimogenitorAlreadyCursed>{PAWN_nameDef} already carries the crimson curse.</Bloodfiends_PrimogenitorAlreadyCursed>
+  <Bloodfiends_PrimogenitorCannotTurn>{PAWN_nameDef} cannot be turned.</Bloodfiends_PrimogenitorCannotTurn>
+  <Bloodfiends_PrimogenitorDrankLabel>First Kindred: {PAWN_nameDef}</Bloodfiends_PrimogenitorDrankLabel>
+  <Bloodfiends_PrimogenitorDrankText>{PAWN_nameDef} has drunk the blood of the Primogenitor. When {PAWN_pronoun} wakes, {PAWN_pronoun} will be a First Kindred, the founder of a new Family.</Bloodfiends_PrimogenitorDrankText>
+
+  <!-- Family tab -->
+  <Bloodfiends_FamilyTab>Family</Bloodfiends_FamilyTab>
+  <Bloodfiends_FamilyTabTitle>Family ({0} members)</Bloodfiends_FamilyTabTitle>
+  <Bloodfiends_FamilyTabUnknown>Unknown</Bloodfiends_FamilyTabUnknown>
+  <Bloodfiends_FamilyTabUnknownTip>A member of this Family you have never met.</Bloodfiends_FamilyTabUnknownTip>
+  <Bloodfiends_FamilyTabMemberTip>{PAWN_nameFull}\n{FACTION}</Bloodfiends_FamilyTabMemberTip>
+  <Bloodfiends_FamilyTabNoFaction>No faction</Bloodfiends_FamilyTabNoFaction>
 
   <!-- Quests: Lost Kindred -->
   <Bloodfiends_LetterLabelLostKindred>Lost Kindred: {PAWN_nameDef}</Bloodfiends_LetterLabelLostKindred>

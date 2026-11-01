@@ -27,6 +27,10 @@ namespace Bloodfiends.SanguineRegeneration
         public float mortalStateDrainPerPass = 0.01f;
 
         public int defaultGeneration = 4;
+
+        public List<HediffDef> slowHealingInjuries = new List<HediffDef>();
+        public float slowHealingSpeedFactor = 0.33f;
+        public float slowHealingCostFactor = 2f;
     }
 
     public class Gene_SanguineRegeneration : Gene
@@ -75,6 +79,8 @@ namespace Bloodfiends.SanguineRegeneration
                 if (pawn.Dead) return;
             }
 
+            if (pawn.IsBurning()) return;
+
             HealBloodLoss();
 
             float healingBudget = (Settings.healingPerPassByGeneration?.Evaluate(Generation) ?? 1f) * Hediff_HardbloodShell.RegenerationMultiplierFor(pawn);
@@ -106,10 +112,6 @@ namespace Bloodfiends.SanguineRegeneration
             if (TrySpendHemogen(severityHealed * Settings.hemogenPerBloodLossSeverity)) bloodLoss.Severity -= severityHealed;
         }
 
-        /// <summary>
-        /// Heals fresh injuries, bleeding ones first, then the worst. Scars are left to the Scarless gene.
-        /// Returns whatever healing budget is left over.
-        /// </summary>
         private float HealInjuries(float healingBudget)
         {
             List<Hediff_Injury> injuries = pawn.health.hediffSet.hediffs
@@ -123,18 +125,19 @@ namespace Bloodfiends.SanguineRegeneration
             {
                 if (healingBudget <= 0f) break;
 
-                float healAmount = Mathf.Min(injury.Severity, healingBudget);
-                if (!TrySpendHemogen(healAmount * Settings.hemogenPerHealedPoint)) break;
+                bool healsSlowly = Settings.slowHealingInjuries.Contains(injury.def);
+                float speedFactor = healsSlowly ? Settings.slowHealingSpeedFactor : 1f;
+                float costFactor = healsSlowly ? Settings.slowHealingCostFactor : 1f;
+
+                float healAmount = Mathf.Min(injury.Severity, healingBudget * speedFactor);
+                if (!TrySpendHemogen(healAmount * Settings.hemogenPerHealedPoint * costFactor)) break;
 
                 injury.Heal(healAmount);
-                healingBudget -= healAmount;
+                healingBudget -= healAmount / speedFactor;
             }
             return healingBudget;
         }
 
-        /// <summary>
-        /// Regrows one missing part, vital parts first. Costs the part's max health times the regrowth multiplier.
-        /// </summary>
         private void TryRegrowOnePart()
         {
             Hediff_MissingPart missingPart = pawn.health.hediffSet.GetMissingPartsCommonAncestors()
