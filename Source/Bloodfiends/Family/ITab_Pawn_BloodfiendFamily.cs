@@ -10,21 +10,29 @@ namespace Bloodfiends.Family
     public class ITab_Pawn_BloodfiendFamily : ITab
     {
         private const float Margin = 10f;
-        private const float SlotWidth = 112f;
-        private const float BoxWidth = 102f;
-        private const float BoxHeight = 42f;
+        private const float CardWidth = 88f;
+        private const float PortraitHeight = 92f;
+        private const float NameHeight = 16f;
+        private const float TierHeight = 14f;
+        private const float CardHeight = PortraitHeight + NameHeight + TierHeight + 4f;
         private const float BadgeHeight = 14f;
-        private const float RowHeight = 74f;
+        private const float SlotWidth = CardWidth + 12f;
+        private const float RowHeight = CardHeight + BadgeHeight + 22f;
         private const float LineThickness = 2f;
         private const int BloodbagRefreshIntervalTicks = 60;
 
-        private static readonly Color PlayerBoxColor = new Color(0.32f, 0.08f, 0.09f);
-        private static readonly Color OutsiderBoxColor = new Color(0.18f, 0.18f, 0.18f);
-        private static readonly Color UnknownBoxColor = new Color(0.1f, 0.1f, 0.1f);
+        private static readonly Vector3 PortraitCameraOffset = new Vector3(0f, 0f, 0.15f);
+        private const float PortraitCameraZoom = 1.1f;
+
+        private static readonly Color PlayerCardColor = new Color(0.26f, 0.07f, 0.08f);
+        private static readonly Color OutsiderCardColor = new Color(0.16f, 0.16f, 0.16f);
+        private static readonly Color UnknownCardColor = new Color(0.09f, 0.09f, 0.09f);
+        private static readonly Color PortraitBackgroundColor = new Color(0.07f, 0.07f, 0.07f);
         private static readonly Color OutlineColor = new Color(0.4f, 0.4f, 0.4f);
         private static readonly Color SelectedOutlineColor = new Color(1f, 0.8f, 0.35f);
         private static readonly Color LineColor = new Color(0.55f, 0.12f, 0.12f);
         private static readonly Color BadgeColor = new Color(0.85f, 0.45f, 0.45f);
+        private static readonly Color UnknownMarkColor = new Color(0.35f, 0.35f, 0.35f);
 
         private readonly Dictionary<int, int> leafCountsByNodeId = new Dictionary<int, int>();
         private readonly Dictionary<Pawn, List<Pawn>> bloodbagsByMaster = new Dictionary<Pawn, List<Pawn>>();
@@ -35,7 +43,7 @@ namespace Bloodfiends.Family
 
         public ITab_Pawn_BloodfiendFamily()
         {
-            size = new Vector2(560f, 440f);
+            size = new Vector2(640f, 560f);
             labelKey = "Bloodfiends_FamilyTab";
         }
 
@@ -150,54 +158,68 @@ namespace Bloodfiends.Family
         private Rect DrawSubtree(GameComponent_BloodfiendFamilies registry, BloodfiendFamilyNode node, float leftEdge, int topGeneration, BloodfiendFamilyNode highlightedNode)
         {
             float subtreeWidth = leafCountsByNodeId[node.nodeId] * SlotWidth;
-            float boxTop = (node.generationNumber - topGeneration) * RowHeight + (RowHeight - BoxHeight) / 2f;
-            Rect boxRect = new Rect(leftEdge + (subtreeWidth - BoxWidth) / 2f, boxTop, BoxWidth, BoxHeight);
+            float cardTop = (node.generationNumber - topGeneration) * RowHeight + 8f;
+            Rect cardRect = new Rect(leftEdge + (subtreeWidth - CardWidth) / 2f, cardTop, CardWidth, CardHeight);
             List<Pawn> nodeBloodbags = BloodbagsOf(node);
-            float lineStartY = nodeBloodbags != null ? boxRect.yMax + BadgeHeight : boxRect.yMax;
+            float lineStartY = nodeBloodbags != null ? cardRect.yMax + BadgeHeight : cardRect.yMax;
 
             float kindredLeftEdge = leftEdge;
             foreach (BloodfiendFamilyNode kindredNode in KindredOf(registry, node))
             {
                 Rect kindredRect = DrawSubtree(registry, kindredNode, kindredLeftEdge, topGeneration, highlightedNode);
-                Widgets.DrawLine(new Vector2(boxRect.center.x, lineStartY), new Vector2(kindredRect.center.x, kindredRect.y), LineColor, LineThickness);
+                Widgets.DrawLine(new Vector2(cardRect.center.x, lineStartY), new Vector2(kindredRect.center.x, kindredRect.y), LineColor, LineThickness);
                 kindredLeftEdge += leafCountsByNodeId[kindredNode.nodeId] * SlotWidth;
             }
 
-            DrawNodeBox(boxRect, node, node == highlightedNode);
-            if (nodeBloodbags != null) DrawBloodbagBadge(boxRect, nodeBloodbags);
-            return boxRect;
+            DrawNodeCard(cardRect, node, node == highlightedNode);
+            if (nodeBloodbags != null) DrawBloodbagBadge(cardRect, nodeBloodbags);
+            return cardRect;
         }
 
-        private static void DrawNodeBox(Rect boxRect, BloodfiendFamilyNode node, bool isHighlighted)
+        private static void DrawNodeCard(Rect cardRect, BloodfiendFamilyNode node, bool isHighlighted)
         {
             Pawn memberPawn = node.HasLivingPawn ? node.bloodfiendPawn : null;
-            Color boxColor = memberPawn == null ? UnknownBoxColor : memberPawn.Faction == Faction.OfPlayer ? PlayerBoxColor : OutsiderBoxColor;
-            Widgets.DrawBoxSolidWithOutline(boxRect, boxColor, isHighlighted ? SelectedOutlineColor : OutlineColor, isHighlighted ? 2 : 1);
+            Color cardColor = memberPawn == null ? UnknownCardColor : memberPawn.Faction == Faction.OfPlayer ? PlayerCardColor : OutsiderCardColor;
+            Widgets.DrawBoxSolidWithOutline(cardRect, cardColor, isHighlighted ? SelectedOutlineColor : OutlineColor, isHighlighted ? 2 : 1);
+
+            Rect portraitRect = new Rect(cardRect.x + 2f, cardRect.y + 2f, cardRect.width - 4f, PortraitHeight);
+            Rect nameRect = new Rect(cardRect.x, portraitRect.yMax, cardRect.width, NameHeight);
+            Rect tierRect = new Rect(cardRect.x, nameRect.yMax, cardRect.width, TierHeight);
+            Widgets.DrawBoxSolid(portraitRect, PortraitBackgroundColor);
+
+            Text.Anchor = TextAnchor.MiddleCenter;
+            if (memberPawn != null) GUI.DrawTexture(portraitRect, PortraitsCache.Get(memberPawn, portraitRect.size, Rot4.South, PortraitCameraOffset, PortraitCameraZoom));
+            else
+            {
+                Text.Font = GameFont.Medium;
+                GUI.color = UnknownMarkColor;
+                Widgets.Label(portraitRect, "?");
+                GUI.color = Color.white;
+            }
 
             string nameLabel = memberPawn != null ? memberPawn.LabelShortCap : "Bloodfiends_FamilyTabUnknown".Translate().Resolve();
             Text.Font = GameFont.Tiny;
-            Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(boxRect.TopHalf(), nameLabel.Truncate(boxRect.width - 6f));
+            Widgets.Label(nameRect, nameLabel.Truncate(nameRect.width - 4f));
             GUI.color = Color.gray;
-            Widgets.Label(boxRect.BottomHalf(), TierLabelForGeneration(node.generationNumber));
+            Widgets.Label(tierRect, TierLabelForGeneration(node.generationNumber));
             GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
             Text.Font = GameFont.Small;
 
             if (memberPawn == null)
             {
-                TooltipHandler.TipRegion(boxRect, "Bloodfiends_FamilyTabUnknownTip".Translate());
+                TooltipHandler.TipRegion(cardRect, "Bloodfiends_FamilyTabUnknownTip".Translate());
                 return;
             }
 
-            Widgets.DrawHighlightIfMouseover(boxRect);
-            TooltipHandler.TipRegion(boxRect, "Bloodfiends_FamilyTabMemberTip".Translate(memberPawn.Named("PAWN"), (memberPawn.Faction?.Name ?? "Bloodfiends_FamilyTabNoFaction".Translate().Resolve()).Named("FACTION")));
-            if (Widgets.ButtonInvisible(boxRect) && memberPawn.SpawnedOrAnyParentSpawned) CameraJumper.TryJumpAndSelect(memberPawn);
+            Widgets.DrawHighlightIfMouseover(cardRect);
+            TooltipHandler.TipRegion(cardRect, "Bloodfiends_FamilyTabMemberTip".Translate(memberPawn.Named("PAWN"), (memberPawn.Faction?.Name ?? "Bloodfiends_FamilyTabNoFaction".Translate().Resolve()).Named("FACTION")));
+            if (Widgets.ButtonInvisible(cardRect) && memberPawn.SpawnedOrAnyParentSpawned) CameraJumper.TryJumpAndSelect(memberPawn);
         }
 
-        private static void DrawBloodbagBadge(Rect boxRect, List<Pawn> nodeBloodbags)
+        private static void DrawBloodbagBadge(Rect cardRect, List<Pawn> nodeBloodbags)
         {
-            Rect badgeRect = new Rect(boxRect.x, boxRect.yMax, boxRect.width, BadgeHeight);
+            Rect badgeRect = new Rect(cardRect.x, cardRect.yMax, cardRect.width, BadgeHeight);
             Text.Font = GameFont.Tiny;
             Text.Anchor = TextAnchor.MiddleCenter;
             GUI.color = BadgeColor;
