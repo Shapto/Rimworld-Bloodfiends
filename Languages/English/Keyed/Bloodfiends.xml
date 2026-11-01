@@ -36,6 +36,8 @@
 
   <Bloodfiends_FeverBurnedOut>The flames have burned the crimson fever out of {PAWN_nameDef}'s blood.</Bloodfiends_FeverBurnedOut>
 
+  <Bloodfiends_ElderLairProvoked>The elder's household has been provoked and is coming for you.</Bloodfiends_ElderLairProvoked>
+
   <!-- Promotion -->
   <Bloodfiends_PromotionLabel>Blood rises</Bloodfiends_PromotionLabel>
   <Bloodfiends_PromotionTextDeath>{ELDER_nameFull} is dead. Every Kindred of {ELDER_possessive} line has risen a generation:</Bloodfiends_PromotionTextDeath>
