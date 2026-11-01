@@ -3,7 +3,7 @@
 	<GeneDef>
 		<defName>Bloodfiends_SanguineRegeneration</defName>
 		<label>sanguine regeneration</label>
-		<description>TODO</description>
+		<description>Carriers of this gene possess exceptional regenerative abilities fueled by hemogen. As long as a sufficient is present, bleeding wounds immediately coagulate and scab over, crushed bones reset and mend on their own, and severed limbs regrow in a matter of seconds. Due to the complex tissue damage they cause, burns are a third as fast to heal and cost significantly more hemogen when compared to other wounds.</description>
 		<geneClass>Bloodfiends.SanguineRegeneration.Gene_SanguineRegeneration</geneClass>
 		<iconPath>Icons/Healing</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
