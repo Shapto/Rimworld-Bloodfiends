@@ -29,7 +29,7 @@
 	<SitePartDef>
 		<defName>Bloodfiends_ElderLair</defName>
 		<label>elder's lair</label>
-		<description>TODO</description>
+		<description>This area has been overtaken by a Bloodfiend Elder.</description>
 		<workerClass>SitePartWorker</workerClass>
 		<siteTexture>World/WorldObjects/Sites/GenericSite</siteTexture>
 		<expandingIconTexture>World/WorldObjects/Expanding/Sites/DownedRefugee</expandingIconTexture>
