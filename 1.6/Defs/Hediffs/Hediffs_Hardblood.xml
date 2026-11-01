@@ -74,7 +74,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_HardbloodMantle</defName>
 		<label>hardblood mantle</label>
-		<description>TODO</description>
+		<description>A floating ring of coagulated blood. Will warp and shift to protect the pawn from oncoming attacks.</description>
 		<hediffClass>Bloodfiends.Mantle.Hediff_Mantle</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>false</isBad>
