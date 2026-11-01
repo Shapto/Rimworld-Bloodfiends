@@ -3,7 +3,7 @@
 	<AbilityDef>
 		<defName>Bloodfiends_Embrace</defName>
 		<label>embrace</label>
-		<description>TODO</description>
+		<description>Bestow the curse of your bloodline upon another pawn\nIf slots are available, the targetted pawn will be sired as a kindred, answering directly under the caster in the bloodline as a fully fledged Bloodfiend.\nIf all kindred slots are full, the targetted pawn will instead be turned into a Bloodbag: similarly bloodthirsty, but entirely mindless thralls fully at the behest of their master.</description>
 		<iconPath>Icons/Embrace</iconPath>
 		<category>Bloodfiends_Bloodfiend</category>
 		<displayOrder>110</displayOrder>
