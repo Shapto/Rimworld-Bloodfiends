@@ -72,8 +72,6 @@
 
   <!-- Family tab -->
   <Bloodfiends_FamilyTab>Family</Bloodfiends_FamilyTab>
-  <Bloodfiends_FamilyTabTitle>Family ({0} members)</Bloodfiends_FamilyTabTitle>
-  <Bloodfiends_FamilyTabUnknown>Unknown</Bloodfiends_FamilyTabUnknown>
   <Bloodfiends_FamilyTabUnknownTip>A member of this Family you have never met.</Bloodfiends_FamilyTabUnknownTip>
   <Bloodfiends_FamilyTabMemberTip>{PAWN_nameFull}\n{FACTION}</Bloodfiends_FamilyTabMemberTip>
   <Bloodfiends_FamilyTabNoFaction>No faction</Bloodfiends_FamilyTabNoFaction>

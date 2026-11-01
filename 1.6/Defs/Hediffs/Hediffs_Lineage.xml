@@ -21,8 +21,8 @@
         </statFactors>
         <statOffsets>
           <PsychicSensitivity>1.0</PsychicSensitivity>
-          <MeditationFocusGain>0.2</MeditationFocusGain>
-          <PsychicEntropyRecoveryRate>0.2</PsychicEntropyRecoveryRate>
+          <MeditationFocusGain MayRequire="Ludeon.RimWorld.Royalty">0.2</MeditationFocusGain>
+          <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.2</PsychicEntropyRecoveryRate>
           <MeleeHitChance>0.15</MeleeHitChance>
           <PainShockThreshold>0.4</PainShockThreshold>
         </statOffsets>
@@ -37,8 +37,8 @@
         </statFactors>
         <statOffsets>
           <PsychicSensitivity>0.73</PsychicSensitivity>
-          <MeditationFocusGain>0.15</MeditationFocusGain>
-          <PsychicEntropyRecoveryRate>0.15</PsychicEntropyRecoveryRate>
+          <MeditationFocusGain MayRequire="Ludeon.RimWorld.Royalty">0.15</MeditationFocusGain>
+          <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.15</PsychicEntropyRecoveryRate>
           <MeleeHitChance>0.11</MeleeHitChance>
           <PainShockThreshold>0.29</PainShockThreshold>
         </statOffsets>
@@ -53,8 +53,8 @@
         </statFactors>
         <statOffsets>
           <PsychicSensitivity>0.51</PsychicSensitivity>
-          <MeditationFocusGain>0.1</MeditationFocusGain>
-          <PsychicEntropyRecoveryRate>0.1</PsychicEntropyRecoveryRate>
+          <MeditationFocusGain MayRequire="Ludeon.RimWorld.Royalty">0.1</MeditationFocusGain>
+          <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.1</PsychicEntropyRecoveryRate>
           <MeleeHitChance>0.08</MeleeHitChance>
           <PainShockThreshold>0.2</PainShockThreshold>
         </statOffsets>
@@ -69,8 +69,8 @@
         </statFactors>
         <statOffsets>
           <PsychicSensitivity>0.33</PsychicSensitivity>
-          <MeditationFocusGain>0.07</MeditationFocusGain>
-          <PsychicEntropyRecoveryRate>0.07</PsychicEntropyRecoveryRate>
+          <MeditationFocusGain MayRequire="Ludeon.RimWorld.Royalty">0.07</MeditationFocusGain>
+          <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.07</PsychicEntropyRecoveryRate>
           <MeleeHitChance>0.05</MeleeHitChance>
           <PainShockThreshold>0.13</PainShockThreshold>
         </statOffsets>
@@ -85,8 +85,8 @@
         </statFactors>
         <statOffsets>
           <PsychicSensitivity>0.18</PsychicSensitivity>
-          <MeditationFocusGain>0.04</MeditationFocusGain>
-          <PsychicEntropyRecoveryRate>0.04</PsychicEntropyRecoveryRate>
+          <MeditationFocusGain MayRequire="Ludeon.RimWorld.Royalty">0.04</MeditationFocusGain>
+          <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.04</PsychicEntropyRecoveryRate>
           <MeleeHitChance>0.03</MeleeHitChance>
           <PainShockThreshold>0.07</PainShockThreshold>
         </statOffsets>
@@ -101,8 +101,8 @@
         </statFactors>
         <statOffsets>
           <PsychicSensitivity>0.08</PsychicSensitivity>
-          <MeditationFocusGain>0.02</MeditationFocusGain>
-          <PsychicEntropyRecoveryRate>0.02</PsychicEntropyRecoveryRate>
+          <MeditationFocusGain MayRequire="Ludeon.RimWorld.Royalty">0.02</MeditationFocusGain>
+          <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.02</PsychicEntropyRecoveryRate>
           <MeleeHitChance>0.01</MeleeHitChance>
           <PainShockThreshold>0.03</PainShockThreshold>
         </statOffsets>
@@ -117,8 +117,8 @@
         </statFactors>
         <statOffsets>
           <PsychicSensitivity>0.02</PsychicSensitivity>
-          <MeditationFocusGain>0.004</MeditationFocusGain>
-          <PsychicEntropyRecoveryRate>0.004</PsychicEntropyRecoveryRate>
+          <MeditationFocusGain MayRequire="Ludeon.RimWorld.Royalty">0.004</MeditationFocusGain>
+          <PsychicEntropyRecoveryRate MayRequire="Ludeon.RimWorld.Royalty">0.004</PsychicEntropyRecoveryRate>
           <MeleeHitChance>0.003</MeleeHitChance>
           <PainShockThreshold>0.01</PainShockThreshold>
         </statOffsets>

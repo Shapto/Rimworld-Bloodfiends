@@ -13,9 +13,14 @@ namespace Bloodfiends.Sanguophages
     [HarmonyPatch(typeof(PawnGenerator), nameof(PawnGenerator.GetXenotypeForGeneratedPawn))]
     public static class Patch_PawnGenerator_GetXenotypeForGeneratedPawn
     {
+        /// <summary>
+        /// Vanilla's sanguophage plus VRE Sanguophage's subxenotypes. Names that don't exist without VRE simply never match.
+        /// </summary>
+        private static readonly HashSet<string> ReplacedXenotypeNames = new HashSet<string> { "Sanguophage", "VRE_Strigoi", "VRE_Ekkimian", "VRE_Bruxa" };
+
         public static void Postfix(ref XenotypeDef __result)
         {
-            if (BloodfiendsMod.Settings.replaceSanguophages && __result == XenotypeDefOf.Sanguophage) __result = BloodfiendsDefOf.Bloodfiends_Bloodfiend;
+            if (BloodfiendsMod.Settings.replaceSanguophages && __result != null && ReplacedXenotypeNames.Contains(__result.defName)) __result = BloodfiendsDefOf.Bloodfiends_Bloodfiend;
         }
     }
 
