@@ -6,9 +6,6 @@
 		<labelShortAdj>aquaphobic</labelShortAdj>
 		<description>Carriers of this gene have an intense fear of water. They will break and flee in the presence of rain, rivers, lakes and other bodies of water and are uncomfortable around wet surfaces like snow and mud.</description>
 		<geneClass>Bloodfiends.Aquaphobia.Gene_Aquaphobia</geneClass>
-		<customEffectDescriptions>
-			<li>TODO</li>
-		</customEffectDescriptions>
 		<displayCategory>ResistanceAndWeakness</displayCategory>
 		<displayOrderInCategory>81</displayOrderInCategory>
 		<iconPath>Icons/Aquaphobia</iconPath>
