@@ -3,7 +3,7 @@
   <HediffDef>
     <defName>Bloodfiends_Lineage</defName>
     <label>bloodfiend</label>
-    <description>TODO</description>
+    <description>This pawn's place in the family hierarchy.</description>
     <hediffClass>Bloodfiends.Family.Hediff_BloodfiendLineage</hediffClass>
     <defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
     <isBad>false</isBad>
@@ -144,7 +144,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_EmbraceWeakness</defName>
 		<label>drained by the embrace</label>
-		<description>TODO</description>
+		<description>This person has been drained by embracing another pawn. They will take three days to recover from the shedding of genetic material and abrupt bloodloss.</description>
 		<hediffClass>HediffWithComps</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>true</isBad>

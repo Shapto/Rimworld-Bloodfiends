@@ -3,7 +3,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_SeekingEmbrace</defName>
 		<label>seeking the Embrace</label>
-		<description>TODO</description>
+		<description>This person is seeking to sire a kindred.</description>
 		<hediffClass>HediffWithComps</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>false</isBad>

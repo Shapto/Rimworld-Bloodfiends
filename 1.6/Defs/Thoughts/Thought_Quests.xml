@@ -10,7 +10,7 @@
 		<stages>
 			<li>
 				<label>blood torch</label>
-				<description>TODO</description>
+				<description>The crimson glow of the torch is quite pleasant.</description>
 				<baseMoodEffect>2</baseMoodEffect>
 			</li>
 		</stages>
