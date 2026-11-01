@@ -121,4 +121,17 @@
   <Bloodfiends_HuntedKindredCaughtLabel>{JOINER_nameDef} died</Bloodfiends_HuntedKindredCaughtLabel>
   <Bloodfiends_HuntedKindredCaughtText>{HUNTER_nameDef} got what {HUNTER_pronoun} came for.</Bloodfiends_HuntedKindredCaughtText>
 
+  <!-- Settings -->
+  <Bloodfiends_SettingReplaceSanguophages>Bloodfiends replace sanguophages</Bloodfiends_SettingReplaceSanguophages>
+  <Bloodfiends_SettingReplaceSanguophagesTip>Pawns that would be generated as sanguophages are generated as Bloodfiends instead. Vanilla's sanguophage quests no longer appear; the Bloodfiend versions take their place.</Bloodfiends_SettingReplaceSanguophagesTip>
+  <Bloodfiends_SettingSurviveBrainDestruction>Sanguine regeneration survives brain destruction</Bloodfiends_SettingSurviveBrainDestruction>
+  <Bloodfiends_SettingSurviveBrainDestructionTip>A Bloodfiend whose brain is destroyed holds on in a mortal state and regrows it, as long as they have the hemogen. Off: brain destruction kills, as in vanilla.</Bloodfiends_SettingSurviveBrainDestructionTip>
+  <Bloodfiends_SettingFireHindersRegeneration>Fire hinders regeneration</Bloodfiends_SettingFireHindersRegeneration>
+  <Bloodfiends_SettingFireHindersRegenerationTip>Burns regenerate slowly and at a higher hemogen cost, and a burning Bloodfiend cannot regenerate at all.</Bloodfiends_SettingFireHindersRegenerationTip>
+  <Bloodfiends_SettingPrimogenitorDrops>First Kindred drop the blood of the Primogenitor</Bloodfiends_SettingPrimogenitorDrops>
+  <Bloodfiends_SettingPrimogenitorDropsTip>When a First Kindred dies on a map, a vial of the Primogenitor's blood is left by the corpse.</Bloodfiends_SettingPrimogenitorDropsTip>
+  <Bloodfiends_SettingKindredPerBloodfiend>Kindred per Bloodfiend: {0}</Bloodfiends_SettingKindredPerBloodfiend>
+  <Bloodfiends_SettingKindredPerBloodfiendTip>How many Kindred each Bloodfiend can Embrace. Past that, an Embrace makes a Bloodbag.</Bloodfiends_SettingKindredPerBloodfiendTip>
+  <Bloodfiends_SettingResetToDefaults>Reset to defaults</Bloodfiends_SettingResetToDefaults>
+
 </LanguageData>

@@ -96,7 +96,7 @@ namespace Bloodfiends.Family
             BloodfiendFamilyNode node = LineageHediff?.Node;
             if (registry == null || node == null) return;
 
-            if (node.generationNumber == GameComponent_BloodfiendFamilies.ElderGeneration) DropBloodOfThePrimogenitor();
+            if (node.generationNumber == GameComponent_BloodfiendFamilies.ElderGeneration && BloodfiendsMod.Settings.firstKindredDropsPrimogenitorBlood) DropBloodOfThePrimogenitor();
             Bloodfiends.SharedThirst.FamilialImpiety.Notify_ElderKilled(pawn, node, dinfo);
             GameComponent_BloodfiendFamilies.SyncPromotedPawns(registry.Notify_BloodfiendDied(node), pawn);
         }

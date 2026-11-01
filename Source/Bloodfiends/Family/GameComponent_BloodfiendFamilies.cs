@@ -12,7 +12,7 @@ namespace Bloodfiends.Family
     {
         public const int ElderGeneration = 1;
 
-        public const int MaximumKindredsPerBloodfiend = 2;
+        public static int MaximumKindredsPerBloodfiend => BloodfiendsMod.Settings.maximumKindredsPerBloodfiend;
 
         private Dictionary<int, BloodfiendFamilyNode> nodesById = new Dictionary<int, BloodfiendFamilyNode>();
         private int nextNodeId = 1;
@@ -104,7 +104,8 @@ namespace Bloodfiends.Family
                 familyId = familyId,
                 generationNumber = generationNumber,
                 bloodfiendPawn = bloodfiendPawn,
-                embracerNodeId = embracerNode?.nodeId ?? -1
+                embracerNodeId = embracerNode?.nodeId ?? -1,
+                creatorNodeId = embracerNode?.nodeId ?? -1
             };
             RegisterNode(node);
 
@@ -175,6 +176,9 @@ namespace Bloodfiends.Family
         public List<BloodfiendFamilyNode> Notify_BloodfiendDied(BloodfiendFamilyNode deadNode)
         {
             if (deadNode == null || !nodesById.ContainsKey(deadNode.nodeId)) return new List<BloodfiendFamilyNode>();
+
+            BloodfiendFamilyNode creatorNode = GetNode(deadNode.creatorNodeId);
+            if (creatorNode != null) creatorNode.kindredCreatedCount = Math.Max(0, creatorNode.kindredCreatedCount - 1);
 
             List<BloodfiendFamilyNode> promotedNodes = GetDescendants(deadNode).ToList();
             foreach (BloodfiendFamilyNode promotedNode in promotedNodes)

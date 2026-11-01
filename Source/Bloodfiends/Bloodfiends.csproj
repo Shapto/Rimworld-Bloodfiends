@@ -87,6 +87,7 @@
     <Compile Include="BloodCommand\MapComponent_BloodCommand.cs" />
     <Compile Include="BloodfiendsDefOf.cs" />
     <Compile Include="BloodfiendsMod.cs" />
+    <Compile Include="BloodfiendsSettings.cs" />
     <Compile Include="BloodfiendsSounds.cs" />
     <Compile Include="Coagulate\CompAbilityEffect_Coagulate.cs" />
     <Compile Include="Coagulate\Hediff_HardbloodShell.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Quests\QuestPart_DiscardUnarrivedPawns.cs" />
     <Compile Include="SanguineRegeneration\Gene_SanguineRegeneration.cs" />
     <Compile Include="SanguineRegeneration\Patch_PawnHealthTracker_ShouldBeDead.cs" />
+    <Compile Include="Sanguophages\Patch_SanguophageReplacement.cs" />
     <Compile Include="SharedThirst\FamilialImpiety.cs" />
     <Compile Include="SharedThirst\Gene_SharedThirst.cs" />
     <Compile Include="SharedThirst\Hediff_Feasting.cs" />

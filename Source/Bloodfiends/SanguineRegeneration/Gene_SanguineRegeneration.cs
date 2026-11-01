@@ -61,7 +61,8 @@ namespace Bloodfiends.SanguineRegeneration
 
         public bool TryPreventDeath()
         {
-            if (!Active || AvailableHemogen <= 0f || pawn.health.hediffSet.GetBrain() == null) return false;
+            bool brainDestroyed = pawn.health.hediffSet.GetBrain() == null;
+            if (!Active || AvailableHemogen <= 0f || brainDestroyed && !BloodfiendsMod.Settings.regenerationSurvivesBrainDestruction) return false;
 
             lastDeathPreventedTick = Find.TickManager.TicksGame;
             return true;
@@ -79,7 +80,7 @@ namespace Bloodfiends.SanguineRegeneration
                 if (pawn.Dead) return;
             }
 
-            if (pawn.IsBurning()) return;
+            if (BloodfiendsMod.Settings.fireHindersRegeneration && pawn.IsBurning()) return;
 
             HealBloodLoss();
 
@@ -125,7 +126,7 @@ namespace Bloodfiends.SanguineRegeneration
             {
                 if (healingBudget <= 0f) break;
 
-                bool healsSlowly = Settings.slowHealingInjuries.Contains(injury.def);
+                bool healsSlowly = BloodfiendsMod.Settings.fireHindersRegeneration && Settings.slowHealingInjuries.Contains(injury.def);
                 float speedFactor = healsSlowly ? Settings.slowHealingSpeedFactor : 1f;
                 float costFactor = healsSlowly ? Settings.slowHealingCostFactor : 1f;
 
