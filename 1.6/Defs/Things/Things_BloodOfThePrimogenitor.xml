@@ -3,7 +3,7 @@
 	<ThingDef ParentName="ResourceBase">
 		<defName>Bloodfiends_BloodOfThePrimogenitor</defName>
 		<label>blood of the Primogenitor</label>
-		<description>TODO</description>
+		<description>A vial of blood with the highest possible concentration of Dipsia and subsequent supressor archites. The thick liquid inside shifts and shimmers in the light like glitter. It smells metallic, sweet and utterly cloying.</description>
 		<graphicData>
 			<texPath>Items/PrimogenitorVial</texPath>
 			<graphicClass>Graphic_Single</graphicClass>

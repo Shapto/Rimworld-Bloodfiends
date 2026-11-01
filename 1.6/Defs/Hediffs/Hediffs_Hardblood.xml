@@ -3,7 +3,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_HardbloodGrowths</defName>
 		<label>hardblood growths</label>
-		<description>TODO</description>
+		<description>Painful growths of crystallized hemogen have erupted from underneat the skin, forming a hard layer of armor</description>
 		<hediffClass>Bloodfiends.Hardblood.Hediff_HardbloodGrowths</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>false</isBad>
@@ -43,7 +43,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_HardbloodShell</defName>
 		<label>hardblood shell</label>
-		<description>TODO</description>
+		<description>A hard carapace of crystallized hemogen. Takes the full impact of incoming attacks and spreads across the brittle crystalline surface, preserving the body underneath until it shatters.</description>
 		<hediffClass>Bloodfiends.Coagulate.Hediff_HardbloodShell</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>false</isBad>
@@ -74,7 +74,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_HardbloodMantle</defName>
 		<label>hardblood mantle</label>
-		<description>TODO</description>
+		<description>A floating ring of coagulated blood. Will warp and shift to protect the pawn from oncoming attacks.</description>
 		<hediffClass>Bloodfiends.Mantle.Hediff_Mantle</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>false</isBad>

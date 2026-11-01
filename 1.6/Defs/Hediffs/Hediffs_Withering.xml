@@ -3,7 +3,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_Withering</defName>
 		<label>withering</label>
-		<description>TODO</description>
+		<description>Sharp pangs of pain cramp throughout the heart and veins. Without blood, a hemogenic pawn will soon grow frail and regress to their primal predatory instincts, attacking anything in sight in order to quench their thirst.</description>
 		<hediffClass>HediffWithComps</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>true</isBad>

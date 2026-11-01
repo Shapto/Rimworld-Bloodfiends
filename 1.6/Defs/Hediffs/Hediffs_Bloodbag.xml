@@ -3,7 +3,7 @@
 	<HediffDef>
 		<defName>Bloodfiends_BloodbagInfection</defName>
 		<label>crimson fever</label>
-		<description>TODO</description>
+		<description>Dipsia infection in a wound. If not immediately subjected to fire, it will spread from the wound to the circulatory system and cause general infection and Bloodbag transformation within three hours.</description>
 		<hediffClass>Bloodfiends.Bloodbags.Hediff_BloodbagInfection</hediffClass>
 		<defaultLabelColor>(0.75, 0.1, 0.1)</defaultLabelColor>
 		<isBad>true</isBad>
