@@ -25,7 +25,7 @@
 				</capMods>
 			</li>
 			<li>
-				<minSeverity>0.35</minSeverity>
+				<minSeverity>0.25</minSeverity>
 				<label>starved</label>
 				<painOffset>0.1</painOffset>
 				<capMods>
@@ -44,7 +44,7 @@
 				</capMods>
 			</li>
 			<li>
-				<minSeverity>0.7</minSeverity>
+				<minSeverity>0.45</minSeverity>
 				<label>withered</label>
 				<painOffset>0.15</painOffset>
 				<capMods>
@@ -63,7 +63,7 @@
 				</capMods>
 			</li>
 			<li>
-				<minSeverity>0.85</minSeverity>
+				<minSeverity>0.6</minSeverity>
 				<label>ravenous</label>
 				<lifeThreatening>true</lifeThreatening>
 				<painFactor>0.4</painFactor>

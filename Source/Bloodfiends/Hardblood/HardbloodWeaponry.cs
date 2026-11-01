@@ -1,4 +1,5 @@
 ﻿using Bloodfiends.Family;
+using Bloodfiends.Hunger;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -243,7 +244,7 @@ namespace Bloodfiends.Hardblood
         private static void Equip(Pawn pawn, ThingWithComps replica, float cost)
         {
             GameComponent_HardbloodReplicas replicas = GameComponent_HardbloodReplicas.Instance;
-            if (replicas == null || pawn.equipment == null || HemogenOf(pawn) < cost) return;
+            if (replicas == null || pawn.equipment == null || !BloodfrenzyUtility.CanAfford(pawn, cost)) return;
 
             ThingWithComps held = pawn.equipment.Primary;
             if (held != null)
@@ -255,7 +256,7 @@ namespace Bloodfiends.Hardblood
             // registered before it's equipped, so its first frame is already drawn as hardblood
             replicas.Register(replica, true);
             pawn.equipment.AddEquipment(replica);
-            GeneUtility.OffsetHemogen(pawn, -cost);
+            BloodfrenzyUtility.Pay(pawn, cost);
             replicas.StartForming(replica, pawn);
         }
 

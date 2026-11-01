@@ -16,6 +16,7 @@
 			<li Class="Bloodfiends.Hunger.WitheringExtension">
 				<witheringHediff>Bloodfiends_Withering</witheringHediff>
 				<frenzyState>Bloodfiends_Bloodfrenzy</frenzyState>
+				<frenzyAtSeverity>0.6</frenzyAtSeverity>
 			</li>
 		</modExtensions>
 	</GeneDef>
