@@ -22,10 +22,9 @@ namespace Bloodfiends.Family
         private const float RowPadding = 22f;
         private const float TreeSidePadding = 16f;
         private const float BadgeRadius = 9f;
-        private const float TieThickness = 3f;
-        private const float TieGapFromRing = 2f;
-        private const float DashLength = 7f;
-        private const float DashGap = 5f;
+        private const float TieThickness = 2f;
+        private const float TieGapFromRing = 3f;
+        private const float ScrollbarWidth = 16f;
         private const float CrownWidth = 30f;
         private const float CrownHeight = 18f;
         private const float CrownOverlap = 4f;
@@ -109,7 +108,12 @@ namespace Bloodfiends.Family
 
             Rect treeOutRect = new Rect(contentRect.x, contentRect.y + HeaderHeight, contentRect.width, contentRect.height - HeaderHeight);
             Widgets.DrawBoxSolidWithOutline(treeOutRect, FamilyTreeTextures.TreeBackgroundColor, DividerColor);
-            Rect treeViewRect = new Rect(0f, 0f, Mathf.Max(treeOutRect.width - 16f, RailWidth + treeWidth), Mathf.Max(treeOutRect.height - 16f, treeHeight));
+            float contentWidth = RailWidth + treeWidth;
+            bool needsVerticalScrollbar = treeHeight > treeOutRect.height || treeHeight > treeOutRect.height - ScrollbarWidth && contentWidth > treeOutRect.width;
+            bool needsHorizontalScrollbar = contentWidth > treeOutRect.width - (needsVerticalScrollbar ? ScrollbarWidth : 0f);
+            float viewWidth = Mathf.Max(treeOutRect.width - (needsVerticalScrollbar ? ScrollbarWidth : 0f), contentWidth);
+            float viewHeight = Mathf.Max(treeOutRect.height - (needsHorizontalScrollbar ? ScrollbarWidth : 0f), treeHeight);
+            Rect treeViewRect = new Rect(0f, 0f, viewWidth, viewHeight);
             treeLeftEdge = RailWidth + (treeViewRect.width - RailWidth - treeWidth) / 2f;
 
             Widgets.BeginScrollView(treeOutRect, ref scrollPosition, treeViewRect);
@@ -246,7 +250,7 @@ namespace Bloodfiends.Family
             if (memberPawn != null)
             {
                 DrawTinted(portraitRect, FamilyTreeTextures.Disc, PortraitBackgroundColor);
-                GUI.DrawTexture(portraitRect, PortraitsCache.Get(memberPawn, portraitRect.size, Rot4.South, PortraitCameraOffset, PortraitCameraZoom));
+                GUI.DrawTexture(portraitRect, PortraitsCache.Get(memberPawn, portraitRect.size, Rot4.South, PortraitCameraOffset, PortraitCameraZoom, healthStateOverride: PawnHealthState.Mobile));
                 GUI.DrawTexture(portraitRect, FamilyTreeTextures.CornerMask);
             }
             else
@@ -268,29 +272,38 @@ namespace Bloodfiends.Family
 
         private void DrawTies(GameComponent_BloodfiendFamilies registry, BloodfiendFamilyNode node)
         {
+            List<BloodfiendFamilyNode> kindredNodes = KindredOf(registry, node).ToList();
+            if (kindredNodes.Count == 0) return;
+
             Vector2 embracerCenter = CenterOf(node);
             float embracerRadius = PortraitRadiusFor(node.generationNumber);
-            foreach (BloodfiendFamilyNode kindredNode in KindredOf(registry, node))
+            bool embracerHasName = node.HasLivingPawn && embracerRadius >= NamedPortraitMinimumRadius;
+            float tieTop = embracerCenter.y + embracerRadius + (embracerHasName ? NameSpace + 2f : 0f) + TieGapFromRing;
+
+            float kindredTop = kindredNodes.Min(kindredNode => CenterOf(kindredNode).y - PortraitRadiusFor(kindredNode.generationNumber)) - TieGapFromRing;
+            float barY = Mathf.Round((tieTop + kindredTop) / 2f);
+            float barLeft = Mathf.Min(embracerCenter.x, kindredNodes.Min(kindredNode => CenterOf(kindredNode).x));
+            float barRight = Mathf.Max(embracerCenter.x, kindredNodes.Max(kindredNode => CenterOf(kindredNode).x));
+
+            DrawVerticalTie(embracerCenter.x, tieTop, barY);
+            DrawHorizontalTie(barLeft, barRight, barY);
+            foreach (BloodfiendFamilyNode kindredNode in kindredNodes)
             {
                 Vector2 kindredCenter = CenterOf(kindredNode);
-                Vector2 direction = (kindredCenter - embracerCenter).normalized;
-                Vector2 tieStart = embracerCenter + direction * (embracerRadius + TieGapFromRing);
-                Vector2 tieEnd = kindredCenter - direction * (PortraitRadiusFor(kindredNode.generationNumber) + TieGapFromRing);
-                DrawDashedLine(tieStart, tieEnd);
+                DrawVerticalTie(kindredCenter.x, barY, kindredCenter.y - PortraitRadiusFor(kindredNode.generationNumber) - TieGapFromRing);
             }
         }
 
-        private static void DrawDashedLine(Vector2 start, Vector2 end)
+        private static void DrawVerticalTie(float x, float top, float bottom)
         {
-            float length = Vector2.Distance(start, end);
-            if (length < 1f) return;
+            if (bottom <= top) return;
+            Widgets.DrawBoxSolid(new Rect(Mathf.Round(x - TieThickness / 2f), Mathf.Round(top), TieThickness, Mathf.Round(bottom - top)), TieColor);
+        }
 
-            Vector2 direction = (end - start) / length;
-            for (float dashStart = 0f; dashStart < length; dashStart += DashLength + DashGap)
-            {
-                float dashEnd = Mathf.Min(dashStart + DashLength, length);
-                Widgets.DrawLine(start + direction * dashStart, start + direction * dashEnd, TieColor, TieThickness);
-            }
+        private static void DrawHorizontalTie(float left, float right, float y)
+        {
+            if (right <= left) return;
+            Widgets.DrawBoxSolid(new Rect(Mathf.Round(left), Mathf.Round(y - TieThickness / 2f), Mathf.Round(right - left) + TieThickness, TieThickness), TieColor);
         }
 
         private void DrawOverlays(BloodfiendFamilyNode node)

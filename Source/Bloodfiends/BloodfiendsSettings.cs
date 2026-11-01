@@ -11,6 +11,7 @@ namespace Bloodfiends
         public int maximumKindredsPerBloodfiend = DefaultMaximumKindredsPerBloodfiend;
         public bool firstKindredDropsPrimogenitorBlood = true;
         public bool fireHindersRegeneration = true;
+        public bool kindredSlotsFreeOnDeath = true;
 
         public void ResetToDefaults()
         {
@@ -19,6 +20,7 @@ namespace Bloodfiends
             maximumKindredsPerBloodfiend = DefaultMaximumKindredsPerBloodfiend;
             firstKindredDropsPrimogenitorBlood = true;
             fireHindersRegeneration = true;
+            kindredSlotsFreeOnDeath = true;
         }
 
         public override void ExposeData()

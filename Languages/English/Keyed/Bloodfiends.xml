@@ -83,6 +83,9 @@
   <Bloodfiends_FamilyTabMasterlessCount>{0} masterless</Bloodfiends_FamilyTabMasterlessCount>
   <Bloodfiends_BloodbagMasterTip>Belongs to {MASTER_nameFull}.</Bloodfiends_BloodbagMasterTip>
   <Bloodfiends_BloodbagNoMasterTip>Its maker is gone; it serves the Family.</Bloodfiends_BloodbagNoMasterTip>
+  <Bloodfiends_FamilyTabBloodlineOf>The bloodline of {PAWN_nameDef}</Bloodfiends_FamilyTabBloodlineOf>
+  <Bloodfiends_FamilyTabUnknownBloodline>An unknown bloodline</Bloodfiends_FamilyTabUnknownBloodline>
+  <Bloodfiends_FamilyTabSummary>{0} members · {1} met · {2} Bloodbags</Bloodfiends_FamilyTabSummary>
 
   <!-- Quests: Lost Kindred -->
   <Bloodfiends_LetterLabelLostKindred>Lost Kindred: {PAWN_nameDef}</Bloodfiends_LetterLabelLostKindred>
@@ -133,5 +136,7 @@
   <Bloodfiends_SettingKindredPerBloodfiend>Kindred per Bloodfiend: {0}</Bloodfiends_SettingKindredPerBloodfiend>
   <Bloodfiends_SettingKindredPerBloodfiendTip>How many Kindred each Bloodfiend can Embrace. Past that, an Embrace makes a Bloodbag.</Bloodfiends_SettingKindredPerBloodfiendTip>
   <Bloodfiends_SettingResetToDefaults>Reset to defaults</Bloodfiends_SettingResetToDefaults>
+  <Bloodfiends_SettingKindredSlotsFreeOnDeath>Kindred slots free up when a Kindred dies</Bloodfiends_SettingKindredSlotsFreeOnDeath>
+  <Bloodfiends_SettingKindredSlotsFreeOnDeathTip>On: only living Kindred count toward the limit, so a Bloodfiend can Embrace again after losing one. Off: every Kindred a Bloodfiend ever made counts, for life.</Bloodfiends_SettingKindredSlotsFreeOnDeathTip>
 
 </LanguageData>

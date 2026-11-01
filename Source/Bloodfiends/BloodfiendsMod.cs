@@ -42,6 +42,8 @@ namespace Bloodfiends
             listing.Label("Bloodfiends_SettingKindredPerBloodfiend".Translate(Settings.maximumKindredsPerBloodfiend), tooltip: "Bloodfiends_SettingKindredPerBloodfiendTip".Translate());
             Settings.maximumKindredsPerBloodfiend = Mathf.RoundToInt(listing.Slider(Settings.maximumKindredsPerBloodfiend, MinimumKindredsPerBloodfiend, MaximumKindredsSliderValue));
 
+            listing.CheckboxLabeled("Bloodfiends_SettingKindredSlotsFreeOnDeath".Translate(), ref Settings.kindredSlotsFreeOnDeath, "Bloodfiends_SettingKindredSlotsFreeOnDeathTip".Translate());
+
             listing.GapLine();
             if (listing.ButtonText("Bloodfiends_SettingResetToDefaults".Translate())) Settings.ResetToDefaults();
 

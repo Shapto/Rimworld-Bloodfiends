@@ -156,7 +156,9 @@ namespace Bloodfiends.Family
             return CreateNodeUnder(embracerNode, embracerNode.familyId, embracerNode.generationNumber + 1, spawnedPawn);
         }
 
-        public bool CanEmbraceKindred(BloodfiendFamilyNode embracerNode) => embracerNode != null && embracerNode.kindredCreatedCount < MaximumKindredsPerBloodfiend;
+        public int KindredSlotsUsedBy(BloodfiendFamilyNode embracerNode) => BloodfiendsMod.Settings.kindredSlotsFreeOnDeath ? nodesById.Values.Count(node => node.creatorNodeId == embracerNode.nodeId) : embracerNode.kindredCreatedCount;
+
+        public bool CanEmbraceKindred(BloodfiendFamilyNode embracerNode) => embracerNode != null && KindredSlotsUsedBy(embracerNode) < MaximumKindredsPerBloodfiend;
 
         /// <summary>
         /// Adds a new Kindred one generation below its embracer, in the same Family.
@@ -176,9 +178,6 @@ namespace Bloodfiends.Family
         public List<BloodfiendFamilyNode> Notify_BloodfiendDied(BloodfiendFamilyNode deadNode)
         {
             if (deadNode == null || !nodesById.ContainsKey(deadNode.nodeId)) return new List<BloodfiendFamilyNode>();
-
-            BloodfiendFamilyNode creatorNode = GetNode(deadNode.creatorNodeId);
-            if (creatorNode != null) creatorNode.kindredCreatedCount = Math.Max(0, creatorNode.kindredCreatedCount - 1);
 
             List<BloodfiendFamilyNode> promotedNodes = GetDescendants(deadNode).ToList();
             foreach (BloodfiendFamilyNode promotedNode in promotedNodes)
