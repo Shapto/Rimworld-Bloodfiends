@@ -3,7 +3,7 @@
 	<MutantDef ParentName="BaseMutantEntity" MayRequire="Ludeon.RimWorld.Anomaly">
 		<defName>Bloodfiends_Bloodbag</defName>
 		<label>bloodbag</label>
-		<description>TODO</description>
+		<description>Mutated, disfigured and transformed by an unrestrained form of Dipsia, Bloodbags are near-mindless thralls entirely subject to their master's whims.\nThe strain of Dipsia they carry is unburdened by suppression archites and highly infectious, capable of spreading via open wounds and bites without the need for transfusion.\nBloodbags retain enough muscle memory to wield guns and perform basic labour, but are otherwise non-cognisant.</description>
 		<hediff>Bloodfiends_HardbloodGrowths</hediff>
 		<thinkTree>Bloodfiends_Bloodbag</thinkTree>
 		<thinkTreeConstant>GhoulConstant</thinkTreeConstant>
