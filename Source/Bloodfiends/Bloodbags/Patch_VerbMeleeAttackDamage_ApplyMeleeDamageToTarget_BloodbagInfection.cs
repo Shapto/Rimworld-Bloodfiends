@@ -34,6 +34,7 @@ namespace Bloodfiends.Bloodbags
 
             var infection = (Hediff_BloodbagInfection)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_BloodbagInfection, victim);
             infection.familyId = BloodbagUtility.FamilyOf(attacker);
+            infection.master = BloodbagUtility.MasterFor(attacker);
             infection.faction = attacker.Faction;
             victim.health.AddHediff(infection);
         }

@@ -22,6 +22,15 @@ namespace Bloodfiends.Bloodbags
 
         public static int FamilyOf(Pawn bloodbag) => bloodbag.health.hediffSet.GetFirstHediff<Hediff_HardbloodGrowths>()?.familyId ?? -1;
 
+        public static Pawn MasterOf(Pawn bloodbag) => bloodbag?.health.hediffSet.GetFirstHediff<Hediff_HardbloodGrowths>()?.master;
+
+        public static Pawn MasterFor(Pawn maker)
+        {
+            if (maker == null) return null;
+            if (IsBloodbag(maker)) return MasterOf(maker);
+            return GameComponent_BloodfiendFamilies.Instance?.GetNodeForPawn(maker) != null ? maker : null;
+        }
+
         public static bool CanBecomeBloodbag(Pawn pawn)
         {
             if (pawn == null || pawn.Dead || !pawn.RaceProps.Humanlike || pawn.IsMutant) return false;
@@ -50,7 +59,11 @@ namespace Bloodfiends.Bloodbags
             }
 
             Hediff_HardbloodGrowths growths = pawn.health.hediffSet.GetFirstHediff<Hediff_HardbloodGrowths>();
-            if (growths != null) growths.familyId = familyId;
+            if (growths != null)
+            {
+                growths.familyId = familyId;
+                growths.master = MasterFor(instigator);
+            }
             if (pawn.SpawnedOrAnyParentSpawned) FilthMaker.TryMakeFilth(pawn.PositionHeld, pawn.MapHeld, ThingDefOf.Filth_Blood, 3);
         }
     }

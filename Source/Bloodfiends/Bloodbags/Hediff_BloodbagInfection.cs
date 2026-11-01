@@ -17,7 +17,8 @@ namespace Bloodfiends.Bloodbags
     {
         public int familyId = -1;
         public Faction faction;
-        private bool queuedToTurn;   // not saved: after loading it's simply queued again
+        private bool queuedToTurn;
+        public Pawn master;
         public override bool ShouldRemove => base.ShouldRemove || !BloodbagUtility.CanBecomeBloodbag(pawn) && !pawn.Dead;
 
         public override void PostTick()
@@ -33,6 +34,7 @@ namespace Bloodfiends.Bloodbags
             base.ExposeData();
             Scribe_Values.Look(ref familyId, "familyId", -1);
             Scribe_References.Look(ref faction, "faction");
+            Scribe_References.Look(ref master, "master");
         }
     }
 }

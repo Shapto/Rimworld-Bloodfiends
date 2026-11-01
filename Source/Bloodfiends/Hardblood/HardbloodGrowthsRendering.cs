@@ -15,16 +15,29 @@ namespace Bloodfiends.Hardblood
     public class Hediff_HardbloodGrowths : HediffWithComps
     {
         public int familyId = -1;   // the Family this Bloodbag belongs to
-        public override void PostRemoved()
+        public Pawn master;         // the Bloodfiend who made it
+
+        public override string TipStringExtra
         {
-            base.PostRemoved();
-            HardbloodGraphics.Forget(pawn);
+            get
+            {
+                string baseTip = base.TipStringExtra;
+                string masterLine = master != null && !master.Dead ? "Bloodfiends_BloodbagMasterTip".Translate(master.Named("MASTER")).Resolve() : "Bloodfiends_BloodbagNoMasterTip".Translate().Resolve();
+                return baseTip.NullOrEmpty() ? masterLine : baseTip + "\n" + masterLine;
+            }
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
+            if (Scribe.mode == LoadSaveMode.Saving && master != null && master.Discarded) master = null;
             Scribe_Values.Look(ref familyId, "familyId", -1);
+            Scribe_References.Look(ref master, "master");
+        }
+        public override void PostRemoved()
+        {
+            base.PostRemoved();
+            HardbloodGraphics.Forget(pawn);
         }
 
         private const int ThirstIntervalTicks = 250;

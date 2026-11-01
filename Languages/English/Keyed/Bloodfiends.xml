@@ -77,6 +77,12 @@
   <Bloodfiends_FamilyTabUnknownTip>A member of this Family you have never met.</Bloodfiends_FamilyTabUnknownTip>
   <Bloodfiends_FamilyTabMemberTip>{PAWN_nameFull}\n{FACTION}</Bloodfiends_FamilyTabMemberTip>
   <Bloodfiends_FamilyTabNoFaction>No faction</Bloodfiends_FamilyTabNoFaction>
+  <Bloodfiends_FamilyTabBloodbags>{0} Bloodbags</Bloodfiends_FamilyTabBloodbags>
+  <Bloodfiends_FamilyTabBloodbagOf>Bloodbag of {MASTER_nameDef}</Bloodfiends_FamilyTabBloodbagOf>
+  <Bloodfiends_FamilyTabMasterlessBloodbag>Masterless Bloodbag</Bloodfiends_FamilyTabMasterlessBloodbag>
+  <Bloodfiends_FamilyTabMasterlessCount>{0} masterless</Bloodfiends_FamilyTabMasterlessCount>
+  <Bloodfiends_BloodbagMasterTip>Belongs to {MASTER_nameFull}.</Bloodfiends_BloodbagMasterTip>
+  <Bloodfiends_BloodbagNoMasterTip>Its maker is gone; it serves the Family.</Bloodfiends_BloodbagNoMasterTip>
 
   <!-- Quests: Lost Kindred -->
   <Bloodfiends_LetterLabelLostKindred>Lost Kindred: {PAWN_nameDef}</Bloodfiends_LetterLabelLostKindred>
