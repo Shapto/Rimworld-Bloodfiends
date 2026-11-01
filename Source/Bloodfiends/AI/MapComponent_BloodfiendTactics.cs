@@ -1,6 +1,7 @@
 ﻿using Bloodfiends.Coagulate;
 using Bloodfiends.Family;
 using Bloodfiends.Hardblood;
+using Bloodfiends.Hunger;
 using Bloodfiends.Mantle;
 using RimWorld;
 using System.Collections.Generic;
@@ -37,8 +38,10 @@ namespace Bloodfiends.AI
 
         private static bool IsFightingBloodfiend(Pawn pawn)
         {
-            if (pawn.Dead || pawn.Downed || pawn.IsColonistPlayerControlled || pawn.IsPrisoner || pawn.InMentalState) return false;
+            if (pawn.Dead || pawn.Downed || pawn.IsPrisoner) return false;
             if (pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>()?.Active != true) return false;
+            if (BloodfrenzyUtility.IsFrenzied(pawn)) return pawn.mindState?.enemyTarget != null || pawn.CurJobDef == JobDefOf.AttackMelee;
+            if (pawn.IsColonistPlayerControlled || pawn.InMentalState) return false;
             Thing enemy = pawn.mindState?.enemyTarget;
             return enemy != null && enemy.Spawned && !enemy.Destroyed;
         }
@@ -49,7 +52,7 @@ namespace Bloodfiends.AI
             HardbloodLanceExtension lance = lanceDef?.GetModExtension<HardbloodLanceExtension>();
             if (lance == null || HardbloodWeaponry.GenerationOf(pawn) > lance.maximumGeneration) return false;
             if (pawn.equipment == null || pawn.equipment.Primary?.def == lanceDef) return false;
-            if (HemogenOf(pawn) < lance.manifestCost) return false;
+            if (!BloodfrenzyUtility.CanAfford(pawn, lance.manifestCost)) return false;
             pawn.genes.GetFirstGeneOfType<Gene_Bloodfiend>().weaponry.ManifestLance(pawn);
             return pawn.equipment.Primary?.def == lanceDef;
         }
@@ -61,10 +64,11 @@ namespace Bloodfiends.AI
             float hemogenCost = ability.EffectComps
                 .OfType<CompAbilityEffect_HemogenCost>()
                 .Sum(cost => cost.Props.hemogenCost);
-            if (HemogenOf(pawn) < hemogenCost) return false;
+            if (!BloodfrenzyUtility.CanAfford(pawn, hemogenCost)) return false;
             Job castJob = ability.GetJob(pawn, pawn);
             if (castJob == null) return false;
             pawn.jobs.StartJob(castJob, JobCondition.InterruptForced);
+            if (BloodfrenzyUtility.IsFrenzied(pawn)) BloodfrenzyUtility.Pay(pawn, hemogenCost);
             return true;
         }
 

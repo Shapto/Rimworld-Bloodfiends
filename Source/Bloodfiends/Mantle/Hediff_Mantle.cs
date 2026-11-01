@@ -21,6 +21,7 @@ namespace Bloodfiends.Mantle
         public float noticeRadius = 7f;                      // cells out it notices projectiles coming at the Bloodfiend
         public float wallHoldSeconds = 1.2f;                 // how long the wall holds after the last threat
         public float decayPerHour = 0.25f;                   // share of the maximum it loses per in-game hour (a fresh cast at half lasts 2 hours unfed)
+        public float burnDamageFactor = 2f;                  // fire and burn damage drains this many times more charge
     }
 
     public class Hediff_Mantle : HediffWithComps
@@ -86,10 +87,15 @@ namespace Bloodfiends.Mantle
             return cut;
         }
 
+        private static readonly HediffDef BurnInjury = DefDatabase<HediffDef>.GetNamedSilentFail("Burn");
+
+        private static bool IsBurnDamage(DamageDef damageDef) => damageDef == DamageDefOf.Flame || damageDef == DamageDefOf.Burn || damageDef.hediff != null && damageDef.hediff == BurnInjury;
+
         public bool TryAbsorb(DamageInfo damageInfo)
         {
             if (charge <= 0f || damageInfo.Def == null || !damageInfo.Def.harmsHealth || damageInfo.Def.armorCategory == null) return false;
-            charge = Mathf.Max(0f, charge - damageInfo.Amount);
+            float chargeLost = damageInfo.Amount * (IsBurnDamage(damageInfo.Def) ? Settings.burnDamageFactor : 1f);
+            charge = Mathf.Max(0f, charge - chargeLost);
             if (charge <= 0f) brokenByDamage = true;
             float angle = AngleTowardSource(damageInfo);
             if (pawn.Spawned)

@@ -1,5 +1,6 @@
 ﻿using Bloodfiends.BloodCommand;
 using Bloodfiends.Family;
+using Bloodfiends.Hunger;
 using RimWorld;
 using SingularityFramework.Visuals.Brushlines;
 using System;
@@ -102,6 +103,11 @@ namespace Bloodfiends.Hardblood
             Gene_Hemogen hemogenGene = holder.genes?.GetFirstGeneOfType<Gene_Hemogen>();
             if (hemogenGene == null) return false;
             float drain = HardbloodWeaponry.UpkeepPerDay(holder) * UpkeepIntervalTicks / GenDate.TicksPerDay;
+            if (BloodfrenzyUtility.IsFrenzied(holder))
+            {
+                BloodfrenzyUtility.Pay(holder, drain);
+                return true;
+            }
             if (hemogenGene.Value <= drain) return false;
             GeneUtility.OffsetHemogen(holder, -drain);
             return true;
