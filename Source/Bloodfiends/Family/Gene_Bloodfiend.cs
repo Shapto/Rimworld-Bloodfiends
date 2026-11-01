@@ -66,6 +66,7 @@ namespace Bloodfiends.Family
             else if (GameComponent_BloodfiendFamilies.embracingNodeId >= 0) node = registry.CreateKindredNode(registry.GetNode(GameComponent_BloodfiendFamilies.embracingNodeId), pawn);
             else if (GameComponent_BloodfiendFamilies.placingLostKindred) node = registry.TryPlaceLostKindred(pawn);
             else if (GameComponent_BloodfiendFamilies.placingIntoFamily >= 0) node = registry.TryPlaceInFamily(pawn, GameComponent_BloodfiendFamilies.placingIntoFamily);
+            else if (!PawnGenerator.IsBeingGenerated(pawn)) node = registry.CreateFamilyFor(pawn, GameComponent_BloodfiendFamilies.ElderGeneration);
             else if (pawn.Faction != Faction.OfPlayer && startingTierSettings != null && Rand.Chance(startingTierSettings.joinPlayerFamilyChance)) node = registry.TryPlaceInPlayerRelatedFamily(pawn);
             if (node == null) node = registry.CreateFamilyFor(pawn, RollStartingGeneration(startingTierSettings));
 

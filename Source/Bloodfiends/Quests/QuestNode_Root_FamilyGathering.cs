@@ -187,7 +187,7 @@ namespace Bloodfiends.Quests
 
         private static List<Pawn> GenerateFamily(Quest quest, Faction faction, Map map, int count)
         {
-            var request = new PawnGenerationRequest(PawnKindDefOf.Sanguophage, faction, PawnGenerationContext.NonPlayer, map.Tile, forceGenerateNewPawn: true, mustBeCapableOfViolence: true, forcedXenotype: BloodfiendsDefOf.Bloodfiends_Bloodfiend);
+            var request = new PawnGenerationRequest(BloodfiendsDefOf.Bloodfiends_BloodfiendKind, faction, PawnGenerationContext.NonPlayer, map.Tile, forceGenerateNewPawn: true, mustBeCapableOfViolence: true, forcedXenotype: BloodfiendsDefOf.Bloodfiends_Bloodfiend);
             var bloodfiends = new List<Pawn> { quest.GeneratePawn(request) };
             GameComponent_BloodfiendFamilies families = GameComponent_BloodfiendFamilies.Instance;
             GameComponent_BloodfiendFamilies.placingIntoFamily = families?.GetNodeForPawn(bloodfiends[0])?.familyId ?? -1;
@@ -206,7 +206,9 @@ namespace Bloodfiends.Quests
 
         private static void OfferJoiner(Quest quest, Map map, Faction faction, List<Pawn> bloodfiends, IntVec3 gatherSpot, string meetingCompletedSignal)
         {
-            Pawn joiner = bloodfiends.FirstOrDefault(pawn => !pawn.Dead && !pawn.Downed);
+            Pawn joiner = bloodfiends
+                    .Where(pawn => !pawn.Dead && !pawn.Downed)
+                    .RandomElementWithFallback();
             if (joiner == null) return;
             quest.WaitForDuration(map.Parent, bloodfiends, faction, gatherSpot, JoinerWaitDurationTicks);
             quest.PawnJoinOffer(joiner, "LetterJoinOfferLabel".Translate(joiner.Named("PAWN")), "LetterJoinOfferTitle".Translate(joiner.Named("PAWN")), "LetterJoinOfferText".Translate(joiner.Named("PAWN"), map.Parent.Named("MAP")).Resolve(), () =>

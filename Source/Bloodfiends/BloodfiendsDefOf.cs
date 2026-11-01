@@ -43,6 +43,7 @@ namespace Bloodfiends
         public static JobDef Bloodfiends_ReceiveEmbrace;
         public static SitePartDef Bloodfiends_ElderLair;
         public static ThingDef Bloodfiends_BloodOfThePrimogenitor;
+        public static PawnKindDef Bloodfiends_BloodfiendKind;
         static BloodfiendsDefOf() => DefOfHelper.EnsureInitializedInCtor(typeof(BloodfiendsDefOf));
     }
 }

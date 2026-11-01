@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+	<PawnKindDef ParentName="SanguophageBase">
+		<defName>Bloodfiends_BloodfiendKind</defName>
+		<label>bloodfiend</label>
+		<xenotypeSet Inherit="False">
+			<xenotypeChances>
+				<Bloodfiends_Bloodfiend>999</Bloodfiends_Bloodfiend>
+			</xenotypeChances>
+		</xenotypeSet>
+		<invNutrition>0.5</invNutrition>
+		<invFoodDef>HemogenPack</invFoodDef>
+		<combatEnhancingDrugsChance>0.1</combatEnhancingDrugsChance>
+		<combatEnhancingDrugsCount>1~2</combatEnhancingDrugsCount>
+		<apparelMoney>500~700</apparelMoney>
+		<techHediffsChance>0.15</techHediffsChance>
+		<techHediffsMoney>0~1800</techHediffsMoney>
+		<techHediffsTags>
+			<li>Advanced</li>
+		</techHediffsTags>
+		<weaponMoney>600~800</weaponMoney>
+		<weaponTags>
+			<li>Gun</li>
+			<li>MedievalMeleeDecent</li>
+		</weaponTags>
+		<apparelAllowHeadgearChance>0.1</apparelAllowHeadgearChance>
+		<apparelTags>
+			<li>IndustrialBasic</li>
+		</apparelTags>
+		<apparelRequired Inherit="False">
+			<li>Apparel_Pants</li>
+		</apparelRequired>
+		<apparelDisallowTags>
+			<li>Western</li>
+		</apparelDisallowTags>
+	</PawnKindDef>
+</Defs>
