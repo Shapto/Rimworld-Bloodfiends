@@ -59,6 +59,7 @@ namespace Bloodfiends.Quests
             slate.Set("guardCount", guards.Count);
 
             quest.ReserveFaction(hunterFaction);
+            quest.AddPart(new QuestPart_DiscardUnarrivedPawns { pawns = hunters.Append(joiner).ToList() });
 
             quest.Delay(JoinerArrivalDelayRange.RandomInRange, delegate
             {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+	<QuestScriptDef>
+		<defName>Bloodfiends_HuntedKindred</defName>
+		<rootSelectionWeight>0.3</rootSelectionWeight>
+		<rootMinPoints>0</rootMinPoints>
+		<expireDaysRange>0.3</expireDaysRange>
+		<rootIncreasesPopulation>true</rootIncreasesPopulation>
+		<questNameRules>
+			<rulesStrings>
+				<li>questName->[joiner_nameDef] on the Run</li>
+				<li>questName->Hunted by [hunter_nameDef]</li>
+				<li>questName->The Runaway Kindred</li>
+				<li>questName->[joiner_nameDef]'s Escape</li>
+			</rulesStrings>
+		</questNameRules>
+		<questDescriptionRules>
+			<rulesStrings>
+				<!-- TODO writer -->
+				<li>questDescription->[joiner_nameFull], a [joinerTier], is calling from nearby. [joiner_pronoun] is being hunted by [hunterIntro], who is closing in with [guardCount] thralls.\n\n[joiner_nameDef] begs for shelter and offers to join you. If you accept, [hunter_nameDef] will follow [joiner_objective] to your door.[promotionInfo]</li>
+				<li>hunterIntro(hunterRelation==ancestor)->[joiner_possessive] own elder, [hunter_nameFull], a [hunterTier]</li>
+				<li>hunterIntro(hunterRelation==family)->[hunter_nameFull], a [hunterTier] of [joiner_possessive] own Family</li>
+				<li>hunterIntro->[hunter_nameFull], a [hunterTier]</li>
+				<li>promotionInfo(hunterRelation==ancestor)->\n\nShould [hunter_nameDef] die, [joiner_nameDef] will rise a generation.</li>
+				<li>promotionInfo-></li>
+			</rulesStrings>
+		</questDescriptionRules>
+		<root Class="Bloodfiends.Quests.QuestNode_Root_HuntedKindred" />
+	</QuestScriptDef>
+
+</Defs>

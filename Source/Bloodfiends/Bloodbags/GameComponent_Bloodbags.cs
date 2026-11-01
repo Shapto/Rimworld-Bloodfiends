@@ -41,7 +41,7 @@ namespace Bloodfiends.Bloodbags
                 if (infection == null || pawn.Dead || !BloodbagUtility.CanBecomeBloodbag(pawn)) continue;
 
                 pawn.health.RemoveHediff(infection);
-                BloodbagUtility.MakeBloodbag(pawn, infection.faction, null, infection.familyId);
+                BloodbagUtility.MakeBloodbag(pawn, infection.faction, infection.master, infection.familyId);
                 if (pawn.Faction == Faction.OfPlayer) Messages.Message("Bloodfiends_TurnedIntoBloodbag".Translate(pawn.Named("PAWN")), pawn, MessageTypeDefOf.NeutralEvent);
             }
             pendingTurns.Clear();

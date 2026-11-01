@@ -90,7 +90,7 @@ namespace Bloodfiends.Family
         {
             switch (Result)
             {
-                case EmbraceResult.Kindred: return "Bloodfiends_EmbraceNextKindred".Translate(GameComponent_BloodfiendFamilies.MaximumKindredsPerBloodfiend - CasterNode.kindredCreatedCount);
+                case EmbraceResult.Kindred: return "Bloodfiends_EmbraceNextKindred".Translate(GameComponent_BloodfiendFamilies.MaximumKindredsPerBloodfiend - GameComponent_BloodfiendFamilies.Instance.KindredSlotsUsedBy(CasterNode));
                 case EmbraceResult.Bloodbag: return "Bloodfiends_EmbraceNextBloodbag".Translate();
                 default: return "Bloodfiends_EmbraceNextXenogenes".Translate();
             }

@@ -96,8 +96,16 @@ namespace Bloodfiends.Family
             BloodfiendFamilyNode node = LineageHediff?.Node;
             if (registry == null || node == null) return;
 
+            if (node.generationNumber == GameComponent_BloodfiendFamilies.ElderGeneration && BloodfiendsMod.Settings.firstKindredDropsPrimogenitorBlood) DropBloodOfThePrimogenitor();
             Bloodfiends.SharedThirst.FamilialImpiety.Notify_ElderKilled(pawn, node, dinfo);
             GameComponent_BloodfiendFamilies.SyncPromotedPawns(registry.Notify_BloodfiendDied(node), pawn);
+        }
+
+        private void DropBloodOfThePrimogenitor()
+        {
+            Map map = pawn.MapHeld;
+            if (map == null) return;
+            GenPlace.TryPlaceThing(ThingMaker.MakeThing(BloodfiendsDefOf.Bloodfiends_BloodOfThePrimogenitor), pawn.PositionHeld, map, ThingPlaceMode.Near);
         }
 
         public override IEnumerable<Gizmo> GetGizmos()

@@ -9,7 +9,7 @@
 		<displayOrder>101</displayOrder>
 		<hostile>false</hostile>
 		<casterMustBeCapableOfViolence>false</casterMustBeCapableOfViolence>
-		<displayGizmoWhileUndrafted>true</displayGizmoWhileUndrafted>
+		<displayGizmoWhileUndrafted>false</displayGizmoWhileUndrafted>
 		<disableGizmoWhileUndrafted>false</disableGizmoWhileUndrafted>
 		<targetRequired>false</targetRequired>
 		<verbProperties>

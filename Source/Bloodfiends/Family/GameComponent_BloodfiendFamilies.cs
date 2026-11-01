@@ -12,7 +12,7 @@ namespace Bloodfiends.Family
     {
         public const int ElderGeneration = 1;
 
-        public const int MaximumKindredsPerBloodfiend = 2;
+        public static int MaximumKindredsPerBloodfiend => BloodfiendsMod.Settings.maximumKindredsPerBloodfiend;
 
         private Dictionary<int, BloodfiendFamilyNode> nodesById = new Dictionary<int, BloodfiendFamilyNode>();
         private int nextNodeId = 1;
@@ -38,6 +38,29 @@ namespace Bloodfiends.Family
         public int GetOtherFamilyMemberCount(int familyId) => memberCountsByFamilyId.TryGetValue(familyId, out int memberCount) ? Math.Max(0, memberCount - 1) : 0;
 
         public static GameComponent_BloodfiendFamilies Instance => Current.Game?.GetComponent<GameComponent_BloodfiendFamilies>();
+
+        public IEnumerable<BloodfiendFamilyNode> NodesOfFamily(int familyId) => nodesById.Values.Where(node => node.familyId == familyId);
+
+        private const int TutorialCheckIntervalTicks = 250;
+
+        private bool tutorialLetterSent;
+
+        /// <summary>
+        /// Sends the Bloodfiend tutorial letter once per game, the first time one of the player's Bloodfiends is on a map.
+        /// </summary>
+        public override void GameComponentTick()
+        {
+            if (tutorialLetterSent || Find.TickManager.TicksGame % TutorialCheckIntervalTicks != 0) return;
+
+            Pawn firstBloodfiend = nodesById.Values
+                .Where(IsPlayerMember)
+                .Select(node => node.bloodfiendPawn)
+                .FirstOrDefault(pawn => pawn.Spawned);
+            if (firstBloodfiend == null) return;
+
+            tutorialLetterSent = true;
+            Find.LetterStack.ReceiveLetter("Bloodfiends_TutorialLabel".Translate(), "Bloodfiends_TutorialText".Translate(firstBloodfiend.Named("PAWN")), LetterDefOf.NeutralEvent, firstBloodfiend);
+        }
 
         /// <summary>
         /// RimWorld creates game components through reflection and needs exactly this constructor.
@@ -81,7 +104,8 @@ namespace Bloodfiends.Family
                 familyId = familyId,
                 generationNumber = generationNumber,
                 bloodfiendPawn = bloodfiendPawn,
-                embracerNodeId = embracerNode?.nodeId ?? -1
+                embracerNodeId = embracerNode?.nodeId ?? -1,
+                creatorNodeId = embracerNode?.nodeId ?? -1
             };
             RegisterNode(node);
 
@@ -132,7 +156,9 @@ namespace Bloodfiends.Family
             return CreateNodeUnder(embracerNode, embracerNode.familyId, embracerNode.generationNumber + 1, spawnedPawn);
         }
 
-        public bool CanEmbraceKindred(BloodfiendFamilyNode embracerNode) => embracerNode != null && embracerNode.kindredCreatedCount < MaximumKindredsPerBloodfiend;
+        public int KindredSlotsUsedBy(BloodfiendFamilyNode embracerNode) => BloodfiendsMod.Settings.kindredSlotsFreeOnDeath ? nodesById.Values.Count(node => node.creatorNodeId == embracerNode.nodeId) : embracerNode.kindredCreatedCount;
+
+        public bool CanEmbraceKindred(BloodfiendFamilyNode embracerNode) => embracerNode != null && KindredSlotsUsedBy(embracerNode) < MaximumKindredsPerBloodfiend;
 
         /// <summary>
         /// Adds a new Kindred one generation below its embracer, in the same Family.
@@ -313,10 +339,7 @@ namespace Bloodfiends.Family
             if (places.Count == 0) return null;
             (BloodfiendFamilyNode chosen, bool claimNode) = places.RandomElement();
             if (!claimNode) return CreateNodeUnder(chosen, chosen.familyId, chosen.generationNumber + 1, lostPawn);
-            chosen.bloodfiendPawn = lostPawn;
-            nodeIdsByPawn[lostPawn] = chosen.nodeId;
-            playerAncestorCacheTick = -1;
-            return chosen;
+            return TryClaimNode(lostPawn, chosen.nodeId);
         }
 
         private List<(BloodfiendFamilyNode node, bool claimNode)> LostKindredPlaces()
@@ -412,7 +435,7 @@ namespace Bloodfiends.Family
             Scribe_Collections.Look(ref nodesById, "nodesById", LookMode.Value, LookMode.Deep, ref nodeIdsWorkingList, ref nodesWorkingList);
             Scribe_Values.Look(ref nextNodeId, "nextNodeId", 1);
             Scribe_Values.Look(ref nextFamilyId, "nextFamilyId", 1);
-
+            Scribe_Values.Look(ref tutorialLetterSent, "tutorialLetterSent");
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {
                 if (nodesById == null) nodesById = new Dictionary<int, BloodfiendFamilyNode>();

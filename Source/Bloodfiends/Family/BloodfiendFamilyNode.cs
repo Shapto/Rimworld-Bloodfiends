@@ -16,6 +16,7 @@ namespace Bloodfiends.Family
         public int embracerNodeId = -1;
         public List<int> embracedNodeIds = new List<int>();
         public int kindredCreatedCount;
+        public int creatorNodeId = -1;
 
         public bool HasLivingPawn => bloodfiendPawn != null && !bloodfiendPawn.Dead;
 
@@ -28,8 +29,10 @@ namespace Bloodfiends.Family
             Scribe_Values.Look(ref embracerNodeId, "embracerNodeId", -1);
             Scribe_Collections.Look(ref embracedNodeIds, "embracedNodeIds", LookMode.Value);
             Scribe_Values.Look(ref kindredCreatedCount, "kindredCreatedCount");
+            Scribe_Values.Look(ref creatorNodeId, "creatorNodeId", -1);
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit && embracedNodeIds == null) embracedNodeIds = new List<int>();
+            if (Scribe.mode == LoadSaveMode.PostLoadInit && creatorNodeId < 0) creatorNodeId = embracerNodeId;
         }
     }
 }

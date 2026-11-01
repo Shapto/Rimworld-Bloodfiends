@@ -19,6 +19,10 @@
 						<li>(7, 0.5)</li>
 					</points>
 				</healingPerPassByGeneration>
+				<slowHealingInjuries>
+					<li>Burn</li>
+					<li>ChemicalBurn</li>
+				</slowHealingInjuries>
 				<hemogenPerHealedPoint>0.002</hemogenPerHealedPoint>
 				<regrowthCostMultiplier>3</regrowthCostMultiplier>
 				<bloodLossHealedPerPass>0.02</bloodLossHealedPerPass>
