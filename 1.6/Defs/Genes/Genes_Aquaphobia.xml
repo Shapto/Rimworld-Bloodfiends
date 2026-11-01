@@ -33,12 +33,12 @@
 		<stages>
 			<li>
 				<label>uneasy around water</label>
-				<description>TODO</description>
+				<description>It's too wet around here. Gives me the creeps.</description>
 				<baseMoodEffect>-4</baseMoodEffect>
 			</li>
 			<li>
 				<label>afraid of water</label>
-				<description>TODO</description>
+				<description>Too much water! The glare! The sun is blinding me! On the ripples! Or is that the moon?</description>
 				<baseMoodEffect>-10</baseMoodEffect>
 			</li>
 		</stages>
