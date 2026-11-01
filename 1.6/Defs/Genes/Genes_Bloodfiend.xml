@@ -2,8 +2,8 @@
 <Defs>
 	<GeneDef>
 		<defName>Bloodfiends_Bloodfiend</defName>
-		<label>crimson curse</label>
-		<description>TODO</description>
+		<label>dipsia</label>
+		<description>Carriers of this gene have special archites in their bloodstream which are attempting, and failing to, suppress a peculiar bloodborne illness. It grants them the ability to manipulate blood and greatly enhances their physical capabilities, which are even further enhanced by gorging on blood. Dipsia dillutes throughout the bloodline and determines a carrier's position within the genealogical hierarchy as well as their power and control over blood relative to their kindred.</description>
 		<geneClass>Bloodfiends.Family.Gene_Bloodfiend</geneClass>
 		<iconPath>Icons/CrimsonCurse</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>

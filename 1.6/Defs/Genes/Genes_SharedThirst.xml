@@ -3,7 +3,7 @@
 	<GeneDef>
 		<defName>Bloodfiends_SharedThirst</defName>
 		<label>shared thirst</label>
-		<description>TODO</description>
+		<description>Carriers of this gene possess a strong desire to propagate their bloodline and a strong familial bond with their kindred. Hemogen drain and general mood of a bloodline's members are dictated by the amount of members the family possesses. The larger a family, the smaller the drain. A respect for the hierarchy is intrisic to the carrier's instincts: while an elder striking a progeny is seen as discipline and siblings of the same tier quarreling are trivial matters; hurting a higher kindred will have an immense psychological burden, killing one will be traumatizing.</description>
 		<geneClass>Bloodfiends.SharedThirst.Gene_SharedThirst</geneClass>
 		<iconPath>Icons/SharedThirst</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
