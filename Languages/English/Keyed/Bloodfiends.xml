@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <!-- Tutorial -->
-  <Bloodfiends_TutorialLabel>The crimson curse</Bloodfiends_TutorialLabel>
+  <Bloodfiends_TutorialLabel>About Dipsia</Bloodfiends_TutorialLabel>
   <Bloodfiends_TutorialText>{PAWN_nameDef} is a Bloodfiend. {PAWN_pronoun} hungers not for food but for blood, and for the emotions that run through it.\n\nBlood:\n- Bloodfiends run on hemogen. Fresh blood feeds them best; stale sources like hemogen packs barely sate them.\n- Their regeneration knits wounds and regrows limbs at the cost of hemogen, and can hold off death while there is blood to burn.\n\nThe Family:\n- Every Bloodfiend belongs to a Family, ranked from First Kindred down to Lesser Kindred. Higher Kindred are stronger and command greater blood arts. See the Family tab.\n- A Bloodfiend can Embrace others to make them Kindred, up to a limit. When an elder dies, everyone below them rises a generation.\n- Bloodfiends of one Family share a thirst: striking your own kin weighs on the mind, striking an elder most of all.\n\nWeaknesses:\n- Bloodfiends fear deep water.\n- Fire is their bane. Burns heal slowly, and a burning Bloodfiend cannot regenerate at all.</Bloodfiends_TutorialText>
 
   <!-- Embrace -->
@@ -33,6 +33,8 @@
   <Bloodfiends_ManifestLance>Manifest hardblood lance ({0} hemogen)</Bloodfiends_ManifestLance>
 
   <Bloodfiends_CannotMimicSpecial>This weapon is too complex to mimic.</Bloodfiends_CannotMimicSpecial>
+
+  <Bloodfiends_FeverBurnedOut>The flames have burned the crimson fever out of {PAWN_nameDef}'s blood.</Bloodfiends_FeverBurnedOut>
 
   <!-- Promotion -->
   <Bloodfiends_PromotionLabel>Blood rises</Bloodfiends_PromotionLabel>

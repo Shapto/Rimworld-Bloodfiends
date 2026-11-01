@@ -19,14 +19,25 @@ namespace Bloodfiends.Bloodbags
         public Faction faction;
         private bool queuedToTurn;
         public Pawn master;
-        public override bool ShouldRemove => base.ShouldRemove || !BloodbagUtility.CanBecomeBloodbag(pawn) && !pawn.Dead;
+        private const int BurnCheckIntervalTicks = 30;
+
+        private bool burnedOut;
+
+        public override bool ShouldRemove => base.ShouldRemove || burnedOut || !BloodbagUtility.CanBecomeBloodbag(pawn) && !pawn.Dead;
 
         public override void PostTick()
         {
             base.PostTick();
-            if (queuedToTurn || Severity < def.maxSeverity || pawn.Dead) return;
+            if (!burnedOut && pawn.IsHashIntervalTick(BurnCheckIntervalTicks) && pawn.IsBurning()) BurnOut();
+            if (burnedOut || queuedToTurn || Severity < def.maxSeverity || pawn.Dead) return;
             queuedToTurn = true;
             GameComponent_Bloodbags.Instance?.QueueTurning(pawn);
+        }
+
+        private void BurnOut()
+        {
+            burnedOut = true;
+            if (pawn.Faction == Faction.OfPlayer) Messages.Message("Bloodfiends_FeverBurnedOut".Translate(pawn.Named("PAWN")), pawn, MessageTypeDefOf.PositiveEvent);
         }
 
         public override void ExposeData()
