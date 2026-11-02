@@ -56,7 +56,7 @@
 
   <!-- Hardblood Weaponry -->
   <Bloodfiends_HardbloodWeaponry>Hardblood Weaponry</Bloodfiends_HardbloodWeaponry>
-  <Bloodfiends_HardbloodWeaponryDesc>TODO\n\nRepertoire: {0} / {1}</Bloodfiends_HardbloodWeaponryDesc>
+  <Bloodfiends_HardbloodWeaponryDesc>Memorize a held weapon in an available slot, then freely replicate its form and function by manipulating Hardblood. Bloodfiends of the second generation and higher get access to a powerful, innate Hardblood weapon.\n\nRepertoire: {0} / {1}</Bloodfiends_HardbloodWeaponryDesc>
   <Bloodfiends_WeaponryDowned>{0} is downed.</Bloodfiends_WeaponryDowned>
   <Bloodfiends_MimicWeapon>Mimic {0}</Bloodfiends_MimicWeapon>
   <Bloodfiends_AlreadyMimicked>already in repertoire</Bloodfiends_AlreadyMimicked>
