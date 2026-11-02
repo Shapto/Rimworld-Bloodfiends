@@ -1,6 +1,7 @@
 ﻿using Bloodfiends.BloodCommand;
 using Bloodfiends.Family;
 using Bloodfiends.Hunger;
+using Bloodfiends.LaSangre;
 using RimWorld;
 using SingularityFramework.Visuals.Brushlines;
 using System;
@@ -69,13 +70,19 @@ namespace Bloodfiends.Hardblood
                     continue;
                 }
                 Pawn holder = (replica.ParentHolder as Pawn_EquipmentTracker)?.pawn;
-                if (!StillHeld(replica, holder) || upkeepTick && !PayUpkeep(holder))
+                if (!StillHeld(replica, holder) || upkeepTick && !LaSangreDuels.IsDuelLance(replica) && !PayUpkeep(holder))
                 {
                     Dissolve(replica);
                     continue;
                 }
                 lastHolders[replica] = holder;
             }
+        }
+
+        public void Shatter(Thing replica)
+        {
+            Forget(replica);
+            if (!replica.Destroyed) replica.Destroy(DestroyMode.Vanish);
         }
 
         /// <summary>

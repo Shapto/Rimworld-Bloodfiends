@@ -29,6 +29,19 @@ namespace Bloodfiends.LaSangre
         public SimpleCurve tendrilRadiusByAlong;           // how far out the tendrils wind (cells), by how far along the lance: just outside its outline
         public float cameraShake = 4f;
         public SoundDef impactSound;
+        public string interceptorLanceTexturePath = "Items/La_Sangre_De_Sancho_Lance";
+        public Vector2 interceptorLanceButtOnTexture = new Vector2(0.017f, 0.035f);
+        public Vector2 interceptorLanceTipOnTexture = new Vector2(0.985f, 0.976f);
+        public float interceptorLanceHalfWidthOnTexture = 0.05f;
+        public float interceptorLanceLength = 3.4f;               // cells, drawn a little larger than held for the duel
+        public float interceptorLanceGripFraction = 0.25f;
+        public string enhancementTexturePath = "Items/Separated_Enhanced_La_Sangre";   // forms over the interceptor's lance
+        public Vector2 enhancementButtOnTexture = new Vector2(0.1f, 0.08f);
+        public Vector2 enhancementTipOnTexture = new Vector2(0.953f, 0.955f);
+        public float enhancementHalfWidthOnTexture = 0.13f;
+        public int duelClashes = 3;
+        public float duelLoserDamageFactor = 0.8f;                // of La Sangre's damage, scaled by the winner's strength
+        public float duelWinnerDamageFactor = 0.2f;               // of La Sangre's damage, scaled by the loser's strength
 
         public CompProperties_AbilityLaSangre() => compClass = typeof(CompAbilityEffect_LaSangre);
     }

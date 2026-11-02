@@ -10,7 +10,7 @@ using Verse.Sound;
 
 namespace Bloodfiends.LaSangre
 {
-    public class LaSangreFlight : Thing, IThingHolder
+    public partial class LaSangreFlight : Thing, IThingHolder
     {
         private const int CocoonClosedTick = 54;
         private const int HiddenTick = 40;
@@ -116,6 +116,12 @@ namespace Bloodfiends.LaSangre
             if (ageTicks == AirCocoonStartTick) BloodfiendsSounds.PlayAt(SoundDefOf.Psycast_Skip_Entry, airPosition, map);
             if (ageTicks == RevealTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, airPosition, map);
             if (ageTicks == LanceStartTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceForming, airPosition, map);
+            if (ageTicks == LanceGrownTick) TryStartDuel(map);
+            if (duelist != null)
+            {
+                TickDuel(map);
+                return;
+            }
             if (ageTicks == DiveTick)
             {
                 StartSmear();
@@ -223,20 +229,22 @@ namespace Bloodfiends.LaSangre
 
         public override void Destroy(DestroyMode mode = DestroyMode.Vanish)
         {
+            if (duelist != null) EndDuelEarly();
             Pawn caster = FlyingPawn;
             if (caster != null && Spawned) PutDown(caster, Map);
             base.Destroy(mode);
         }
 
 
-        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && ageTicks < DiveTick);
+        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && (ageTicks < DiveTick || duelist != null));
 
-        private Vector3 PawnDrawPosition => ageTicks < TeleportEndTick ? groundPosition.WithY(AltitudeLayer.Pawn.AltitudeFor()) : airPosition.WithY(AltitudeLayer.Skyfaller.AltitudeFor());
+        private Vector3 PawnDrawPosition => duelist != null && ageTicks >= DiveTick ? CasterDuelPlace().position.WithY(AltitudeLayer.Skyfaller.AltitudeFor()) : ageTicks < TeleportEndTick ? groundPosition.WithY(AltitudeLayer.Pawn.AltitudeFor()) : airPosition.WithY(AltitudeLayer.Skyfaller.AltitudeFor());
 
         public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
         {
             Pawn pawn = FlyingPawn;
             if (pawn != null && PawnVisible) pawn.DynamicDrawPhaseAt(phase, PawnDrawPosition, flip);
+            DrawDuelistPawn(phase, flip);
             base.DynamicDrawPhaseAt(phase, drawLoc, flip);
         }
 
@@ -261,7 +269,8 @@ namespace Bloodfiends.LaSangre
                 DrawLance(GripPosition(airPosition), grown, lanceMaterial, airAltitude + 0.12f);
             }
             if (ageTicks >= WindStartTick && ageTicks < DiveTick) DrawTendrils();
-            if (ageTicks >= DiveTick) DrawGhosts(airAltitude + 0.12f);
+            if (ageTicks >= DiveTick && duelist == null) DrawGhosts(airAltitude + 0.12f);
+            if (duelist != null) DrawDuel(airAltitude);
 
             groundDrawer.DrawAll();
             backDrawer.DrawAll();
@@ -471,6 +480,7 @@ namespace Bloodfiends.LaSangre
             Scribe_Values.Look(ref wasDrafted, "wasDrafted");
             Scribe_Values.Look(ref seed, "seed");
             Scribe_Defs.Look(ref abilityDef, "abilityDef");
+            ExposeDuel();
         }
     }
 }
