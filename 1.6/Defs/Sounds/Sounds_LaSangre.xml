@@ -155,7 +155,7 @@
   <SoundDef>
     <defName>Bloodfiends_DuelGrind</defName>
     <context>MapOnly</context>
-    <maxSimultaneous>1</maxSimultaneous>
+    <maxSimultaneous>2</maxSimultaneous>
     <subSounds>
       <li>
         <grains>

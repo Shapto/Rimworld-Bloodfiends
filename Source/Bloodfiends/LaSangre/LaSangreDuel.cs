@@ -19,18 +19,18 @@ namespace Bloodfiends.LaSangre
     /// </summary>
     public partial class LaSangreFlight
     {
-        private const int DashTicks = 10;
+        private const int DashTicks = 16;
         private const int FirstClashTick = DiveTick + DashTicks;
-        private const int ClashIntervalTicks = 30;
-        private const int ShoveDelayTicks = 6;
+        private const int ClashIntervalTicks = 55;
+        private const int ShoveDelayTicks = 12;
         private const int GrindSparkTicks = 5;
-        private const int BreakHitstopTicks = 6;
-        private const int SnapTicks = 4;
-        private const int TableauTicks = 30;
-        private const int WindUpTicks = 12;
-        private const int SlamTicks = 9;
-        private const int PinTicks = 24;
-        private const int LandingTicks = 12;
+        private const int BreakHitstopTicks = 14;
+        private const int SnapTicks = 6;
+        private const int TableauTicks = 60;
+        private const int WindUpTicks = 24;
+        private const int SlamTicks = 12;
+        private const int PinTicks = 40;
+        private const int LandingTicks = 20;
         private const int LesserGeneration = 8;
         private const float DuelHeightFactor = 0.9f;
         private const float ReachShare = 0.97f;

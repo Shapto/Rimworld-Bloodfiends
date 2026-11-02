@@ -25,10 +25,11 @@ namespace Bloodfiends.LaSangre
         private const int AfterimageSpacingTicks = 2;
         private const int SurgeFlashTicks = 6;
         private const int ImpactFlashTicks = 12;
-        private const int BreakFlashTicks = 18;
+        private const int BreakFlashTicks = 24;
         private const int SlamFlashTicks = 16;
         private const int CollisionLeadTicks = 15;
         private const int GrindDelayTicks = 8;
+        private const int SwingHitTicks = 20;
         private const int FireworkDelayTicks = 12;
         private const int FlowIntervalTicks = 2;
         private static readonly FloatRange FlowLength = new FloatRange(3.5f, 7f);
@@ -78,7 +79,7 @@ namespace Bloodfiends.LaSangre
             {
                 List<Vector3> swingPath = new List<Vector3>();
                 for (int tick = TableauEndTick; tick <= SlamTick; tick++) swingPath.Add(AtTick(tick, () => LoserPlace().position));
-                MapComponent_BrushLines.Start(map, new TrailLineEffect(MapComponent_BloodCommand.BloodPalette, swingPath, 0.9f, 0.35f, seed + 71, 1f));
+                MapComponent_BrushLines.Start(map, new TrailLineEffect(MapComponent_BloodCommand.BloodPalette, swingPath, 0.9f, 0.5f, seed + 71, 1.3f));
             }
             if (ageTicks == SlamTick) SlamSpectacle(map);
             TickFlowLines(map);
@@ -91,9 +92,10 @@ namespace Bloodfiends.LaSangre
         {
             if (ageTicks == DiveTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelNight, meetPoint, map);
             if (ageTicks == FirstClashTick - CollisionLeadTicks) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelCollision, Contact(0), map);
-            if (ageTicks == FirstClashTick + GrindDelayTicks) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelGrind, Contact(0), map);
+            int ticksIntoLock = ageTicks - FirstClashTick - GrindDelayTicks;
+            if (ticksIntoLock >= 0 && ticksIntoLock % ClashIntervalTicks == 0 && ageTicks < ResolveTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelGrind, LockContact(), map);
             if (ageTicks == ResolveTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelBreakthrough, Contact(Props.duelClashes), map);
-            if (ageTicks == TableauEndTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelSwing, ImpaledSpot, map);
+            if (ageTicks == SlamTick - SwingHitTicks) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelSwing, ImpaledSpot, map);
             if (ageTicks == SlamTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelSlam, SlamPoint, map);
             if (ageTicks == FirstClashTick + FireworkDelayTicks) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelFirework, meetPoint, map);
             TickFireworks(map);
