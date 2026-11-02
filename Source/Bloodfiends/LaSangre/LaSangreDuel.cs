@@ -28,8 +28,8 @@ namespace Bloodfiends.LaSangre
         private const int SnapTicks = 6;
         private const int TableauTicks = 60;
         private const int WindUpTicks = 24;
-        private const int SlamTicks = 12;
-        private const int PinTicks = 40;
+        private const int SlamTicks = 5;
+        private const int PinTicks = 90;
         private const int LandingTicks = 20;
         private const int LesserGeneration = 8;
         private const float DuelHeightFactor = 0.9f;
