@@ -14,30 +14,38 @@ namespace Bloodfiends.LaSangre
 {
     /// <summary>
     /// The La Sangre duel. When La Sangre would strike a Bloodfiend holding a formed lance, the best melee fighter among them
-    /// pours all their hemogen into it, morphs it into Enhanced La Sangre and meets the dive mid-air. The lances lock and grind
-    /// through a few clashes; then the winner impales the loser and slams them into the ground. The blast never lands.
+    /// pours all their hemogen into it, morphs it into Enhanced La Sangre and meets the dive mid-air. The lances lock tip to tip
+    /// and grind through a few surges; then the winner breaks through, runs the loser through and swings them down into the ground on the lance. The blast never lands.
     /// </summary>
     public partial class LaSangreFlight
     {
-        private const int DashTicks = 8;
+        private const int DashTicks = 10;
         private const int FirstClashTick = DiveTick + DashTicks;
-        private const int ClashIntervalTicks = 8;
-        private const int LungeTicks = 4;
-        private const int HoldTicks = 4;
-        private const int SlamTicks = 6;
-        private const int LandingTicks = 10;
+        private const int ClashIntervalTicks = 30;
+        private const int ShoveDelayTicks = 6;
+        private const int GrindSparkTicks = 5;
+        private const int SnapTicks = 4;
+        private const int TableauTicks = 30;
+        private const int WindUpTicks = 12;
+        private const int SlamTicks = 9;
+        private const int PinTicks = 24;
+        private const int LandingTicks = 12;
         private const int LesserGeneration = 8;
         private const float DuelHeightFactor = 0.6f;
-        private const float ReachShare = 0.7f;
+        private const float ReachShare = 0.97f;
         private const float DriftPerClash = 0.3f;
         private const float JitterDistance = 0.08f;
-        private const float LungeShare = 0.6f;
-        private const float ImpaleShare = 0.8f;
-        private const float StandOffShare = 0.6f;
+        private const float LungeShare = 1.4f;
+        private const float ImpaleShare = 0.6f;
+        private const float LiftHeight = 0.7f;
+        private const float WindUpTilt = 0.35f;
+        private const float SlamForwardShare = 0.5f;
         private const float SlamAheadDistance = 2.5f;
-        private const float WinnerHangHeight = 1.2f;
+        private const float StandOffShare = 0.6f;
         private const float ClashFlashSize = 3f;
         private const float ClashShake = 1.5f;
+        private const float FirstImpactFlashSize = 5f;
+        private const float FirstImpactShake = 3f;
         private const float ImpaleShake = 3f;
         private const float SlamFlashSize = 6f;
         private const float SlamFilthRadius = 2.2f;
@@ -50,6 +58,7 @@ namespace Bloodfiends.LaSangre
         private bool duelistWasDrafted;
         private int casterClashWins;
         private int duelistClashWins;
+        private int casterClashMask;
         private bool duelResolved;
         private bool casterWonDuel;
 
@@ -58,13 +67,17 @@ namespace Bloodfiends.LaSangre
 
         private int ResolveTick => FirstClashTick + Props.duelClashes * ClashIntervalTicks;
 
-        private int ImpaleTick => ResolveTick + LungeTicks;
+        private int ImpaledTick => ResolveTick + SnapTicks;
 
-        private int SlamStartTick => ImpaleTick + HoldTicks;
+        private int TableauEndTick => ImpaledTick + TableauTicks;
+
+        private int SlamStartTick => TableauEndTick + WindUpTicks;
 
         private int SlamTick => SlamStartTick + SlamTicks;
 
-        private int LandTick => SlamTick + LandingTicks;
+        private int LandStartTick => SlamTick + PinTicks;
+
+        private int LandTick => LandStartTick + LandingTicks;
 
         private float DuelHeight => Props.airHeight * DuelHeightFactor;
 
@@ -72,13 +85,34 @@ namespace Bloodfiends.LaSangre
 
         private float Reach => TipDistance * ReachShare;
 
-        private Vector3 MeetGround => meetPoint - new Vector3(0f, 0f, DuelHeight);
+        private float ImpaleLength => TipDistance * ImpaleShare;
 
         private Vector3 WinnerFacing => casterWonDuel ? diveDirection : -diveDirection;
 
-        private Vector3 SlamPoint => casterWonDuel ? MeetGround : MeetGround + diveDirection * SlamAheadDistance;
+        /// <summary>
+        /// The winner's sideways heading on screen, which the slam follows. Zero when the dive runs straight up or down.
+        /// </summary>
+        private Vector3 WinnerAhead => Mathf.Abs(WinnerFacing.x) > 0.1f ? new Vector3(Mathf.Sign(WinnerFacing.x), 0f, 0f) : Vector3.zero;
 
-        private Vector3 WinnerLanding => SlamPoint - WinnerFacing * TipDistance * StandOffShare;
+        private Vector3 WinnerStrike => Contact(Props.duelClashes) - WinnerFacing * Reach * (1f - LungeShare);
+
+        private Vector3 ImpaledSpot => WinnerStrike + WinnerFacing * ImpaleLength;
+
+        private Vector3 WindUpDirection => (WinnerFacing + Vector3.forward * WindUpTilt).normalized;
+
+        private Vector3 SlamDirection => (WinnerAhead * SlamForwardShare + Vector3.back).normalized;
+
+        /// <summary>
+        /// Where the loser hits the ground: straight under where they were run through when the caster wins,
+        /// a little further along the interceptor's thrust when the interceptor wins.
+        /// </summary>
+        private Vector3 SlamPoint => (ImpaledSpot - new Vector3(0f, 0f, DuelHeight) + WinnerAhead * (casterWonDuel ? 0f : SlamAheadDistance)).ToIntVec3().ToVector3Shifted();
+
+        private Vector3 WinnerSlamSpot => SlamPoint - SlamDirection * ImpaleLength;
+
+        private float WinnerSlamHeight => -SlamDirection.z * ImpaleLength;
+
+        private Vector3 WinnerLanding => SlamPoint - (WinnerAhead == Vector3.zero ? WinnerFacing : WinnerAhead) * TipDistance * StandOffShare;
 
         private Pawn DuelWinner => casterWonDuel ? duelCaster : duelist;
 
@@ -146,32 +180,48 @@ namespace Bloodfiends.LaSangre
             }
 
             int ticksSinceFirstClash = ageTicks - FirstClashTick;
-            if (ticksSinceFirstClash >= 0 && ticksSinceFirstClash % ClashIntervalTicks == 0 && ticksSinceFirstClash / ClashIntervalTicks < Props.duelClashes) Clash(map, ticksSinceFirstClash / ClashIntervalTicks);
+            int clashIndex = ticksSinceFirstClash / ClashIntervalTicks;
+            if (ticksSinceFirstClash >= 0 && ticksSinceFirstClash % ClashIntervalTicks == 0 && clashIndex < Props.duelClashes) Clash(map, clashIndex);
+            else if (ticksSinceFirstClash > 0 && ageTicks < ResolveTick && ticksSinceFirstClash % GrindSparkTicks == 0) GrindSparks(map, ticksSinceFirstClash);
             if (ageTicks == ResolveTick)
             {
                 duelResolved = true;
                 casterWonDuel = casterClashWins > duelistClashWins;
+                Impale(map);
             }
-            if (ageTicks == ImpaleTick) Impale(map);
             if (ageTicks == SlamTick) Slam(map);
             if (ageTicks >= LandTick) LandDuel(map);
         }
 
         /// <summary>
-        /// One clash in the lock. Who takes it is a roll weighted by each side's power; the contact point is shoved toward the loser.
+        /// One surge in the lock. Who takes it is a roll weighted by each side's power; the point where the lance tips meet
+        /// is then shoved toward whoever lost it. The first one is the moment the two charges collide.
         /// </summary>
         private void Clash(Map map, int clashIndex)
         {
             float casterPower = DuelPower(duelCaster, strength);
             float duelistPower = DuelPower(duelist, duelistStrength);
-            if (Rand.Chance(casterPower / (casterPower + duelistPower))) casterClashWins++;
+            if (Rand.Chance(casterPower / (casterPower + duelistPower)))
+            {
+                casterClashWins++;
+                casterClashMask |= 1 << clashIndex;
+            }
             else duelistClashWins++;
 
-            Vector3 contact = Contact();
+            Vector3 contact = Contact(clashIndex);
             MapComponent_BrushLines.Start(map, new BurstLineEffect(MapComponent_BloodCommand.BloodPalette, contact, 18, new FloatRange(0.8f, 1.6f), new FloatRange(0.16f, 0.26f), seed + 23 + clashIndex, 0.5f));
-            FleckMaker.Static(contact, map, FleckDefOf.ShotFlash, ClashFlashSize);
+            bool firstImpact = clashIndex == 0;
+            FleckMaker.Static(contact, map, firstImpact ? FleckDefOf.ExplosionFlash : FleckDefOf.ShotFlash, firstImpact ? FirstImpactFlashSize : ClashFlashSize);
             BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceChargeHit, contact, map);
-            Shake(map, ClashShake);
+            Shake(map, firstImpact ? FirstImpactShake : ClashShake);
+        }
+
+        /// <summary>
+        /// Between surges the tips keep grinding against each other, throwing a little blood from the contact point.
+        /// </summary>
+        private void GrindSparks(Map map, int ticksSinceFirstClash)
+        {
+            MapComponent_BrushLines.Start(map, new BurstLineEffect(MapComponent_BloodCommand.BloodPalette, LockContact(), 6, new FloatRange(0.4f, 0.9f), new FloatRange(0.1f, 0.18f), seed + 101 + ticksSinceFirstClash, 0.3f));
         }
 
         /// <summary>
@@ -186,16 +236,17 @@ namespace Bloodfiends.LaSangre
         }
 
         /// <summary>
-        /// The winner's lance runs the loser through; the loser's own lance shatters.
+        /// The breakthrough: the loser's lance shatters at the tips and the winner charges through, running them through.
         /// </summary>
         private void Impale(Map map)
         {
-            Vector3 loserPosition = DuelPlace(DuelLoser == duelCaster).position;
+            Vector3 contact = Contact(Props.duelClashes);
+            Vector3 loserPosition = ImpaledSpot;
             Vector3 loserFacing = -WinnerFacing;
-            Vector3 brokenMiddle = loserPosition + loserFacing * Reach * 0.5f;
+            Vector3 brokenMiddle = contact - loserFacing * Reach * 0.5f;
             MapComponent_BrushLines.Start(map, new ShatterLineEffect(MapComponent_BloodCommand.BloodPalette, brokenMiddle, brokenMiddle - new Vector3(0f, 0f, DuelHeight), loserFacing.x >= 0f ? 1f : -1f, 12, 0.5f, 0.1f, seed + 31, 0.9f));
             MapComponent_BrushLines.Start(map, new BurstLineEffect(MapComponent_BloodCommand.BloodPalette, loserPosition, 24, new FloatRange(1f, 2f), new FloatRange(0.18f, 0.3f), seed + 37, 0.6f));
-            FleckMaker.Static(loserPosition, map, FleckDefOf.ShotFlash, ClashFlashSize * 1.6f);
+            FleckMaker.Static(contact, map, FleckDefOf.ExplosionFlash, FirstImpactFlashSize);
             BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, loserPosition, map);
             BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceChargeHit, loserPosition, map);
             Shake(map, ImpaleShake);
@@ -210,7 +261,7 @@ namespace Bloodfiends.LaSangre
             Vector3 slamPoint = SlamPoint;
             Pawn loser = DuelLoser;
             Pawn winner = DuelWinner;
-            PutDownDuelPawn(loser, slamPoint, -WinnerFacing);
+            PutDownDuelPawn(loser, slamPoint, -SlamDirection);
 
             MapComponent_BrushLines.Start(map, new BurstLineEffect(MapComponent_BloodCommand.BloodPalette, slamPoint, 36, new FloatRange(1.5f, 3f), new FloatRange(0.22f, 0.38f), seed + 41, 0.8f));
             FleckMaker.Static(slamPoint, map, FleckDefOf.ExplosionFlash, SlamFlashSize);
@@ -292,9 +343,16 @@ namespace Bloodfiends.LaSangre
         }
 
         /// <summary>
-        /// Where the lances meet: shoved a little toward whoever has lost more clashes.
+        /// Where the lances meet after the first few clashes: shoved toward whoever has lost more of them.
         /// </summary>
-        private Vector3 Contact() => meetPoint + diveDirection * (casterClashWins - duelistClashWins) * DriftPerClash;
+        private Vector3 Contact(int clashesCounted)
+        {
+            int winDifference = 0;
+            for (int clashIndex = 0; clashIndex < clashesCounted && clashIndex < Props.duelClashes; clashIndex++) winDifference += CasterTookClash(clashIndex) ? 1 : -1;
+            return meetPoint + diveDirection * winDifference * DriftPerClash;
+        }
+
+        private bool CasterTookClash(int clashIndex) => (casterClashMask & (1 << clashIndex)) != 0;
 
         private Vector3 Jitter(float pawnSeed)
         {
@@ -304,8 +362,8 @@ namespace Bloodfiends.LaSangre
         }
 
         /// <summary>
-        /// Where a duelist is drawn and how high off the ground (for the shadow): the dash, the grinding lock,
-        /// then for the winner the lunge, slam and landing, and for the loser being run through and driven into the ground.
+        /// Where a duelist is drawn and how high off the ground (for the shadow): the dash, the lock,
+        /// then the winner's breakthrough and the loser carried along on their lance.
         /// </summary>
         private (Vector3 position, float height) DuelPlace(bool forCaster)
         {
@@ -313,34 +371,81 @@ namespace Bloodfiends.LaSangre
             Vector3 start = forCaster ? airPosition : duelistGround;
             float startHeight = forCaster ? Props.airHeight : 0f;
             if (ageTicks < DiveTick) return (start, startHeight);
-
-            Vector3 locked = Contact() - facing * Reach;
             if (ageTicks < FirstClashTick)
             {
-                float dash = Mathf.Pow(Mathf.InverseLerp(DiveTick, FirstClashTick, ageTicks), 2f);
-                return (Vector3.Lerp(start, locked, dash), Mathf.Lerp(startHeight, DuelHeight, dash));
+                float dash = EaseIn(DiveTick, FirstClashTick);
+                return (Vector3.Lerp(start, Contact(0) - facing * Reach, dash), Mathf.Lerp(startHeight, DuelHeight, dash));
             }
-            Vector3 jitter = Jitter(forCaster ? 1.7f : 4.3f);
-            if (ageTicks < ResolveTick) return (locked + jitter, DuelHeight);
+            if (ageTicks < ResolveTick) return (LockPlace(forCaster, facing), DuelHeight);
+            return forCaster == casterWonDuel ? WinnerPlace() : LoserPlace();
+        }
 
-            bool isWinner = forCaster == casterWonDuel;
-            Vector3 winnerLocked = Contact() - WinnerFacing * Reach;
-            Vector3 winnerLunge = winnerLocked + WinnerFacing * Reach * LungeShare;
-            Vector3 impaled = winnerLunge + WinnerFacing * TipDistance * ImpaleShare;
-            if (isWinner)
+        /// <summary>
+        /// Where the tips meet during the lock: each surge holds for a moment, then the contact point is shoved toward whoever lost it.
+        /// </summary>
+        private Vector3 LockContact()
+        {
+            int ticksIntoLock = Mathf.Max(0, ageTicks - FirstClashTick);
+            int clashIndex = Mathf.Min(ticksIntoLock / ClashIntervalTicks, Props.duelClashes - 1);
+            int surgeTick = FirstClashTick + clashIndex * ClashIntervalTicks;
+            return Vector3.Lerp(Contact(clashIndex), Contact(clashIndex + 1), EaseOut(surgeTick + ShoveDelayTicks, surgeTick + ClashIntervalTicks));
+        }
+
+        /// <summary>
+        /// Both pressing tip to tip along one line, shuddering against each other.
+        /// </summary>
+        private Vector3 LockPlace(bool forCaster, Vector3 facing) => LockContact() - facing * Reach + Jitter(forCaster ? 1.7f : 4.3f);
+
+        /// <summary>
+        /// The winner charges through, hangs there for a moment with the loser run through, lifts them on the lance,
+        /// swings them down into the ground, holds them pinned there, then drops down beside the crater.
+        /// </summary>
+        private (Vector3 position, float height) WinnerPlace()
+        {
+            Vector3 locked = Contact(Props.duelClashes) - WinnerFacing * Reach;
+            Vector3 lifted = WinnerStrike + Vector3.forward * LiftHeight;
+            float liftedHeight = DuelHeight + LiftHeight;
+            if (ageTicks < ImpaledTick) return (Vector3.Lerp(locked, WinnerStrike, EaseOut(ResolveTick, ImpaledTick)), DuelHeight);
+            if (ageTicks < TableauEndTick) return (WinnerStrike, DuelHeight);
+            if (ageTicks < SlamStartTick)
             {
-                Vector3 aboveSlam = WinnerLanding + new Vector3(0f, 0f, WinnerHangHeight);
-                if (ageTicks < ImpaleTick) return (Vector3.Lerp(winnerLocked, winnerLunge, EaseOut(ResolveTick, ImpaleTick)), DuelHeight);
-                if (ageTicks < SlamStartTick) return (winnerLunge + jitter, DuelHeight);
-                if (ageTicks < SlamTick) return (Vector3.Lerp(winnerLunge, aboveSlam, EaseIn(SlamStartTick, SlamTick)), Mathf.Lerp(DuelHeight, WinnerHangHeight, EaseIn(SlamStartTick, SlamTick)));
-                float drop = BrushStroke.SmoothStep(SlamTick, LandTick, ageTicks);
-                return (Vector3.Lerp(aboveSlam, WinnerLanding, drop), Mathf.Lerp(WinnerHangHeight, 0f, drop));
+                float lift = EaseOut(TableauEndTick, SlamStartTick);
+                return (Vector3.Lerp(WinnerStrike, lifted, lift), Mathf.Lerp(DuelHeight, liftedHeight, lift));
             }
+            if (ageTicks < SlamTick)
+            {
+                float slam = EaseIn(SlamStartTick, SlamTick);
+                return (Vector3.Lerp(lifted, WinnerSlamSpot, slam), Mathf.Lerp(liftedHeight, WinnerSlamHeight, slam));
+            }
+            if (ageTicks < LandStartTick) return (WinnerSlamSpot + Jitter(7.1f) * 0.5f, WinnerSlamHeight);
+            float drop = BrushStroke.SmoothStep(LandStartTick, LandTick, ageTicks);
+            return (Vector3.Lerp(WinnerSlamSpot, WinnerLanding, drop), Mathf.Lerp(WinnerSlamHeight, 0f, drop));
+        }
 
-            if (ageTicks < ImpaleTick) return (Vector3.Lerp(locked, impaled, EaseOut(ResolveTick, ImpaleTick)), DuelHeight);
-            if (ageTicks < SlamStartTick) return (impaled + jitter, DuelHeight);
-            if (ageTicks < SlamTick) return (Vector3.Lerp(impaled, SlamPoint, EaseIn(SlamStartTick, SlamTick)), Mathf.Lerp(DuelHeight, 0f, EaseIn(SlamStartTick, SlamTick)));
-            return (SlamPoint, 0f);
+        /// <summary>
+        /// The loser is knocked onto the winner's lance, then stays stuck on it wherever the lance points, all the way into the ground.
+        /// </summary>
+        private (Vector3 position, float height) LoserPlace()
+        {
+            Vector3 locked = Contact(Props.duelClashes) + WinnerFacing * Reach;
+            if (ageTicks < ImpaledTick) return (Vector3.Lerp(locked, ImpaledSpot, EaseOut(ResolveTick, ImpaledTick)), DuelHeight);
+            if (ageTicks >= SlamTick) return (SlamPoint, 0f);
+
+            Vector3 onLance = WinnerPlace().position + ImpaleDirection() * ImpaleLength;
+            if (ageTicks < TableauEndTick) return (onLance + Jitter(9.3f) * 0.4f, DuelHeight);
+            if (ageTicks < SlamStartTick) return (onLance + Jitter(9.3f), Mathf.Lerp(DuelHeight, DuelHeight + LiftHeight, EaseOut(TableauEndTick, SlamStartTick)));
+            return (onLance, Mathf.Lerp(DuelHeight + LiftHeight, 0f, EaseIn(SlamStartTick, SlamTick)));
+        }
+
+        /// <summary>
+        /// Where the winner's lance points once the loser is on it: still along the charge, tipped up as they lift, then swung down into the ground.
+        /// </summary>
+        private Vector3 ImpaleDirection()
+        {
+            if (ageTicks < TableauEndTick) return WinnerFacing;
+            if (ageTicks < SlamStartTick) return Vector3.Slerp(WinnerFacing, WindUpDirection, EaseOut(TableauEndTick, SlamStartTick));
+            if (ageTicks < SlamTick) return Vector3.Slerp(WindUpDirection, SlamDirection, EaseIn(SlamStartTick, SlamTick));
+            return SlamDirection;
         }
 
         private float EaseIn(int fromTick, int toTick) => Mathf.Pow(Mathf.InverseLerp(fromTick, toTick, ageTicks), 2f);
@@ -374,8 +479,8 @@ namespace Bloodfiends.LaSangre
             {
                 if (casterAirborne) DrawDuelShadow(casterPosition, casterHeight);
                 if (duelistAirborne) DrawDuelShadow(duelistPosition, duelistHeight);
-                if (casterAirborne && LanceIntact(true)) enhancedLanceLook.Draw(casterPosition, LanceFacing(true, casterPosition, duelistPosition), 1f, LanceAltitude(casterHeight, airAltitude));
-                if (duelistAirborne && LanceIntact(false)) enhancedLanceLook.Draw(duelistPosition, LanceFacing(false, duelistPosition, casterPosition), 1f, LanceAltitude(duelistHeight, airAltitude));
+                if (casterAirborne && LanceIntact(true)) enhancedLanceLook.Draw(casterPosition, LanceFacing(true, casterPosition), 1f, LanceAltitude(casterHeight, airAltitude));
+                if (duelistAirborne && LanceIntact(false)) enhancedLanceLook.Draw(duelistPosition, LanceFacing(false, duelistPosition), 1f, LanceAltitude(duelistHeight, airAltitude));
                 return;
             }
 
@@ -389,18 +494,23 @@ namespace Bloodfiends.LaSangre
         /// <summary>
         /// The loser's lance is gone from the moment they're run through.
         /// </summary>
-        private bool LanceIntact(bool forCaster) => !duelResolved || ageTicks < ImpaleTick || forCaster == casterWonDuel;
+        private bool LanceIntact(bool forCaster) => !duelResolved || forCaster == casterWonDuel;
 
         /// <summary>
-        /// Straight at the opponent during the lock; once the winner lunges, their lance follows the loser down.
+        /// Straight at the opponent during the clashes; once the loser is run through, the winner's lance carries them,
+        /// and after the slam it stays buried in them until the winner lets go.
         /// </summary>
-        private Vector3 LanceFacing(bool forCaster, Vector3 ownPosition, Vector3 opponentPosition)
+        private Vector3 LanceFacing(bool forCaster, Vector3 ownPosition)
         {
             Vector3 facing = forCaster ? diveDirection : -diveDirection;
             if (!duelResolved || forCaster != casterWonDuel) return facing;
-            Vector3 target = ageTicks < SlamTick ? opponentPosition : SlamPoint;
-            Vector3 toward = new Vector3(target.x - ownPosition.x, 0f, target.z - ownPosition.z);
-            return toward.sqrMagnitude > 0.01f ? toward.normalized : facing;
+            Pawn loser = DuelLoser;
+            if (ageTicks >= SlamTick && loser != null && loser.Spawned)
+            {
+                Vector3 toward = new Vector3(loser.DrawPos.x - ownPosition.x, 0f, loser.DrawPos.z - ownPosition.z);
+                if (toward.sqrMagnitude > 0.01f) return toward.normalized;
+            }
+            return ImpaleDirection();
         }
 
         private static float LanceAltitude(float height, float airAltitude) => height > 0.05f ? airAltitude + 0.12f : AltitudeLayer.Pawn.AltitudeFor() + 0.1f;
@@ -430,6 +540,7 @@ namespace Bloodfiends.LaSangre
             Scribe_Values.Look(ref duelistWasDrafted, "duelistWasDrafted");
             Scribe_Values.Look(ref casterClashWins, "casterClashWins");
             Scribe_Values.Look(ref duelistClashWins, "duelistClashWins");
+            Scribe_Values.Look(ref casterClashMask, "casterClashMask");
             Scribe_Values.Look(ref duelResolved, "duelResolved");
             Scribe_Values.Look(ref casterWonDuel, "casterWonDuel");
         }
