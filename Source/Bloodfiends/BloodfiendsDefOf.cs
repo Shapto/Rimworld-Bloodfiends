@@ -38,6 +38,17 @@ namespace Bloodfiends
         public static SoundDef Bloodfiends_LanceForming;
         public static SoundDef Bloodfiends_LanceChargeWindup;
         public static SoundDef Bloodfiends_LanceChargeHit;
+        public static SoundDef Bloodfiends_SangreWindup;
+        public static SoundDef Bloodfiends_SangreDive;
+        public static SoundDef Bloodfiends_DuelEnhance;
+        public static SoundDef Bloodfiends_DuelNight;
+        public static SoundDef Bloodfiends_DuelCollision;
+        public static SoundDef Bloodfiends_DuelGrind;
+        public static SoundDef Bloodfiends_DuelSurge;
+        public static SoundDef Bloodfiends_DuelBreakthrough;
+        public static SoundDef Bloodfiends_DuelSwing;
+        public static SoundDef Bloodfiends_DuelSlam;
+        public static SoundDef Bloodfiends_DuelLanding;
         public static HediffDef Bloodfiends_SeekingEmbrace;
         public static AbilityDef Bloodfiends_Embrace;
         public static JobDef Bloodfiends_ReceiveEmbrace;

@@ -116,6 +116,7 @@ namespace Bloodfiends.LaSangre
             if (ageTicks == AirCocoonStartTick) BloodfiendsSounds.PlayAt(SoundDefOf.Psycast_Skip_Entry, airPosition, map);
             if (ageTicks == RevealTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, airPosition, map);
             if (ageTicks == LanceStartTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceForming, airPosition, map);
+            if (ageTicks == WindStartTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreWindup, airPosition, map);
             if (ageTicks == LanceGrownTick) TryStartDuel(map);
             if (duelist != null)
             {
@@ -125,7 +126,7 @@ namespace Bloodfiends.LaSangre
             if (ageTicks == DiveTick)
             {
                 StartSmear();
-                BloodfiendsSounds.PlayBloodRush(airPosition, map);
+                BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreDive, airPosition, map);
             }
             if (ageTicks >= ImpactTick) Impact();
         }

@@ -125,7 +125,9 @@
     <Compile Include="Hunger\Patch_IngestionOutcomeDoer_OffsetHemogen_StaleBlood.cs" />
     <Compile Include="LaSangre\BurstLineEffect.cs" />
     <Compile Include="LaSangre\CompAbilityEffect_LaSangre.cs" />
+    <Compile Include="LaSangre\Duellineeffects.cs" />
     <Compile Include="LaSangre\LaSangreDuel.cs" />
+    <Compile Include="LaSangre\Lasangreduelspectacle.cs" />
     <Compile Include="LaSangre\LaSangreFlight.cs" />
     <Compile Include="Mantle\CompAbilityEffect_Mantle.cs" />
     <Compile Include="Mantle\Gizmo_MantleStatus.cs" />

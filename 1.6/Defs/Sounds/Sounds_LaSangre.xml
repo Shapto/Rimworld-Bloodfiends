@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+
+  <!-- the blood winding up around the lance, swelling into the dive -->
+  <SoundDef>
+    <defName>Bloodfiends_SangreWindup</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Windup</clipPath>
+          </li>
+        </grains>
+        <volumeRange>28~32</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the dive itself -->
+  <SoundDef>
+    <defName>Bloodfiends_SangreDive</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Folder">
+            <clipFolderPath>LaSangre/Dive</clipFolderPath>
+          </li>
+        </grains>
+        <volumeRange>32~35</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the interceptor's lance becoming Enhanced La Sangre -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelEnhance</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Enhance</clipPath>
+          </li>
+        </grains>
+        <volumeRange>32~35</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- under the night falling over the duel -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelNight</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Night</clipPath>
+          </li>
+        </grains>
+        <volumeRange>24~27</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the two charges colliding (the hit lands a quarter second in) -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelCollision</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Collision</clipPath>
+          </li>
+        </grains>
+        <volumeRange>34~37</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the tips grinding against each other in the lock -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelGrind</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Grind</clipPath>
+          </li>
+        </grains>
+        <volumeRange>28~31</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- each surge in the lock -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelSurge</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>2</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Folder">
+            <clipFolderPath>LaSangre/Duel/Surge</clipFolderPath>
+          </li>
+        </grains>
+        <volumeRange>30~33</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the breakthrough, ringing on through the hang -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelBreakthrough</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Breakthrough</clipPath>
+          </li>
+        </grains>
+        <volumeRange>34~37</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the swing down (its hit lands a third of a second in, on the slam) -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelSwing</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Swing</clipPath>
+          </li>
+        </grains>
+        <volumeRange>32~35</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- under La Sangre's own impact when the loser hits the ground -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelSlam</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Slam</clipPath>
+          </li>
+        </grains>
+        <volumeRange>33~36</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+  <!-- the winner coming down -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelLanding</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Landing</clipPath>
+          </li>
+        </grains>
+        <volumeRange>28~31</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>
