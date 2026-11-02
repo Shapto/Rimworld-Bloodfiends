@@ -1,5 +1,6 @@
 ﻿using Bloodfiends.Bloodbags;
 using RimWorld;
+using System.Linq;
 using Verse;
 
 namespace Bloodfiends.Family
@@ -165,15 +166,25 @@ namespace Bloodfiends.Family
 
         private static void PassOnBloodline(Pawn casterPawn, Pawn kindredPawn)
         {
-            GeneUtility.ReimplantXenogerm(casterPawn, kindredPawn);
-            RemoveHediff(kindredPawn, HediffDefOf.XenogerminationComa);
-            RemoveHediff(kindredPawn, HediffDefOf.XenogermReplicating);
-            RemoveHediff(casterPawn, HediffDefOf.XenogermReplicating);
+            CopyXenotype(casterPawn, kindredPawn);
 
             if (kindredPawn.genes.GetFirstGeneOfType<Gene_Bloodfiend>() != null) return;
             GeneDef dipsiaDef = casterPawn.genes.GetFirstGeneOfType<Gene_Bloodfiend>()?.def ?? DefDatabase<GeneDef>.GetNamed("Bloodfiends_Bloodfiend");
             if (dipsiaDef.prerequisite != null && !kindredPawn.genes.HasActiveGene(dipsiaDef.prerequisite)) kindredPawn.genes.AddGene(dipsiaDef.prerequisite, xenogene: true);
             kindredPawn.genes.AddGene(dipsiaDef, xenogene: true);
+        }
+
+        private void PassOnXenogenes(Pawn casterPawn, Pawn targetPawn)
+        {
+            bool willing = IsWilling(casterPawn, targetPawn);
+            CopyXenotype(casterPawn, targetPawn);
+
+            TakeUnder(targetPawn);
+            DrainEmbracer(casterPawn);
+            GiveTurningThoughts(casterPawn, targetPawn, willing);
+
+            FilthMaker.TryMakeFilth(targetPawn.PositionHeld, targetPawn.MapHeld, ThingDefOf.Filth_Blood, 2);
+            Messages.Message("Bloodfiends_EmbracedXenogenes".Translate(casterPawn.Named("CASTER"), targetPawn.Named("TARGET")), targetPawn, MessageTypeDefOf.NeutralEvent);
         }
 
         public bool CanMakeKindredNow => CasterNode != null && GameComponent_BloodfiendFamilies.Instance?.CanEmbraceKindred(CasterNode) == true;
@@ -184,19 +195,13 @@ namespace Bloodfiends.Family
             MakeKindred(parent.pawn, colonist, joinsEmbracer: false);
         }
 
-        private void PassOnXenogenes(Pawn casterPawn, Pawn targetPawn)
+        private static void CopyXenotype(Pawn casterPawn, Pawn targetPawn)
         {
-            bool willing = IsWilling(casterPawn, targetPawn);
-            GeneUtility.ReimplantXenogerm(casterPawn, targetPawn);
-            RemoveHediff(targetPawn, HediffDefOf.XenogerminationComa);
-            RemoveHediff(casterPawn, HediffDefOf.XenogermReplicating);
-
-            TakeUnder(targetPawn);
-            DrainEmbracer(casterPawn);
-            GiveTurningThoughts(casterPawn, targetPawn, willing);
-
-            FilthMaker.TryMakeFilth(targetPawn.PositionHeld, targetPawn.MapHeld, ThingDefOf.Filth_Blood, 2);
-            Messages.Message("Bloodfiends_EmbracedXenogenes".Translate(casterPawn.Named("CASTER"), targetPawn.Named("TARGET")), targetPawn, MessageTypeDefOf.NeutralEvent);
+            targetPawn.genes.SetXenotype(casterPawn.genes.Xenotype);
+            targetPawn.genes.xenotypeName = casterPawn.genes.xenotypeName;
+            targetPawn.genes.iconDef = casterPawn.genes.iconDef;
+            targetPawn.genes.ClearXenogenes();
+            foreach (Gene xenogene in casterPawn.genes.Xenogenes.ToList()) targetPawn.genes.AddGene(xenogene.def, xenogene: true);
         }
 
         private static bool IsWilling(Pawn casterPawn, Pawn targetPawn) => IsSeeker(targetPawn) || targetPawn.Faction == casterPawn.Faction && !targetPawn.IsPrisoner;

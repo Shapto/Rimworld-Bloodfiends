@@ -12,6 +12,7 @@ namespace Bloodfiends
         public bool firstKindredDropsPrimogenitorBlood = true;
         public bool fireHindersRegeneration = true;
         public bool kindredSlotsFreeOnDeath = true;
+        public bool laSangreHitsAllies = false;
 
         public void ResetToDefaults()
         {
@@ -21,12 +22,14 @@ namespace Bloodfiends
             firstKindredDropsPrimogenitorBlood = true;
             fireHindersRegeneration = true;
             kindredSlotsFreeOnDeath = true;
+            laSangreHitsAllies = false;
         }
 
         public override void ExposeData()
         {
             base.ExposeData();
             Scribe_Values.Look(ref replaceSanguophages, "replaceSanguophages", false);
+            Scribe_Values.Look(ref laSangreHitsAllies, "laSangreHitsAllies", false);
             Scribe_Values.Look(ref regenerationSurvivesBrainDestruction, "regenerationSurvivesBrainDestruction", false);
             Scribe_Values.Look(ref maximumKindredsPerBloodfiend, "maximumKindredsPerBloodfiend", DefaultMaximumKindredsPerBloodfiend);
             Scribe_Values.Look(ref firstKindredDropsPrimogenitorBlood, "firstKindredDropsPrimogenitorBlood", true);

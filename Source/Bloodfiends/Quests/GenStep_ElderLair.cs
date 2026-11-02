@@ -22,7 +22,7 @@ namespace Bloodfiends.Quests
             ThingOwner lairThings = parms.sitePart?.things;
             if (lairThings == null || lairThings.Count == 0) return;
 
-            IntVec3 lairCenter = RCellFinder.TryFindRandomCellNearTheCenterOfTheMapWith(cell => CanBuildLairAt(cell, map), map, out IntVec3 foundCell) ? foundCell : map.Center;
+            IntVec3 lairCenter = RCellFinder.TryFindRandomCellNearTheCenterOfTheMapWith(cell => CanBuildLairAt(cell, map, requireClearGround: true), map, out IntVec3 openCell) ? openCell : RCellFinder.TryFindRandomCellNearTheCenterOfTheMapWith(cell => CanBuildLairAt(cell, map, requireClearGround: false), map, out IntVec3 reachableCell) ? reachableCell : map.Center;
             CellRect lairRect = CellRect.CenteredOn(lairCenter, LairHalfSize).ClipInsideMap(map);
             Faction lairFaction = lairThings.OfType<Pawn>().FirstOrDefault()?.Faction;
             BuildLair(map, lairRect, lairFaction);
@@ -51,11 +51,11 @@ namespace Bloodfiends.Quests
             MapGenerator.SetVar("RectOfInterest", lairRect);
         }
 
-        private static bool CanBuildLairAt(IntVec3 center, Map map)
+        private static bool CanBuildLairAt(IntVec3 center, Map map, bool requireClearGround)
         {
             CellRect footprint = CellRect.CenteredOn(center, LairHalfSize + 2);
-            if (!footprint.InBounds(map)) return false;
-            return footprint.Cells.All(cell => cell.GetTerrain(map).affordances.Contains(TerrainAffordanceDefOf.Heavy));
+            if (!footprint.InBounds(map) || !map.reachability.CanReachMapEdge(center, TraverseParms.For(TraverseMode.PassDoors))) return false;
+            return footprint.Cells.All(cell => cell.GetTerrain(map).affordances.Contains(TerrainAffordanceDefOf.Heavy) && (!requireClearGround || cell.GetEdifice(map) == null));
         }
 
         private static void BuildLair(Map map, CellRect lairRect, Faction lairFaction)

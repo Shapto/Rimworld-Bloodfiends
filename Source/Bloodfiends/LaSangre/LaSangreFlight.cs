@@ -145,14 +145,18 @@ namespace Bloodfiends.LaSangre
             var enemiesHit = new List<Pawn>();
             if (caster != null)
             {
+                bool hitsAllies = BloodfiendsMod.Settings.laSangreHitsAllies;
                 foreach (Thing thing in GenRadial.RadialDistinctThingsAround(impactCell, map, settings.impactRadius, true).ToList())
                 {
-                    if (!(thing is Pawn enemy) || enemy == caster || enemy.Dead || !enemy.HostileTo(caster)) continue;
-                    Vector3 away = enemy.DrawPos - impactPosition;
+                    if (!(thing is Pawn victim) || victim == caster || victim.Dead) continue;
+                    bool isEnemy = victim.HostileTo(caster);
+                    if (!isEnemy && !hitsAllies) continue;
+
+                    Vector3 away = victim.DrawPos - impactPosition;
                     float angle = away.sqrMagnitude > 0.01f ? away.AngleFlat() : diveDirection.AngleFlat();
-                    enemy.TakeDamage(new DamageInfo(settings.damageDef ?? DamageDefOf.Stab, settings.damage * strength, settings.armorPenetration, angle, caster));
-                    if (!enemy.Dead) enemy.stances?.stunner?.StunFor(settings.stunTicks, caster);
-                    enemiesHit.Add(enemy);
+                    victim.TakeDamage(new DamageInfo(settings.damageDef ?? DamageDefOf.Stab, settings.damage * strength, settings.armorPenetration, angle, caster));
+                    if (!victim.Dead) victim.stances?.stunner?.StunFor(settings.stunTicks, caster);
+                    if (isEnemy) enemiesHit.Add(victim);
                 }
             }
 

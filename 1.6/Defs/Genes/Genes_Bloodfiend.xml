@@ -8,6 +8,7 @@
 		<iconPath>Icons/CrimsonCurse</iconPath>
 		<displayCategory>Bloodfiends_Bloodfiend</displayCategory>
 		<prerequisite>Hemogenic</prerequisite>
+		<minAgeActive>3</minAgeActive>
 		<biostatArc>10</biostatArc>
 		<abilities>
 			<li>Bloodfeed</li>

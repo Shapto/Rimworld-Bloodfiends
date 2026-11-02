@@ -36,6 +36,7 @@ namespace Bloodfiends
             listing.CheckboxLabeled("Bloodfiends_SettingReplaceSanguophages".Translate(), ref Settings.replaceSanguophages, "Bloodfiends_SettingReplaceSanguophagesTip".Translate());
             listing.CheckboxLabeled("Bloodfiends_SettingSurviveBrainDestruction".Translate(), ref Settings.regenerationSurvivesBrainDestruction, "Bloodfiends_SettingSurviveBrainDestructionTip".Translate());
             listing.CheckboxLabeled("Bloodfiends_SettingFireHindersRegeneration".Translate(), ref Settings.fireHindersRegeneration, "Bloodfiends_SettingFireHindersRegenerationTip".Translate());
+            listing.CheckboxLabeled("Bloodfiends_SettingLaSangreHitsAllies".Translate(), ref Settings.laSangreHitsAllies, "Bloodfiends_SettingLaSangreHitsAlliesTip".Translate());
             listing.CheckboxLabeled("Bloodfiends_SettingPrimogenitorDrops".Translate(), ref Settings.firstKindredDropsPrimogenitorBlood, "Bloodfiends_SettingPrimogenitorDropsTip".Translate());
 
             listing.GapLine();

@@ -221,7 +221,7 @@ namespace Bloodfiends.Hardblood
             ThingDef lanceDef = BloodfiendsDefOf.Bloodfiends_HardbloodLance;
             HardbloodLanceExtension lance = lanceDef?.GetModExtension<HardbloodLanceExtension>();
             if (lance == null || GenerationOf(pawn) > lance.maximumGeneration) return;
-            string label = "Bloodfiends_ManifestLance".Translate((lance.manifestCost * 100f).ToString("0"));
+            string label = "Bloodfiends_ManifestLance".Translate(pawn.LabelShort.Named("OWNER"), (lance.manifestCost * 100f).ToString("0").Named("COST"));
             if (holdingReplica && held.def == lanceDef) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_AlreadyManifested".Translate() + ")", null));
             else if (hemogen < lance.manifestCost) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_NotEnoughHemogen".Translate() + ")", null));
             else options.Add(new FloatMenuOption(label, () => ManifestLance(pawn)));
@@ -231,6 +231,7 @@ namespace Bloodfiends.Hardblood
         {
             ThingDef lanceDef = BloodfiendsDefOf.Bloodfiends_HardbloodLance;
             var lance = (ThingWithComps)ThingMaker.MakeThing(lanceDef);
+            if (lance is Thing_HardbloodLance namedLance) namedLance.ownerName = pawn.LabelShort;
             Equip(pawn, lance, lanceDef.GetModExtension<HardbloodLanceExtension>().manifestCost);
         }
 

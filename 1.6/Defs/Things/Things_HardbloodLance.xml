@@ -2,6 +2,7 @@
 <Defs>
 	<ThingDef ParentName="BaseMeleeWeapon_Sharp">
 		<defName>Bloodfiends_HardbloodLance</defName>
+		<thingClass>Bloodfiends.Hardblood.Thing_HardbloodLance</thingClass>
 		<label>hardblood lance</label>
 		<description>The pinnacle of Hardblood construction. A mathematically perfected shape, it yields devastating striking power in synchrony with the user's dominion over blood manipulation.</description>
 		<graphicData>

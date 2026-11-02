@@ -118,6 +118,26 @@ namespace Bloodfiends.Family
         }
 
         /// <summary>
+        /// A child born with Dipsia joins under their Bloodfiend parent. Births don't take an Embrace slot:
+        /// the child sits under the parent in the tree, but the parent didn't make them with their blood.
+        /// </summary>
+        public BloodfiendFamilyNode CreateBornNode(BloodfiendFamilyNode parentNode, Pawn childPawn)
+        {
+            BloodfiendFamilyNode childNode = new BloodfiendFamilyNode
+            {
+                nodeId = nextNodeId++,
+                familyId = parentNode.familyId,
+                generationNumber = parentNode.generationNumber + 1,
+                bloodfiendPawn = childPawn,
+                embracerNodeId = parentNode.nodeId,
+                creatorNodeId = -1
+            };
+            RegisterNode(childNode);
+            parentNode.embracedNodeIds.Add(childNode.nodeId);
+            return childNode;
+        }
+
+        /// <summary>
         /// Places a newly spawned non-player Bloodfiend into a Family the player is part of, through one of that Family's
         /// outside members: either taking over an offscreen node, or as a new Kindred of an outside member with a free slot.
         /// Returns null when no player Family has anyone outside the colony.
@@ -188,6 +208,7 @@ namespace Bloodfiends.Family
             ChangeFamilyMemberCount(deadNode.familyId, -1);
             if (deadNode.bloodfiendPawn != null) nodeIdsByPawn.Remove(deadNode.bloodfiendPawn);
             playerAncestorCacheTick = -1;
+            PruneFamilyIfEmpty(deadNode.familyId);
             return promotedNodes;
         }
 
@@ -404,6 +425,20 @@ namespace Bloodfiends.Family
 
             node.bloodfiendPawn = null;
             nodeIdsByPawn.Remove(pawn);
+            playerAncestorCacheTick = -1;
+            PruneFamilyIfEmpty(node.familyId);
+        }
+
+        private void PruneFamilyIfEmpty(int familyId)
+        {
+            if (nodesById.Values.Any(node => node.familyId == familyId && node.bloodfiendPawn != null)) return;
+
+            List<int> emptyFamilyNodeIds = nodesById.Values
+                .Where(node => node.familyId == familyId)
+                .Select(node => node.nodeId)
+                .ToList();
+            foreach (int nodeId in emptyFamilyNodeIds) nodesById.Remove(nodeId);
+            memberCountsByFamilyId.Remove(familyId);
             playerAncestorCacheTick = -1;
         }
 

@@ -117,6 +117,7 @@
     <Compile Include="Hardblood\HardbloodReplicaGraphics.cs" />
     <Compile Include="Hardblood\HardbloodWeaponry.cs" />
     <Compile Include="Hardblood\HardbloodWeapons.cs" />
+    <Compile Include="Hardblood\Thing_HardbloodLance.cs" />
     <Compile Include="HemogenCostPreview.cs" />
     <Compile Include="Hunger\BloodfrenzyUtility.cs" />
     <Compile Include="Hunger\Gene_Withering.cs" />
