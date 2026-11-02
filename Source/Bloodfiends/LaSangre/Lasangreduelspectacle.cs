@@ -8,16 +8,19 @@ using Verse;
 namespace Bloodfiends.LaSangre
 {
     /// <summary>
-    /// The show around the La Sangre duel: night falls over the map with a moon behind the lock, the screen flashes on every
+    /// The show around the La Sangre duel: night falls over the map and La Manchaland's starry sky opens behind the lock, with
+    /// its moon just above where the lances meet. The screen flashes on every
     /// big hit, shockwaves ring out of each surge, the winner's swing leaves a trail and afterimages, and the slam bursts
     /// out of the ground in spikes. None of it touches the game; it's all drawn or spawned as effects.
     /// </summary>
     public partial class LaSangreFlight
     {
-        private const float NightDarkness = 0.6f;
-        private const float MoonDiameter = 7f;
+        private const float NightDarkness = 0.92f;
         private const float MoonRise = 0.6f;
-        private const int MoonTextureSize = 256;
+        private const int StarTextureWidth = 768;
+        private const int StarTextureHeight = 256;
+        private const int StarCount = 70;
+        private const float TwinkleSpeed = 2.2f;
         private const int AfterimageCount = 3;
         private const int AfterimageSpacingTicks = 2;
         private const int SurgeFlashTicks = 6;
@@ -26,16 +29,27 @@ namespace Bloodfiends.LaSangre
         private const int SlamFlashTicks = 16;
         private const int CollisionLeadTicks = 15;
         private const int GrindDelayTicks = 8;
+        private const int FireworkDelayTicks = 12;
+        private const float FireworkInnerRadius = 2.5f;
+        private const float FireworkOuterRadius = 6f;
+
+        /// <summary>
+        /// When each firework bursts, in ticks after the firework sound starts: on the crackles in Firework.wav.
+        /// </summary>
+        private static readonly int[] FireworkBurstTicks = { 3, 14, 25, 34, 45, 62, 75 };
 
         private static readonly BrushPalette GlowPalette = new BrushPalette(new Color(1f, 0.82f, 0.78f), new Color(0.95f, 0.2f, 0.16f), new Color(0.55f, 0.03f, 0.05f));
-        private static readonly Color NightColor = new Color(0.04f, 0.01f, 0.1f);
+        private static readonly Color NightColor = new Color(0.01f, 0f, 0.05f);
         private static readonly Color WhiteFlashColor = new Color(1f, 0.96f, 0.94f);
         private static readonly Color RedFlashColor = new Color(0.85f, 0.05f, 0.05f);
         private static readonly Color DustColor = new Color(0.35f, 0.29f, 0.24f);
+        private static readonly BrushPalette FireworkPalette = new BrushPalette(new Color(1f, 0.55f, 0.5f), new Color(0.9f, 0.12f, 0.12f), new Color(0.6f, 0.05f, 0.1f));
 
-        private static Material duelOverlayMaterial;
-        private static Material moonMaterial;
-        private static MaterialPropertyBlock duelPropertyBlock;
+        private static Material nightMaterial;
+        private static Material whiteFlashMaterial;
+        private static Material redFlashMaterial;
+        private static Material skyMaterial;
+        private static Material[] twinkleMaterials;
 
         /// <summary>
         /// The duel's game-side moments: effects started on the tick they happen, so they play even when nobody's looking.
@@ -76,6 +90,25 @@ namespace Bloodfiends.LaSangre
             if (ageTicks == ResolveTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelBreakthrough, Contact(Props.duelClashes), map);
             if (ageTicks == TableauEndTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelSwing, ImpaledSpot, map);
             if (ageTicks == SlamTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelSlam, SlamPoint, map);
+            if (ageTicks == FirstClashTick + FireworkDelayTicks) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelFirework, meetPoint, map);
+            TickFireworks(map);
+        }
+
+        /// <summary>
+        /// Once the lances lock under the moon, fireworks burst in the sky around it, each on a crackle of the sound.
+        /// </summary>
+        private void TickFireworks(Map map)
+        {
+            int burstIndex = System.Array.IndexOf(FireworkBurstTicks, ageTicks - FirstClashTick - FireworkDelayTicks);
+            if (burstIndex < 0) return;
+            var random = new System.Random(seed + 121 + burstIndex);
+            float angle = (float)random.NextDouble() * Mathf.PI * 2f;
+            float distance = Mathf.Lerp(FireworkInnerRadius, FireworkOuterRadius, (float)random.NextDouble());
+            Vector3 burstCentre = meetPoint + new Vector3(0f, 0f, MoonRise) + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * distance;
+            float size = Mathf.Lerp(0.7f, 1.4f, (float)random.NextDouble());
+            MapComponent_BrushLines.Start(map, new BurstLineEffect(FireworkPalette, burstCentre, 16, new FloatRange(size * 0.6f, size), new FloatRange(0.04f, 0.08f), random.Next(), 0.8f));
+            FleckMaker.ThrowMicroSparks(burstCentre, map);
+            FleckMaker.Static(burstCentre, map, FleckDefOf.ShotFlash, size * 1.5f);
         }
 
         private void SurgeSpectacle(Map map, Vector3 contact, bool firstImpact)
@@ -118,15 +151,13 @@ namespace Bloodfiends.LaSangre
             float night = NightShare();
             if (night > 0f)
             {
-                DrawOverView(AltitudeLayer.PawnUnused.AltitudeFor(), new Color(NightColor.r, NightColor.g, NightColor.b, night * NightDarkness));
-                Vector3 moonCentre = meetPoint + new Vector3(0f, 0f, MoonRise);
-                duelPropertyBlock.SetColor(ShaderPropertyIDs.Color, new Color(1f, 1f, 1f, night));
-                Graphics.DrawMesh(MeshPool.plane10, Matrix4x4.TRS(moonCentre.WithY(AltitudeLayer.PawnState.AltitudeFor()), Quaternion.identity, new Vector3(MoonDiameter, 1f, MoonDiameter)), moonMaterial, 0, null, 0, duelPropertyBlock);
+                DrawOverView(AltitudeLayer.PawnUnused.AltitudeFor(), nightMaterial, night * NightDarkness);
+                DrawSky(night);
             }
             DrawSwingAfterimages(airAltitude);
 
-            (float flash, Color flashColor) = Flash();
-            if (flash > 0f) DrawOverView(AltitudeLayer.MetaOverlays.AltitudeFor(), new Color(flashColor.r, flashColor.g, flashColor.b, flash));
+            (float flash, bool redFlash) = Flash();
+            if (flash > 0f) DrawOverView(AltitudeLayer.MetaOverlays.AltitudeFor(), redFlash ? redFlashMaterial : whiteFlashMaterial, flash);
         }
 
         /// <summary>
@@ -142,12 +173,12 @@ namespace Bloodfiends.LaSangre
         /// <summary>
         /// The brightest flash going on right now: white for the first collision, each surge and the breakthrough, red for the slam.
         /// </summary>
-        private (float alpha, Color color) Flash()
+        private (float alpha, bool red) Flash()
         {
             float white = Mathf.Max(FlashFrom(FirstClashTick, 0.8f, ImpactFlashTicks), FlashFrom(ResolveTick, 0.95f, BreakFlashTicks));
             for (int clashIndex = 1; clashIndex < Props.duelClashes; clashIndex++) white = Mathf.Max(white, FlashFrom(FirstClashTick + clashIndex * ClashIntervalTicks, 0.3f, SurgeFlashTicks));
             float red = FlashFrom(SlamTick, 0.6f, SlamFlashTicks);
-            return red > white ? (red, RedFlashColor) : (white, WhiteFlashColor);
+            return red > white ? (red, true) : (white, false);
         }
 
         private float FlashFrom(int flashTick, float strength, int fadeTicks)
@@ -174,46 +205,88 @@ namespace Bloodfiends.LaSangre
             }
         }
 
-        private void DrawOverView(float altitude, Color color)
+        /// <summary>
+        /// Covers the whole view in one colour, faded to "alpha". Fading goes through vanilla's faded material pool, one material
+        /// per fade step, so every quad drawn in a frame keeps its own fade.
+        /// </summary>
+        private static void DrawOverView(float altitude, Material material, float alpha)
         {
             CellRect view = Find.CameraDriver.CurrentViewRect;
             Vector3 centre = view.CenterVector3.WithY(altitude);
-            duelPropertyBlock.SetColor(ShaderPropertyIDs.Color, color);
-            Graphics.DrawMesh(MeshPool.plane10, Matrix4x4.TRS(centre, Quaternion.identity, new Vector3(view.Width + 4f, 1f, view.Height + 4f)), duelOverlayMaterial, 0, null, 0, duelPropertyBlock);
-        }
-
-        private static void EnsureSpectacleMaterials()
-        {
-            if (duelOverlayMaterial != null) return;
-            duelPropertyBlock = new MaterialPropertyBlock();
-            duelOverlayMaterial = MaterialPool.MatFrom(new MaterialRequest(BaseContent.WhiteTex, ShaderDatabase.Transparent, Color.white));
-            moonMaterial = MaterialPool.MatFrom(new MaterialRequest(MakeMoonTexture(), ShaderDatabase.Transparent, Color.white));
+            Graphics.DrawMesh(MeshPool.plane10, Matrix4x4.TRS(centre, Quaternion.identity, new Vector3(view.Width + 4f, 1f, view.Height + 4f)), FadedMaterialPool.FadedVersionOf(material, alpha), 0);
         }
 
         /// <summary>
-        /// A pale moon with a soft halo, made once at runtime.
+        /// La Manchaland's night sky, laid behind the duel so its moon sits just above the lock, with two layers of stars
+        /// fading in and out of step on top so the sky twinkles.
         /// </summary>
-        private static Texture2D MakeMoonTexture()
+        private void DrawSky(float night)
         {
-            var texture = new Texture2D(MoonTextureSize, MoonTextureSize, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
-            float half = MoonTextureSize / 2f;
-            for (int row = 0; row < MoonTextureSize; row++)
+            Texture skyTexture = skyMaterial.mainTexture;
+            float skyWidth = Props.duelSkyWidth;
+            float skyHeight = skyWidth * skyTexture.height / skyTexture.width;
+            Vector3 moonCentre = meetPoint + new Vector3(0f, 0f, MoonRise);
+            Vector2 moonOnTexture = Props.duelSkyMoonOnTexture;
+            Vector3 skyCentre = moonCentre + new Vector3((0.5f - moonOnTexture.x) * skyWidth, 0f, (0.5f - moonOnTexture.y) * skyHeight);
+            Vector3 skySize = new Vector3(skyWidth, 1f, skyHeight);
+            float skyAltitude = AltitudeLayer.PawnState.AltitudeFor();
+
+            Graphics.DrawMesh(MeshPool.plane10, Matrix4x4.TRS(skyCentre.WithY(skyAltitude), Quaternion.identity, skySize), FadedMaterialPool.FadedVersionOf(skyMaterial, night), 0);
+            for (int layer = 0; layer < twinkleMaterials.Length; layer++)
             {
-                for (int column = 0; column < MoonTextureSize; column++)
+                float twinkle = (Mathf.Sin(Time.realtimeSinceStartup * TwinkleSpeed + layer * Mathf.PI) + 1f) / 2f;
+                Graphics.DrawMesh(MeshPool.plane10, Matrix4x4.TRS(skyCentre.WithY(skyAltitude + 0.01f + layer * 0.001f), Quaternion.identity, skySize), FadedMaterialPool.FadedVersionOf(twinkleMaterials[layer], night * twinkle), 0);
+            }
+        }
+
+        private void EnsureSpectacleMaterials()
+        {
+            if (nightMaterial != null) return;
+            nightMaterial = SolidColorOverlay(NightColor);
+            whiteFlashMaterial = SolidColorOverlay(WhiteFlashColor);
+            redFlashMaterial = SolidColorOverlay(RedFlashColor);
+            Texture2D skyTexture = ContentFinder<Texture2D>.Get(Props.duelSkyTexturePath, false) ?? BaseContent.ClearTex;
+            skyMaterial = MaterialPool.MatFrom(new MaterialRequest(skyTexture, ShaderDatabase.Transparent, Color.white));
+            twinkleMaterials = new[] { MakeStarsMaterial(41), MakeStarsMaterial(97) };
+        }
+
+        /// <summary>
+        /// A see-through material of one colour, baked into its texture so fading it keeps the colour.
+        /// </summary>
+        private static Material SolidColorOverlay(Color color) => MaterialPool.MatFrom(new MaterialRequest(SolidColorMaterials.NewSolidColorTexture(color), ShaderDatabase.Transparent, Color.white));
+
+        /// <summary>
+        /// A layer of small soft stars in the sky's colours, made once at runtime; it fades out toward the sky's edges like the sky does.
+        /// </summary>
+        private static Material MakeStarsMaterial(int starSeed)
+        {
+            var texture = new Texture2D(StarTextureWidth, StarTextureHeight, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+            var pixels = new Color[StarTextureWidth * StarTextureHeight];
+            Color[] starColors = { new Color(1f, 1f, 1f), new Color(0.75f, 0.8f, 1f), new Color(1f, 0.75f, 0.9f), new Color(1f, 0.95f, 0.7f) };
+            var random = new System.Random(starSeed);
+            for (int star = 0; star < StarCount; star++)
+            {
+                float starX = (float)random.NextDouble() * StarTextureWidth;
+                float starY = StarTextureHeight * (0.3f + 0.65f * (float)random.NextDouble());
+                float radius = 1.2f + 2f * (float)random.NextDouble();
+                Color starColor = starColors[random.Next(starColors.Length)];
+                float edgeFade = Mathf.Clamp01(Mathf.Min(starX, StarTextureWidth - starX) / (StarTextureWidth * 0.15f));
+                for (int row = Mathf.Max(0, (int)(starY - radius * 2f)); row < Mathf.Min(StarTextureHeight, (int)(starY + radius * 2f) + 1); row++)
                 {
-                    float distance = new Vector2(column + 0.5f - half, row + 0.5f - half).magnitude / half;
-                    float body = 1f - BrushStroke.SmoothStep(0.6f, 0.63f, distance);
-                    float halo = (1f - BrushStroke.SmoothStep(0.6f, 1f, distance)) * 0.35f;
-                    float shade = 0.82f + 0.18f * Mathf.PerlinNoise(column * 0.025f, row * 0.025f);
-                    Color bodyColor = new Color(0.93f * shade, 0.92f * shade, 1f * shade);
-                    Color haloColor = new Color(0.72f, 0.66f, 1f);
-                    Color color = Color.Lerp(haloColor, bodyColor, body);
-                    color.a = Mathf.Max(body, halo);
-                    texture.SetPixel(column, row, color);
+                    for (int column = Mathf.Max(0, (int)(starX - radius * 2f)); column < Mathf.Min(StarTextureWidth, (int)(starX + radius * 2f) + 1); column++)
+                    {
+                        float distance = new Vector2(column - starX, row - starY).magnitude / radius;
+                        float glow = Mathf.Clamp01(1f - distance / 2f);
+                        glow *= glow * edgeFade;
+                        int index = row * StarTextureWidth + column;
+                        if (glow <= pixels[index].a) continue;
+                        pixels[index] = new Color(starColor.r, starColor.g, starColor.b, glow);
+                    }
                 }
             }
+            texture.SetPixels(pixels);
             texture.Apply();
-            return texture;
+            return MaterialPool.MatFrom(new MaterialRequest(texture, ShaderDatabase.Transparent, Color.white));
         }
     }
 }

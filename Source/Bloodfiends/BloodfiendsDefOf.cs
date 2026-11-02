@@ -49,6 +49,7 @@ namespace Bloodfiends
         public static SoundDef Bloodfiends_DuelSwing;
         public static SoundDef Bloodfiends_DuelSlam;
         public static SoundDef Bloodfiends_DuelLanding;
+        public static SoundDef Bloodfiends_DuelFirework;
         public static HediffDef Bloodfiends_SeekingEmbrace;
         public static AbilityDef Bloodfiends_Embrace;
         public static JobDef Bloodfiends_ReceiveEmbrace;

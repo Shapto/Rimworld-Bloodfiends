@@ -39,6 +39,9 @@ namespace Bloodfiends.LaSangre
         public Vector2 enhancementButtOnTexture = new Vector2(0.1f, 0.08f);
         public Vector2 enhancementTipOnTexture = new Vector2(0.953f, 0.955f);
         public float enhancementHalfWidthOnTexture = 0.13f;
+        public string duelSkyTexturePath = "Effects/La_Sangre_Duel_Sky";   // the night sky behind the duel
+        public float duelSkyWidth = 42f;                          // cells; its height follows the texture
+        public Vector2 duelSkyMoonOnTexture = new Vector2(0.508f, 0.428f);  // UV of the moon's centre, placed just above the lock
         public int duelClashes = 3;
         public float duelLoserDamageFactor = 0.8f;                // of La Sangre's damage, scaled by the winner's strength
         public float duelWinnerDamageFactor = 0.2f;               // of La Sangre's damage, scaled by the loser's strength

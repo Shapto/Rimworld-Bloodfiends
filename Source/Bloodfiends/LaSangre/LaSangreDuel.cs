@@ -560,7 +560,6 @@ namespace Bloodfiends.LaSangre
         private class LanceLook
         {
             private readonly Mesh mesh = new Mesh();
-            private readonly MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
             private readonly Material material;
             private readonly Vector2 buttOnTexture;
             private readonly Vector2 tipOnTexture;
@@ -599,8 +598,7 @@ namespace Bloodfiends.LaSangre
                 mesh.uv = new[] { Uv(0f, -1f), Uv(0f, 1f), Uv(grown, 1f), Uv(grown, -1f) };
                 mesh.RecalculateBounds();
                 Quaternion turn = Quaternion.LookRotation(direction.normalized) * Quaternion.Euler(0f, -90f, 0f);
-                propertyBlock.SetColor(ShaderPropertyIDs.Color, new Color(1f, 1f, 1f, opacity));
-                Graphics.DrawMesh(mesh, Matrix4x4.TRS(grip.WithY(altitude), turn, Vector3.one), material, 0, null, 0, propertyBlock);
+                Graphics.DrawMesh(mesh, Matrix4x4.TRS(grip.WithY(altitude), turn, Vector3.one), FadedMaterialPool.FadedVersionOf(material, opacity), 0);
             }
 
             private Vector2 Uv(float along, float side)

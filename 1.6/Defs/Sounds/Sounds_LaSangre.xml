@@ -331,4 +331,34 @@
     </subSounds>
   </SoundDef>
 
+  <!-- the fireworks over the moon once the lances lock -->
+  <SoundDef>
+    <defName>Bloodfiends_DuelFirework</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Clip">
+            <clipPath>LaSangre/Duel/Firework</clipPath>
+          </li>
+        </grains>
+        <volumeRange>26~29</volumeRange>
+        <paramMappings>
+          <li>
+            <inParam Class="SoundParamSource_CameraAltitude" />
+            <outParam Class="SoundParamTarget_Volume" />
+            <curve>
+              <points>
+                <li>(15, 1)</li>
+                <li>(40, 0.4)</li>
+                <li>(65, 0)</li>
+              </points>
+            </curve>
+          </li>
+        </paramMappings>
+      </li>
+    </subSounds>
+  </SoundDef>
+
 </Defs>
