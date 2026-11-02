@@ -22,6 +22,10 @@ namespace Bloodfiends.Family
         private float appliedHemogenMaxOffset;
         private Gene_Hemogen appliedHemogenGene;
         public BloodfiendFamilyNode Node => GameComponent_BloodfiendFamilies.Instance?.GetNode(nodeId);
+
+        private bool curseLost;
+        public override bool ShouldRemove => base.ShouldRemove || curseLost;
+
         public override void PostAdd(DamageInfo? dinfo)
         {
             base.PostAdd(dinfo);
@@ -78,6 +82,11 @@ namespace Bloodfiends.Family
         {
             base.PostTick();
             if (!pawn.IsHashIntervalTick(250)) return;
+            if (pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() == null)
+            {
+                curseLost = true;
+                return;
+            }
             BloodfiendFamilyNode node = Node;
             if (node != null) RefreshHemogenMax(node);
         }
@@ -93,6 +102,7 @@ namespace Bloodfiends.Family
             if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_Mantle) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_Mantle);
             if (pawn.abilities?.GetAbility(BloodfiendsDefOf.Bloodfiends_LaSangre) != null) pawn.abilities.RemoveAbility(BloodfiendsDefOf.Bloodfiends_LaSangre);
             appliedHemogenMaxOffset = 0f;
+            if (curseLost) GameComponent_BloodfiendFamilies.Instance?.ReleaseClaim(pawn);
         }
 
         public override void ExposeData()

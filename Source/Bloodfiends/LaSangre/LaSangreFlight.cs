@@ -10,7 +10,7 @@ using Verse.Sound;
 
 namespace Bloodfiends.LaSangre
 {
-    public class LaSangreFlight : Thing, IThingHolder
+    public partial class LaSangreFlight : Thing, IThingHolder
     {
         private const int CocoonClosedTick = 54;
         private const int HiddenTick = 40;
@@ -116,10 +116,17 @@ namespace Bloodfiends.LaSangre
             if (ageTicks == AirCocoonStartTick) BloodfiendsSounds.PlayAt(SoundDefOf.Psycast_Skip_Entry, airPosition, map);
             if (ageTicks == RevealTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_HardbloodShatter, airPosition, map);
             if (ageTicks == LanceStartTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_LanceForming, airPosition, map);
+            if (ageTicks == WindStartTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreWindup, airPosition, map);
+            if (ageTicks == LanceGrownTick) TryStartDuel(map);
+            if (duelist != null)
+            {
+                TickDuel(map);
+                return;
+            }
             if (ageTicks == DiveTick)
             {
                 StartSmear();
-                BloodfiendsSounds.PlayBloodRush(airPosition, map);
+                BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreDive, airPosition, map);
             }
             if (ageTicks >= ImpactTick) Impact();
         }
@@ -145,14 +152,18 @@ namespace Bloodfiends.LaSangre
             var enemiesHit = new List<Pawn>();
             if (caster != null)
             {
+                bool hitsAllies = BloodfiendsMod.Settings.laSangreHitsAllies;
                 foreach (Thing thing in GenRadial.RadialDistinctThingsAround(impactCell, map, settings.impactRadius, true).ToList())
                 {
-                    if (!(thing is Pawn enemy) || enemy == caster || enemy.Dead || !enemy.HostileTo(caster)) continue;
-                    Vector3 away = enemy.DrawPos - impactPosition;
+                    if (!(thing is Pawn victim) || victim == caster || victim.Dead) continue;
+                    bool isEnemy = victim.HostileTo(caster);
+                    if (!isEnemy && !hitsAllies) continue;
+
+                    Vector3 away = victim.DrawPos - impactPosition;
                     float angle = away.sqrMagnitude > 0.01f ? away.AngleFlat() : diveDirection.AngleFlat();
-                    enemy.TakeDamage(new DamageInfo(settings.damageDef ?? DamageDefOf.Stab, settings.damage * strength, settings.armorPenetration, angle, caster));
-                    if (!enemy.Dead) enemy.stances?.stunner?.StunFor(settings.stunTicks, caster);
-                    enemiesHit.Add(enemy);
+                    victim.TakeDamage(new DamageInfo(settings.damageDef ?? DamageDefOf.Stab, settings.damage * strength, settings.armorPenetration, angle, caster));
+                    if (!victim.Dead) victim.stances?.stunner?.StunFor(settings.stunTicks, caster);
+                    if (isEnemy) enemiesHit.Add(victim);
                 }
             }
 
@@ -219,20 +230,30 @@ namespace Bloodfiends.LaSangre
 
         public override void Destroy(DestroyMode mode = DestroyMode.Vanish)
         {
+            if (duelist != null) EndDuelEarly();
             Pawn caster = FlyingPawn;
             if (caster != null && Spawned) PutDown(caster, Map);
             base.Destroy(mode);
         }
 
 
-        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && ageTicks < DiveTick);
+        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && ageTicks < DiveMomentTick);
+
+        /// <summary>
+        /// When the caster leaves the air: later in a duel, which first waits for the interceptor to ready their lance.
+        /// </summary>
+        private int DiveMomentTick => duelist != null ? DuelDiveTick : DiveTick;
 
         private Vector3 PawnDrawPosition => ageTicks < TeleportEndTick ? groundPosition.WithY(AltitudeLayer.Pawn.AltitudeFor()) : airPosition.WithY(AltitudeLayer.Skyfaller.AltitudeFor());
 
         public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
         {
-            Pawn pawn = FlyingPawn;
-            if (pawn != null && PawnVisible) pawn.DynamicDrawPhaseAt(phase, PawnDrawPosition, flip);
+            if (duelist != null) DrawDuelPawns(phase, flip);
+            else
+            {
+                Pawn pawn = FlyingPawn;
+                if (pawn != null && PawnVisible) pawn.DynamicDrawPhaseAt(phase, PawnDrawPosition, flip);
+            }
             base.DynamicDrawPhaseAt(phase, drawLoc, flip);
         }
 
@@ -241,7 +262,7 @@ namespace Bloodfiends.LaSangre
             EnsureLooks();
             float airAltitude = AltitudeLayer.Skyfaller.AltitudeFor();
 
-            if (ageTicks >= RevealTick - 10 && ageTicks < DiveTick)
+            if (ageTicks >= RevealTick - 10 && ageTicks < DiveMomentTick)
             {
                 Vector3 ground = airPosition - new Vector3(0f, 0f, Props.airHeight);
                 Matrix4x4 shadow = Matrix4x4.TRS(ground.WithY(AltitudeLayer.Shadows.AltitudeFor()), Quaternion.identity, new Vector3(1.2f, 1f, 0.6f));
@@ -251,13 +272,14 @@ namespace Bloodfiends.LaSangre
             DrawGroundCocoon();
             DrawTeleport();
             DrawAirCocoon();
-            if (ageTicks >= LanceStartTick && ageTicks < DiveTick)
+            if (ageTicks >= LanceStartTick && ageTicks < DiveMomentTick)
             {
                 float grown = BrushStroke.SmoothStep(LanceStartTick, LanceGrownTick, ageTicks);
                 DrawLance(GripPosition(airPosition), grown, lanceMaterial, airAltitude + 0.12f);
             }
-            if (ageTicks >= WindStartTick && ageTicks < DiveTick) DrawTendrils();
-            if (ageTicks >= DiveTick) DrawGhosts(airAltitude + 0.12f);
+            if (ageTicks >= WindStartTick && ageTicks < DiveMomentTick) DrawTendrils();
+            if (ageTicks >= DiveTick && duelist == null) DrawGhosts(airAltitude + 0.12f);
+            if (duelist != null) DrawDuel(airAltitude);
 
             groundDrawer.DrawAll();
             backDrawer.DrawAll();
@@ -328,6 +350,7 @@ namespace Bloodfiends.LaSangre
         private void DrawTendrils()
         {
             float windUp = (ageTicks - WindStartTick) / (float)(DiveTick - WindStartTick);
+            if (duelist != null) windUp = Mathf.Lerp((LanceGrownTick - WindStartTick) / (float)(DiveTick - WindStartTick), 1f, Mathf.InverseLerp(LanceGrownTick, DuelDiveTick, ageTicks));
             float wrapped = BrushStroke.SmoothStep(0f, 0.55f, windUp);
             float spin = windUp * windUp * 40f;
             float length = Props.lanceLength;
@@ -467,6 +490,7 @@ namespace Bloodfiends.LaSangre
             Scribe_Values.Look(ref wasDrafted, "wasDrafted");
             Scribe_Values.Look(ref seed, "seed");
             Scribe_Defs.Look(ref abilityDef, "abilityDef");
+            ExposeDuel();
         }
     }
 }

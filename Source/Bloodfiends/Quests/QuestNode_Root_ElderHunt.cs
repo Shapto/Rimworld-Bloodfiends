@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using Bloodfiends.Family;
+﻿using Bloodfiends.Family;
 using RimWorld;
 using RimWorld.Planet;
 using RimWorld.QuestGen;
+using System.Collections.Generic;
+using UnityEngine;
 using Verse;
 
 namespace Bloodfiends.Quests
@@ -24,6 +25,15 @@ namespace Bloodfiends.Quests
             return registry != null && registry.AnyPlayerBloodfiend() && QuestGen_Get.GetMap() != null && TileFinder.TryFindNewSiteTile(out _);
         }
 
+        private static readonly SimpleCurve TargetGenerationByPoints = new SimpleCurve
+        {
+            new CurvePoint(500f, 5f),
+            new CurvePoint(1500f, 4f),
+            new CurvePoint(3000f, 3f),
+            new CurvePoint(5000f, 2f),
+            new CurvePoint(8000f, 1f)
+        };
+
         protected override void RunInt()
         {
             Quest quest = QuestGen.quest;
@@ -35,10 +45,12 @@ namespace Bloodfiends.Quests
 
             Faction lairFaction = BloodfiendQuestUtility.MakeHostileTemporaryFaction();
 
-            List<BloodfiendFamilyNode> ownFamilyAncestors = registry.UnclaimedAncestorsOfPlayer();
-            BloodfiendFamilyNode targetNode = ownFamilyAncestors.Count > 0 && Rand.Chance(OwnElderChance) ? ownFamilyAncestors.RandomElementByWeight(node => 1f / node.generationNumber) : null;
+            int targetGeneration = Mathf.Max(GameComponent_BloodfiendFamilies.ElderGeneration, Mathf.RoundToInt(TargetGenerationByPoints.Evaluate(points)));
 
-            Pawn elder = BloodfiendQuestUtility.GenerateBloodfiend(BloodfiendsDefOf.Bloodfiends_BloodfiendKind, lairFaction, siteTile, claimingNodeId: targetNode?.nodeId ?? -1, foundingGeneration: targetNode == null ? GameComponent_BloodfiendFamilies.ElderGeneration : 0);
+            List<BloodfiendFamilyNode> ownFamilyAncestors = registry.UnclaimedAncestorsOfPlayer();
+            BloodfiendFamilyNode targetNode = ownFamilyAncestors.Count > 0 && Rand.Chance(OwnElderChance) ? ownFamilyAncestors.RandomElementByWeight(node => 1f / (1f + Mathf.Abs(node.generationNumber - targetGeneration) * 2f)) : null;
+
+            Pawn elder = BloodfiendQuestUtility.GenerateBloodfiend(BloodfiendsDefOf.Bloodfiends_BloodfiendKind, lairFaction, siteTile, claimingNodeId: targetNode?.nodeId ?? -1, foundingGeneration: targetNode == null ? targetGeneration : 0);
             BloodfiendFamilyNode elderNode = registry.GetNodeForPawn(elder);
             bool huntingOwnElder = targetNode != null && elderNode == targetNode;
 

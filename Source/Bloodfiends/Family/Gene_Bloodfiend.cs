@@ -18,15 +18,34 @@ namespace Bloodfiends.Family
 
         public HardbloodWeaponry weaponry = new HardbloodWeaponry();
 
+        private const int ActivationCheckIntervalTicks = 250;
+
+        private bool awaitingActivation;
+
+        private bool addedDuringGeneration;
+
         public override void PostAdd()
         {
             base.PostAdd();
-            if (LineageHediff == null && GameComponent_BloodfiendFamilies.Instance?.GetNodeForPawn(pawn) == null) RegisterAsNewBloodfiend();
+            if (LineageHediff != null || GameComponent_BloodfiendFamilies.Instance?.GetNodeForPawn(pawn) != null) return;
+
+            if (!Active)
+            {
+                awaitingActivation = true;
+                addedDuringGeneration = PawnGenerator.IsBeingGenerated(pawn);
+                return;
+            }
+            RegisterAsNewBloodfiend();
         }
 
         public override void TickInterval(int delta)
         {
             base.TickInterval(delta);
+            if (awaitingActivation && pawn.IsHashIntervalTick(ActivationCheckIntervalTicks, delta) && Active)
+            {
+                awaitingActivation = false;
+                RegisterAsNewBloodfiend();
+            }
             if (pawn.IsHashIntervalTick(FeastingUpdateIntervalTicks, delta)) UpdateFeasting();
         }
 
@@ -66,7 +85,8 @@ namespace Bloodfiends.Family
             else if (GameComponent_BloodfiendFamilies.embracingNodeId >= 0) node = registry.CreateKindredNode(registry.GetNode(GameComponent_BloodfiendFamilies.embracingNodeId), pawn);
             else if (GameComponent_BloodfiendFamilies.placingLostKindred) node = registry.TryPlaceLostKindred(pawn);
             else if (GameComponent_BloodfiendFamilies.placingIntoFamily >= 0) node = registry.TryPlaceInFamily(pawn, GameComponent_BloodfiendFamilies.placingIntoFamily);
-            else if (!PawnGenerator.IsBeingGenerated(pawn)) node = registry.CreateFamilyFor(pawn, GameComponent_BloodfiendFamilies.ElderGeneration);
+            else if (TryFindBloodfiendParentNode(registry, out BloodfiendFamilyNode parentNode)) node = registry.CreateBornNode(parentNode, pawn);
+            else if (!PawnGenerator.IsBeingGenerated(pawn) && !addedDuringGeneration) node = registry.CreateFamilyFor(pawn, GameComponent_BloodfiendFamilies.ElderGeneration);
             else if (pawn.Faction != Faction.OfPlayer && startingTierSettings != null && Rand.Chance(startingTierSettings.joinPlayerFamilyChance)) node = registry.TryPlaceInPlayerRelatedFamily(pawn);
             if (node == null) node = registry.CreateFamilyFor(pawn, RollStartingGeneration(startingTierSettings));
 
@@ -81,6 +101,16 @@ namespace Bloodfiends.Family
             Hediff_BloodfiendLineage lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, pawn);
             lineageHediff.nodeId = node.nodeId;
             pawn.health.AddHediff(lineageHediff);
+        }
+
+        private bool TryFindBloodfiendParentNode(GameComponent_BloodfiendFamilies registry, out BloodfiendFamilyNode parentNode)
+        {
+            parentNode = new[] { pawn.GetMother(), pawn.GetFather() }
+                .Select(registry.GetNodeForPawn)
+                .Where(node => node != null)
+                .OrderBy(node => node.generationNumber)
+                .FirstOrDefault();
+            return parentNode != null;
         }
 
         private static int RollStartingGeneration(BloodfiendStartingTierExtension startingTierSettings)
@@ -120,6 +150,8 @@ namespace Bloodfiends.Family
         {
             base.ExposeData();
             Scribe_Deep.Look(ref weaponry, "hardbloodWeaponry");
+            Scribe_Values.Look(ref awaitingActivation, "awaitingActivation");
+            Scribe_Values.Look(ref addedDuringGeneration, "addedDuringGeneration");
             if (Scribe.mode == LoadSaveMode.PostLoadInit && weaponry == null) weaponry = new HardbloodWeaponry();
         }
     }

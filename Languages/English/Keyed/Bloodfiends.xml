@@ -30,13 +30,17 @@
 
   <Bloodfiends_LaSangreNeedsHemogen>Needs at least half a bar of hemogen.</Bloodfiends_LaSangreNeedsHemogen>
 
-  <Bloodfiends_ManifestLance>Manifest hardblood lance ({0} hemogen)</Bloodfiends_ManifestLance>
+  <Bloodfiends_ManifestLance>Manifest La Sangre de {OWNER} ({COST} hemogen)</Bloodfiends_ManifestLance>
+  <Bloodfiends_LanceLabel>La Sangre de {OWNER}</Bloodfiends_LanceLabel>
 
   <Bloodfiends_CannotMimicSpecial>This weapon is too complex to mimic.</Bloodfiends_CannotMimicSpecial>
 
   <Bloodfiends_FeverBurnedOut>The flames have burned the crimson fever out of {PAWN_nameDef}'s blood.</Bloodfiends_FeverBurnedOut>
 
   <Bloodfiends_ElderLairProvoked>The elder's household has been provoked and is coming for you.</Bloodfiends_ElderLairProvoked>
+
+  <Bloodfiends_LaSangreIntercepted>{DUELIST_nameDef} raises La Sangre de {DUELIST_nameDef} to meet {CASTER_nameDef}!</Bloodfiends_LaSangreIntercepted>
+  <Bloodfiends_LaSangreDuelWon>{WINNER_nameDef} prevails. {LOSER_nameDef}'s lance shatters.</Bloodfiends_LaSangreDuelWon>
 
   <!-- Promotion -->
   <Bloodfiends_PromotionLabel>Blood rises</Bloodfiends_PromotionLabel>
@@ -140,5 +144,7 @@
   <Bloodfiends_SettingResetToDefaults>Reset to defaults</Bloodfiends_SettingResetToDefaults>
   <Bloodfiends_SettingKindredSlotsFreeOnDeath>Kindred slots free up when a Kindred dies</Bloodfiends_SettingKindredSlotsFreeOnDeath>
   <Bloodfiends_SettingKindredSlotsFreeOnDeathTip>On: only living Kindred count toward the limit, so a Bloodfiend can Embrace again after losing one. Off: every Kindred a Bloodfiend ever made counts, for life.</Bloodfiends_SettingKindredSlotsFreeOnDeathTip>
+  <Bloodfiends_SettingLaSangreHitsAllies>La Sangre hits allies</Bloodfiends_SettingLaSangreHitsAllies>
+  <Bloodfiends_SettingLaSangreHitsAlliesTip>La Sangre's impact damages everyone in the blast except the caster, including your own colonists and animals. Only enemies' blood feeds the caster's Family.</Bloodfiends_SettingLaSangreHitsAlliesTip>
 
 </LanguageData>
