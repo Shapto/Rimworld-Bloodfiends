@@ -3,8 +3,8 @@
 	<XenotypeDef>
 		<defName>Bloodfiends_Bloodbag</defName>
 		<label>bloodbag</label>
-		<description>TODO</description>
-		<descriptionShort>TODO</descriptionShort>
+		<description>Bloodbags are a type of xenohuman mutated, disfigured and transformed by an unrestrained form of Dipsia into bloodthirsty, mindless thralls. Due to an insufficient quantity of archites in the bloodstream, the strain of Dipsia they carry is unburdened by suppression and highly infectious, capable of spreading via open wounds and bites without the need for transfusion. Bloodbags retain enough muscle memory to wield guns and perform basic labour, but are otherwise non-cognisant.\n\nThe small amount of suppresion archites present in their bloodstream is expelled outward by the illness and coagulate into painful hardblood growths, which act as natural armor. They are entirely subject to whoever's xenogerm they carry and possess no free will of their own. If their genealogical line is wiped out, they regress to masterless animalistic instincts and roam the world in a berserk state, indiscriminately attacking and feeding on anyone and anything in their path.\n\nBloodbags, due to the volatile nature of their Dipsia, are much weaker than Bloodfiends but possess many of the same attributes. They are also as susceptible to fire as their sapient counterparts.</description>
+		<descriptionShort>Bloodbags are a type of xenohuman mutated, disfigured and transformed by an unrestrained form of Dipsia into bloodthirsty, mindless thralls. Due to an insufficient quantity of archites in the bloodstream, the strain of Dipsia they carry is unburdened by suppression and highly infectious, capable of spreading via open wounds and bites without the need for transfusion.</descriptionShort>
 		<iconPath>Icons/Bloodbag</iconPath>
 		<inheritable>false</inheritable>
 		<genes>
