@@ -7,7 +7,7 @@
   <!-- Embrace -->
   <Bloodfiends_NotInFamily>Not part of a Bloodfiend Family.</Bloodfiends_NotInFamily>
   <Bloodfiends_EmbraceOnlyLivingHumans>Only living pawns can be embraced.</Bloodfiends_EmbraceOnlyLivingHumans>
-  <Bloodfiends_AlreadyBloodfiend>Already carries the crimson curse.</Bloodfiends_AlreadyBloodfiend>
+  <Bloodfiends_AlreadyBloodfiend>Already afflicted with Dipsia.</Bloodfiends_AlreadyBloodfiend>
   <Bloodfiends_EmbraceInvalidTarget>Can only embrace a downed pawn, a prisoner, or a colonist.</Bloodfiends_EmbraceInvalidTarget>
   <Bloodfiends_Embraced>{CASTER_labelShort} has embraced {KINDRED_labelShort}.</Bloodfiends_Embraced>
   <Bloodfiends_EmbraceNextKindred>The next embrace makes a Kindred ({0} left).</Bloodfiends_EmbraceNextKindred>
@@ -73,7 +73,7 @@
   <Bloodfiends_NothingToMimic>Hold a weapon to mimic it.</Bloodfiends_NothingToMimic>
 
   <!-- Blood of the Primogenitor -->
-  <Bloodfiends_PrimogenitorAlreadyCursed>{PAWN_nameDef} already carries the crimson curse.</Bloodfiends_PrimogenitorAlreadyCursed>
+  <Bloodfiends_PrimogenitorAlreadyCursed>{PAWN_nameDef} is already afflicted with Dipsia.</Bloodfiends_PrimogenitorAlreadyCursed>
   <Bloodfiends_PrimogenitorCannotTurn>{PAWN_nameDef} cannot be turned.</Bloodfiends_PrimogenitorCannotTurn>
   <Bloodfiends_PrimogenitorDrankLabel>First Kindred: {PAWN_nameDef}</Bloodfiends_PrimogenitorDrankLabel>
   <Bloodfiends_PrimogenitorDrankText>{PAWN_nameDef} has drunk the blood of the Primogenitor. When {PAWN_pronoun} wakes, {PAWN_pronoun} will be a First Kindred, the founder of a new Family.</Bloodfiends_PrimogenitorDrankText>
