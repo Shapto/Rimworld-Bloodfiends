@@ -19,8 +19,18 @@ namespace Bloodfiends.LaSangre
     /// </summary>
     public partial class LaSangreFlight
     {
-        private const int DashTicks = 16;
-        private const int FirstClashTick = DiveTick + DashTicks;
+        private const int RaiseTicks = 20;
+        private const int FormTicks = 30;
+        private const int SwingBackTicks = 18;
+        private const int WoundUpHoldTicks = 16;
+        private const int RaisedTick = LanceGrownTick + RaiseTicks;
+        private const int FormedTick = RaisedTick + FormTicks;
+        private const int SwungBackTick = FormedTick + SwingBackTicks;
+        private const int DuelDiveTick = SwungBackTick + WoundUpHoldTicks;
+        private const int DashTicks = 4;
+        private const int FirstClashTick = DuelDiveTick + DashTicks;
+        private const float SwingForwardShare = 1f;
+        private const float SwingBackDip = 0.3f;
         private const int ClashIntervalTicks = 55;
         private const int ShoveDelayTicks = 12;
         private const int GrindSparkTicks = 5;
@@ -46,7 +56,7 @@ namespace Bloodfiends.LaSangre
         private const float ClashFlashSize = 3f;
         private const float ClashShake = 1.5f;
         private const float FirstImpactFlashSize = 5f;
-        private const float FirstImpactShake = 3f;
+        private const float FirstImpactShake = 5f;
         private const float ImpaleShake = 3f;
         private const float SlamFlashSize = 6f;
         private const float SlamFilthRadius = 2.2f;
@@ -177,7 +187,13 @@ namespace Bloodfiends.LaSangre
         {
             FaceOpponents();
             TickSpectacle(map);
-            if (ageTicks == DiveTick)
+            if (ageTicks == FormedTick) MapComponent_BrushLines.Start(map, new BurstLineEffect(MapComponent_BloodCommand.BloodPalette, duelistGround + Vector3.forward * TipDistance * 0.5f, 14, new FloatRange(0.8f, 1.6f), new FloatRange(0.1f, 0.2f), seed + 27, 0.5f));
+            if (ageTicks == DuelDiveTick - WindUpPeakTicks)
+            {
+                BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreWindup, airPosition, map);
+                BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreWindup, duelistGround, map);
+            }
+            if (ageTicks == DuelDiveTick)
             {
                 BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreDive, airPosition, map);
                 BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_SangreDive, duelistGround, map);
@@ -376,10 +392,10 @@ namespace Bloodfiends.LaSangre
             Vector3 facing = forCaster ? diveDirection : -diveDirection;
             Vector3 start = forCaster ? airPosition : duelistGround;
             float startHeight = forCaster ? Props.airHeight : 0f;
-            if (ageTicks < DiveTick) return (start, startHeight);
+            if (ageTicks < DuelDiveTick) return (start, startHeight);
             if (ageTicks < FirstClashTick)
             {
-                float dash = EaseIn(DiveTick, FirstClashTick);
+                float dash = Mathf.InverseLerp(DuelDiveTick, FirstClashTick, ageTicks);
                 return (Vector3.Lerp(start, Contact(0) - facing * Reach, dash), Mathf.Lerp(startHeight, DuelHeight, dash));
             }
             if (ageTicks < ResolveTick) return (LockPlace(forCaster, facing), DuelHeight);
@@ -467,7 +483,7 @@ namespace Bloodfiends.LaSangre
         private void DrawDuelPawn(Pawn pawn, bool isCaster, DrawPhase phase, bool flip)
         {
             if (pawn == null || !innerContainer.Contains(pawn)) return;
-            if (isCaster && ageTicks < DiveTick && !PawnVisible) return;
+            if (isCaster && ageTicks < DuelDiveTick && !PawnVisible) return;
             (Vector3 position, float height) = DuelPlace(isCaster);
             float altitude = height > 0.05f ? AltitudeLayer.Skyfaller.AltitudeFor() : AltitudeLayer.Pawn.AltitudeFor();
             pawn.DynamicDrawPhaseAt(phase, position.WithY(altitude), flip);
@@ -481,7 +497,7 @@ namespace Bloodfiends.LaSangre
             bool casterAirborne = duelCaster != null && innerContainer.Contains(duelCaster);
             bool duelistAirborne = duelist != null && innerContainer.Contains(duelist);
 
-            if (ageTicks >= DiveTick)
+            if (ageTicks >= DuelDiveTick)
             {
                 if (casterAirborne) DrawDuelShadow(casterPosition, casterHeight);
                 if (duelistAirborne) DrawDuelShadow(duelistPosition, duelistHeight);
@@ -492,11 +508,45 @@ namespace Bloodfiends.LaSangre
                 return;
             }
 
-            Vector3 towardCaster = new Vector3(airPosition.x - duelistGround.x, 0f, airPosition.z - duelistGround.z).normalized;
-            float morph = BrushStroke.SmoothStep(LanceGrownTick, DiveTick, ageTicks);
+            Vector3 readyDirection = DuelistReadyDirection();
+            float morph = BrushStroke.SmoothStep(RaisedTick, FormedTick, ageTicks);
             float groundAltitude = AltitudeLayer.Pawn.AltitudeFor() + 0.1f;
-            duelistLanceLook.Draw(duelistPosition, towardCaster, 1f - morph, groundAltitude);
-            enhancedLanceLook.Draw(duelistPosition, towardCaster, morph, groundAltitude + 0.01f);
+            Vector3 trembling = ageTicks >= SwungBackTick ? Jitter(4.3f) * 0.5f : Vector3.zero;
+            duelistLanceLook.Draw(duelistPosition + trembling, readyDirection, 1f - morph, groundAltitude);
+            enhancedLanceLook.Draw(duelistPosition + trembling, readyDirection, morph, groundAltitude + 0.01f);
+        }
+
+        private Vector3 TowardCaster => new Vector3(airPosition.x - duelistGround.x, 0f, airPosition.z - duelistGround.z).normalized;
+
+        /// <summary>
+        /// Which way the interceptor's swing turns: up and over the shoulder away from the caster, then on around into the charge.
+        /// </summary>
+        private float SwingTurn => TowardCaster.x >= 0f ? 1f : -1f;
+
+        private Vector3 SwungBackDirection => (-TowardCaster + Vector3.back * SwingBackDip).normalized;
+
+        /// <summary>
+        /// The interceptor readying their lance on the ground: raised straight up, held there while it forms into
+        /// Enhanced La Sangre, then swung back behind them and held, wound up, until both charge.
+        /// </summary>
+        private Vector3 DuelistReadyDirection()
+        {
+            if (ageTicks < RaisedTick) return TurnToward(TowardCaster, Vector3.forward, EaseOut(LanceGrownTick, RaisedTick), SwingTurn);
+            if (ageTicks < FormedTick) return Vector3.forward;
+            return TurnToward(Vector3.forward, SwungBackDirection, BrushStroke.SmoothStep(FormedTick, SwungBackTick, ageTicks), SwingTurn);
+        }
+
+        /// <summary>
+        /// Turns one flat direction toward another by a share of the way, going round the given way (1 anticlockwise, -1 clockwise)
+        /// when the two are near opposite, so a swing always carries on in the same direction.
+        /// </summary>
+        private static Vector3 TurnToward(Vector3 from, Vector3 to, float share, float turn)
+        {
+            float fromAngle = Mathf.Atan2(from.z, from.x) * Mathf.Rad2Deg;
+            float turnAngle = Mathf.DeltaAngle(fromAngle, Mathf.Atan2(to.z, to.x) * Mathf.Rad2Deg);
+            if (Mathf.Abs(turnAngle) > 150f && Mathf.Sign(turnAngle) != turn) turnAngle += 360f * turn;
+            float angle = (fromAngle + turnAngle * share) * Mathf.Deg2Rad;
+            return new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
         }
 
         /// <summary>
@@ -511,6 +561,7 @@ namespace Bloodfiends.LaSangre
         private Vector3 LanceFacing(bool forCaster, Vector3 ownPosition)
         {
             Vector3 facing = forCaster ? diveDirection : -diveDirection;
+            if (!forCaster && ageTicks < FirstClashTick) return TurnToward(SwungBackDirection, facing, EaseOut(DuelDiveTick, DuelDiveTick + Mathf.RoundToInt(DashTicks * SwingForwardShare)), SwingTurn);
             if (!duelResolved || forCaster != casterWonDuel) return facing;
             Pawn loser = DuelLoser;
             if (ageTicks >= SlamTick && loser != null && loser.Spawned)

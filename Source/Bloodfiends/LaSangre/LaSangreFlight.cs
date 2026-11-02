@@ -237,7 +237,12 @@ namespace Bloodfiends.LaSangre
         }
 
 
-        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && ageTicks < DiveTick);
+        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && ageTicks < DiveMomentTick);
+
+        /// <summary>
+        /// When the caster leaves the air: later in a duel, which first waits for the interceptor to ready their lance.
+        /// </summary>
+        private int DiveMomentTick => duelist != null ? DuelDiveTick : DiveTick;
 
         private Vector3 PawnDrawPosition => ageTicks < TeleportEndTick ? groundPosition.WithY(AltitudeLayer.Pawn.AltitudeFor()) : airPosition.WithY(AltitudeLayer.Skyfaller.AltitudeFor());
 
@@ -257,7 +262,7 @@ namespace Bloodfiends.LaSangre
             EnsureLooks();
             float airAltitude = AltitudeLayer.Skyfaller.AltitudeFor();
 
-            if (ageTicks >= RevealTick - 10 && ageTicks < DiveTick)
+            if (ageTicks >= RevealTick - 10 && ageTicks < DiveMomentTick)
             {
                 Vector3 ground = airPosition - new Vector3(0f, 0f, Props.airHeight);
                 Matrix4x4 shadow = Matrix4x4.TRS(ground.WithY(AltitudeLayer.Shadows.AltitudeFor()), Quaternion.identity, new Vector3(1.2f, 1f, 0.6f));
@@ -267,12 +272,12 @@ namespace Bloodfiends.LaSangre
             DrawGroundCocoon();
             DrawTeleport();
             DrawAirCocoon();
-            if (ageTicks >= LanceStartTick && ageTicks < DiveTick)
+            if (ageTicks >= LanceStartTick && ageTicks < DiveMomentTick)
             {
                 float grown = BrushStroke.SmoothStep(LanceStartTick, LanceGrownTick, ageTicks);
                 DrawLance(GripPosition(airPosition), grown, lanceMaterial, airAltitude + 0.12f);
             }
-            if (ageTicks >= WindStartTick && ageTicks < DiveTick) DrawTendrils();
+            if (ageTicks >= WindStartTick && ageTicks < DiveMomentTick) DrawTendrils();
             if (ageTicks >= DiveTick && duelist == null) DrawGhosts(airAltitude + 0.12f);
             if (duelist != null) DrawDuel(airAltitude);
 
@@ -345,6 +350,7 @@ namespace Bloodfiends.LaSangre
         private void DrawTendrils()
         {
             float windUp = (ageTicks - WindStartTick) / (float)(DiveTick - WindStartTick);
+            if (duelist != null) windUp = Mathf.Lerp((LanceGrownTick - WindStartTick) / (float)(DiveTick - WindStartTick), 1f, Mathf.InverseLerp(LanceGrownTick, DuelDiveTick, ageTicks));
             float wrapped = BrushStroke.SmoothStep(0f, 0.55f, windUp);
             float spin = windUp * windUp * 40f;
             float length = Props.lanceLength;

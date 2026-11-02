@@ -23,6 +23,9 @@ namespace Bloodfiends.LaSangre
         private const float TwinkleSpeed = 2.2f;
         private const int AfterimageCount = 3;
         private const int AfterimageSpacingTicks = 2;
+        private const int DashAfterimageCount = 4;
+        private const int DashStreaksPerTick = 3;
+        private const int WindUpPeakTicks = 36;
         private const int SurgeFlashTicks = 6;
         private const int ImpactFlashTicks = 12;
         private const int BreakFlashTicks = 24;
@@ -62,7 +65,7 @@ namespace Bloodfiends.LaSangre
         private void TickSpectacle(Map map)
         {
             TickDuelSounds(map);
-            if (ageTicks == DiveTick)
+            if (ageTicks == DuelDiveTick)
             {
                 MapComponent_BrushLines.Start(map, new SmearLineEffect(MapComponent_BloodCommand.BloodPalette, airPosition, Contact(0) - diveDirection * Reach, seed + 51, 0.45f));
                 MapComponent_BrushLines.Start(map, new SmearLineEffect(MapComponent_BloodCommand.BloodPalette, duelistGround, Contact(0) + diveDirection * Reach, seed + 52, 0.45f));
@@ -90,7 +93,7 @@ namespace Bloodfiends.LaSangre
         /// </summary>
         private void TickDuelSounds(Map map)
         {
-            if (ageTicks == DiveTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelNight, meetPoint, map);
+            if (ageTicks == DuelDiveTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelNight, meetPoint, map);
             if (ageTicks == FirstClashTick - CollisionLeadTicks) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelCollision, Contact(0), map);
             int ticksIntoLock = ageTicks - FirstClashTick - GrindDelayTicks;
             if (ticksIntoLock >= 0 && ticksIntoLock % ClashIntervalTicks == 0 && ageTicks < ResolveTick) BloodfiendsSounds.PlayAt(BloodfiendsDefOf.Bloodfiends_DuelGrind, LockContact(), map);
@@ -124,6 +127,15 @@ namespace Bloodfiends.LaSangre
         /// </summary>
         private void TickFlowLines(Map map)
         {
+            if (ageTicks >= DuelDiveTick && ageTicks < FirstClashTick)
+            {
+                for (int streak = 0; streak < DashStreaksPerTick; streak++)
+                {
+                    StartFlowLine(map, DuelPlace(true).position, -diveDirection, streak * 2);
+                    StartFlowLine(map, DuelPlace(false).position, diveDirection, streak * 2 + 1);
+                }
+                return;
+            }
             if (ageTicks < FirstClashTick || ageTicks >= ImpaledTick || (ageTicks - FirstClashTick) % FlowIntervalTicks != 0) return;
             Vector3 centre = ageTicks < ResolveTick ? LockContact() : Contact(Props.duelClashes);
             if (!duelResolved || casterWonDuel) StartFlowLine(map, centre, -diveDirection, 0);
@@ -186,6 +198,7 @@ namespace Bloodfiends.LaSangre
                 DrawSky(night);
             }
             DrawSwingAfterimages(airAltitude);
+            DrawDashAfterimages(airAltitude);
 
             (float flash, bool redFlash) = Flash();
             if (flash > 0f) DrawOverView(AltitudeLayer.MetaOverlays.AltitudeFor(), redFlash ? redFlashMaterial : whiteFlashMaterial, flash);
@@ -196,8 +209,8 @@ namespace Bloodfiends.LaSangre
         /// </summary>
         private float NightShare()
         {
-            if (ageTicks < DiveTick) return 0f;
-            float fallen = BrushStroke.SmoothStep(DiveTick, FirstClashTick, ageTicks);
+            if (ageTicks < DuelDiveTick) return 0f;
+            float fallen = BrushStroke.SmoothStep(DuelDiveTick, FirstClashTick, ageTicks);
             return fallen * (1f - BrushStroke.SmoothStep(SlamTick, LandTick, ageTicks));
         }
 
@@ -233,6 +246,26 @@ namespace Bloodfiends.LaSangre
                 (Vector3 position, float height) = AtTick(tick, () => DuelPlace(winnerIsCaster));
                 Vector3 direction = AtTick(tick, ImpaleDirection);
                 enhancedLanceLook.Draw(position, direction, 1f, LanceAltitude(height, airAltitude) - 0.01f * afterimage, 0.5f / afterimage);
+            }
+        }
+
+        /// <summary>
+        /// The charge is a blur: each lance trails fading copies of itself along the way it came.
+        /// </summary>
+        private void DrawDashAfterimages(float airAltitude)
+        {
+            if (ageTicks < DuelDiveTick || ageTicks > FirstClashTick + 2) return;
+            for (int afterimage = 1; afterimage <= DashAfterimageCount; afterimage++)
+            {
+                int tick = Mathf.Min(ageTicks - afterimage, FirstClashTick);
+                if (tick < DuelDiveTick) break;
+                for (int side = 0; side < 2; side++)
+                {
+                    bool forCaster = side == 0;
+                    (Vector3 position, float height) = AtTick(tick, () => DuelPlace(forCaster));
+                    Vector3 direction = AtTick(tick, () => LanceFacing(forCaster, position));
+                    enhancedLanceLook.Draw(position, direction, 1f, LanceAltitude(height, airAltitude) - 0.01f * afterimage, 0.45f / afterimage);
+                }
             }
         }
 
