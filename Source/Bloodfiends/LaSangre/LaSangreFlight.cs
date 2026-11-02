@@ -236,15 +236,18 @@ namespace Bloodfiends.LaSangre
         }
 
 
-        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && (ageTicks < DiveTick || duelist != null));
+        private bool PawnVisible => ageTicks < HiddenTick || (ageTicks >= RevealTick && ageTicks < DiveTick);
 
-        private Vector3 PawnDrawPosition => duelist != null && ageTicks >= DiveTick ? CasterDuelPlace().position.WithY(AltitudeLayer.Skyfaller.AltitudeFor()) : ageTicks < TeleportEndTick ? groundPosition.WithY(AltitudeLayer.Pawn.AltitudeFor()) : airPosition.WithY(AltitudeLayer.Skyfaller.AltitudeFor());
+        private Vector3 PawnDrawPosition => ageTicks < TeleportEndTick ? groundPosition.WithY(AltitudeLayer.Pawn.AltitudeFor()) : airPosition.WithY(AltitudeLayer.Skyfaller.AltitudeFor());
 
         public override void DynamicDrawPhaseAt(DrawPhase phase, Vector3 drawLoc, bool flip = false)
         {
-            Pawn pawn = FlyingPawn;
-            if (pawn != null && PawnVisible) pawn.DynamicDrawPhaseAt(phase, PawnDrawPosition, flip);
-            DrawDuelistPawn(phase, flip);
+            if (duelist != null) DrawDuelPawns(phase, flip);
+            else
+            {
+                Pawn pawn = FlyingPawn;
+                if (pawn != null && PawnVisible) pawn.DynamicDrawPhaseAt(phase, PawnDrawPosition, flip);
+            }
             base.DynamicDrawPhaseAt(phase, drawLoc, flip);
         }
 

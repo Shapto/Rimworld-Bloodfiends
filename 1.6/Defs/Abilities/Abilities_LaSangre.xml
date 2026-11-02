@@ -35,8 +35,8 @@
 				<stunTicks>120</stunTicks>
 				<hemogenStolenPerEnemy>0.08</hemogenStolenPerEnemy>
 				<familyRadius>14</familyRadius>
-				<airDistance>7</airDistance>
-				<airHeight>3.5</airHeight>
+				<airDistance>11</airDistance>
+				<airHeight>4.5</airHeight>
 				<lanceTexturePath>Items/Enhanced_La_Sangre</lanceTexturePath>
 				<lanceButtOnTexture>(0.075, 0.086)</lanceButtOnTexture>
 				<lanceTipOnTexture>(0.921, 0.931)</lanceTipOnTexture>
