@@ -30,6 +30,10 @@ namespace Bloodfiends.LaSangre
         private const int CollisionLeadTicks = 15;
         private const int GrindDelayTicks = 8;
         private const int FireworkDelayTicks = 12;
+        private const int FlowIntervalTicks = 2;
+        private static readonly FloatRange FlowLength = new FloatRange(3.5f, 7f);
+        private static readonly FloatRange FlowWidth = new FloatRange(0.06f, 0.22f);
+        private const float FlowSpread = 0.35f;
         private const float FireworkInnerRadius = 2.5f;
         private const float FireworkOuterRadius = 6f;
 
@@ -77,6 +81,7 @@ namespace Bloodfiends.LaSangre
                 MapComponent_BrushLines.Start(map, new TrailLineEffect(MapComponent_BloodCommand.BloodPalette, swingPath, 0.9f, 0.35f, seed + 71, 1f));
             }
             if (ageTicks == SlamTick) SlamSpectacle(map);
+            TickFlowLines(map);
         }
 
         /// <summary>
@@ -109,6 +114,30 @@ namespace Bloodfiends.LaSangre
             MapComponent_BrushLines.Start(map, new BurstLineEffect(FireworkPalette, burstCentre, 16, new FloatRange(size * 0.6f, size), new FloatRange(0.04f, 0.08f), random.Next(), 0.8f));
             FleckMaker.ThrowMicroSparks(burstCentre, map);
             FleckMaker.Static(burstCentre, map, FleckDefOf.ShotFlash, size * 1.5f);
+        }
+
+        /// <summary>
+        /// Streaks of blood pouring out of the duel's centre and flowing back past each duelist along the line of the lances,
+        /// for as long as they're locked; once the winner breaks through, only behind the winner, until they hang still.
+        /// </summary>
+        private void TickFlowLines(Map map)
+        {
+            if (ageTicks < FirstClashTick || ageTicks >= ImpaledTick || (ageTicks - FirstClashTick) % FlowIntervalTicks != 0) return;
+            Vector3 centre = ageTicks < ResolveTick ? LockContact() : Contact(Props.duelClashes);
+            if (!duelResolved || casterWonDuel) StartFlowLine(map, centre, -diveDirection, 0);
+            if (!duelResolved || !casterWonDuel) StartFlowLine(map, centre, diveDirection, 1);
+        }
+
+        private void StartFlowLine(Map map, Vector3 centre, Vector3 backward, int side)
+        {
+            var random = new System.Random(seed + 131 + ageTicks * 2 + side);
+            Vector3 across = new Vector3(-backward.z, 0f, backward.x);
+            float offset = ((float)random.NextDouble() * 2f - 1f) * FlowSpread;
+            Vector3 start = centre + backward * (0.3f + (float)random.NextDouble() * 0.8f) + across * offset;
+            float length = Mathf.Lerp(FlowLength.min, FlowLength.max, (float)random.NextDouble());
+            float width = Mathf.Lerp(FlowWidth.min, FlowWidth.max, (float)random.NextDouble());
+            BrushPalette palette = random.NextDouble() < 0.2 ? GlowPalette : MapComponent_BloodCommand.BloodPalette;
+            MapComponent_BrushLines.Start(map, new FlowLineEffect(palette, start, backward, length, offset * 1.5f, width, random.Next(), 0.45f));
         }
 
         private void SurgeSpectacle(Map map, Vector3 contact, bool firstImpact)

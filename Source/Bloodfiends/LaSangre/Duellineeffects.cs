@@ -114,6 +114,31 @@ namespace Bloodfiends.LaSangre
     }
 
     /// <summary>
+    /// A streak of blood flowing away along a direction with a gentle bend, sliding past like wind: its head races out
+    /// and its tail chases after it, so it leaves nothing behind.
+    /// </summary>
+    public class FlowLineEffect : BrushLineEffect
+    {
+        private readonly BrushStroke stroke;
+
+        public override AltitudeLayer Layer => AltitudeLayer.MoteOverhead;
+
+        public FlowLineEffect(BrushPalette palette, Vector3 start, Vector3 direction, float length, float bend, float width, int seed, float durationSeconds) : base(palette, durationSeconds)
+        {
+            Vector3 flow = new Vector3(direction.x, 0f, direction.z).normalized * length;
+            Vector3 across = new Vector3(-flow.z, 0f, flow.x).normalized * bend;
+            stroke = new BrushStroke(along => start + flow * along + across * along * along, width, seed, 6, 0.35f);
+        }
+
+        public override void Draw(BrushLineDrawer drawer, float progress)
+        {
+            float head = BrushStroke.SmoothStep(0f, 0.55f, progress);
+            float tail = BrushStroke.SmoothStep(0.25f, 1f, progress);
+            stroke.Draw(drawer, head, tail, 1f, BrushStroke.SmoothStep(0.6f, 1f, progress) * 0.6f);
+        }
+    }
+
+    /// <summary>
     /// A broken lance: shards thrown out sideways from along its length, each arcing over and falling to the ground below.
     /// </summary>
     public class ShardLineEffect : BrushLineEffect
