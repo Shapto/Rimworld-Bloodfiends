@@ -20,6 +20,7 @@ namespace Bloodfiends.Spawning
             foreach (FactionDef factionDef in factionDefs)
             {
                 if (factionDef.xenotypeSet != null && factionDef.xenotypeSet.BaselinerChance < MinimumBaselinerChance) continue;
+                if (factionDef.xenotypeSet == null) factionDef.xenotypeSet = new XenotypeSet();
                 if (ChancesOf(factionDef.xenotypeSet) == null) ChancesOf(factionDef.xenotypeSet) = new List<XenotypeChance>();
                 List<XenotypeChance> chances = ChancesOf(factionDef.xenotypeSet);
                 if (chances.Any(entry => entry.xenotype == BloodfiendsDefOf.Bloodfiends_Bloodfiend)) continue;
