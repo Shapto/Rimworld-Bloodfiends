@@ -13,6 +13,7 @@ namespace Bloodfiends
         public bool fireHindersRegeneration = true;
         public bool kindredSlotsFreeOnDeath = true;
         public bool laSangreHitsAllies = false;
+        public float factionSpawnChance = 0.005f;
 
         public void ResetToDefaults()
         {
@@ -29,6 +30,7 @@ namespace Bloodfiends
         {
             base.ExposeData();
             Scribe_Values.Look(ref replaceSanguophages, "replaceSanguophages", false);
+            Scribe_Values.Look(ref factionSpawnChance, "factionSpawnChance", 0.005f);
             Scribe_Values.Look(ref laSangreHitsAllies, "laSangreHitsAllies", false);
             Scribe_Values.Look(ref regenerationSurvivesBrainDestruction, "regenerationSurvivesBrainDestruction", false);
             Scribe_Values.Look(ref maximumKindredsPerBloodfiend, "maximumKindredsPerBloodfiend", DefaultMaximumKindredsPerBloodfiend);

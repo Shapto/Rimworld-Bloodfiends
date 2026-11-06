@@ -154,6 +154,7 @@
     <Compile Include="SharedThirst\Hediff_Feasting.cs" />
     <Compile Include="SharedThirst\ThoughtWorker_BurdenOfTheFamily.cs" />
     <Compile Include="SharedThirst\ThoughtWorker_FamilyBond.cs" />
+    <Compile Include="Spawning\BloodfiendFactionSpawning.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

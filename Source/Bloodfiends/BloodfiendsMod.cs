@@ -33,6 +33,9 @@ namespace Bloodfiends
             Listing_Standard listing = new Listing_Standard();
             listing.Begin(new Rect(0f, 0f, viewRect.width, 99999f));
 
+            listing.Label("Bloodfiends_SettingFactionSpawnChance".Translate(Settings.factionSpawnChance.ToStringPercent("0.0")));
+            Settings.factionSpawnChance = listing.Slider(Settings.factionSpawnChance, 0f, 0.05f);
+            Spawning.BloodfiendFactionSpawning.ApplyChance();
             listing.CheckboxLabeled("Bloodfiends_SettingReplaceSanguophages".Translate(), ref Settings.replaceSanguophages, "Bloodfiends_SettingReplaceSanguophagesTip".Translate());
             listing.CheckboxLabeled("Bloodfiends_SettingSurviveBrainDestruction".Translate(), ref Settings.regenerationSurvivesBrainDestruction, "Bloodfiends_SettingSurviveBrainDestructionTip".Translate());
             listing.CheckboxLabeled("Bloodfiends_SettingFireHindersRegeneration".Translate(), ref Settings.fireHindersRegeneration, "Bloodfiends_SettingFireHindersRegenerationTip".Translate());

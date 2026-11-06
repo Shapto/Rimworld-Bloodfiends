@@ -6,9 +6,7 @@
 	<supportedVersions>
 		<li>1.6</li>
 	</supportedVersions>
-	<description>
-		Bloodfiends from Limbus Company. Commissioned by kutaro.
-	</description>
+	<description>Bloodfiends from Limbus Company. Commissioned by kutaro.</description>
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>
