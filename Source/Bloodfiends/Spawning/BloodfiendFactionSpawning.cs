@@ -11,6 +11,7 @@ namespace Bloodfiends.Spawning
     {
         private static readonly AccessTools.FieldRef<XenotypeSet, List<XenotypeChance>> ChancesOf = AccessTools.FieldRefAccess<XenotypeSet, List<XenotypeChance>>("xenotypeChances");
         private static readonly List<XenotypeChance> addedChances = new List<XenotypeChance>();
+        private const float MinimumBaselinerChance = 0.1f;
 
         static BloodfiendFactionSpawning()
         {
@@ -18,7 +19,7 @@ namespace Bloodfiends.Spawning
                 .Where(factionDef => factionDef.humanlikeFaction && !factionDef.isPlayer && !factionDef.hidden);
             foreach (FactionDef factionDef in factionDefs)
             {
-                if (factionDef.xenotypeSet == null) factionDef.xenotypeSet = new XenotypeSet();
+                if (factionDef.xenotypeSet != null && factionDef.xenotypeSet.BaselinerChance < MinimumBaselinerChance) continue;
                 if (ChancesOf(factionDef.xenotypeSet) == null) ChancesOf(factionDef.xenotypeSet) = new List<XenotypeChance>();
                 List<XenotypeChance> chances = ChancesOf(factionDef.xenotypeSet);
                 if (chances.Any(entry => entry.xenotype == BloodfiendsDefOf.Bloodfiends_Bloodfiend)) continue;
