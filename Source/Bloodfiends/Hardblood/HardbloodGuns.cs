@@ -28,7 +28,8 @@ namespace Bloodfiends.Hardblood
         private static readonly HashSet<Projectile> shards = new HashSet<Projectile>();
         private static readonly AccessTools.FieldRef<Projectile, Vector3> OriginOf = AccessTools.FieldRefAccess<Projectile, Vector3>("origin");
         private static Material trailMaterial;
-
+        private const float CommonCompShare = 0.5f;
+        private static readonly Type[] SpecialCompClasses = { typeof(CompBladelinkWeapon), typeof(CompUniqueWeapon), typeof(CompEquippableAbility) };
         public static bool firingReplica;
 
         private static HashSet<Type> AllowedCompClasses
@@ -42,6 +43,16 @@ namespace Bloodfiends.Hardblood
                     Type type = GenTypes.GetTypeInAnyAssembly(typeName);
                     if (type != null) allowedCompClasses.Add(type);
                 }
+
+                List<ThingDef> weaponDefs = DefDatabase<ThingDef>.AllDefsListForReading.Where(thingDef => thingDef.IsWeapon).ToList();
+                float commonThreshold = weaponDefs.Count * CommonCompShare;
+                IEnumerable<Type> commonCompClasses = weaponDefs
+                    .SelectMany(weaponDef => (weaponDef.comps ?? new List<CompProperties>()).Select(comp => comp.compClass).Where(compClass => compClass != null).Distinct())
+                    .GroupBy(compClass => compClass)
+                    .Where(group => group.Count() >= commonThreshold)
+                    .Select(group => group.Key)
+                    .Where(compClass => !SpecialCompClasses.Any(specialClass => specialClass.IsAssignableFrom(compClass)));
+                allowedCompClasses.UnionWith(commonCompClasses);
                 return allowedCompClasses;
             }
         }

@@ -103,6 +103,7 @@
     <Compile Include="Family\Gene_Bloodfiend.cs" />
     <Compile Include="Family\Hediff_BloodfiendLineage.cs" />
     <Compile Include="Family\ITab_Pawn_BloodfiendFamily.cs" />
+    <Compile Include="Family\Patch_GeneUtility_IsBloodfeeder.cs" />
     <Compile Include="Family\Patch_Pawn_Discard_ReleaseFamilyNode.cs" />
     <Compile Include="Family\Patch_WorldPawnGC_KeepBloodfiendAncestors.cs" />
     <Compile Include="Hardblood\BloodbagGrowth.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="SanguineRegeneration\Gene_SanguineRegeneration.cs" />
     <Compile Include="SanguineRegeneration\Patch_PawnHealthTracker_ShouldBeDead.cs" />
     <Compile Include="Sanguophages\Patch_SanguophageReplacement.cs" />
+    <Compile Include="Scenarios\ScenPart_BloodfiendStartingTier.cs" />
     <Compile Include="SharedThirst\FamilialImpiety.cs" />
     <Compile Include="SharedThirst\Gene_SharedThirst.cs" />
     <Compile Include="SharedThirst\Hediff_Feasting.cs" />

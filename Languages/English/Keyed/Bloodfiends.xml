@@ -44,6 +44,8 @@
 
   <Bloodfiends_SettingFactionSpawnChance>Bloodfiend chance in factions: {0}</Bloodfiends_SettingFactionSpawnChance>
 
+  <Bloodfiends_ScenarioStartingTier>Starting Bloodfiends begin as generation {0} of a new Family.</Bloodfiends_ScenarioStartingTier>
+
   <!-- Promotion -->
   <Bloodfiends_PromotionLabel>Blood rises</Bloodfiends_PromotionLabel>
   <Bloodfiends_PromotionTextDeath>{ELDER_nameFull} is dead. Every Kindred of {ELDER_possessive} line has risen a generation:</Bloodfiends_PromotionTextDeath>

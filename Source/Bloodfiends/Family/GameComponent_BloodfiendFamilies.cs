@@ -117,6 +117,13 @@ namespace Bloodfiends.Family
             return node;
         }
 
+        public BloodfiendFamilyNode RefoundFamily(Pawn pawn, int generation)
+        {
+            BloodfiendFamilyNode oldNode = GetNodeForPawn(pawn);
+            if (oldNode != null) Notify_BloodfiendDied(oldNode);
+            return CreateFamilyFor(pawn, generation);
+        }
+
         /// <summary>
         /// A child born with Dipsia joins under their Bloodfiend parent. Births don't take an Embrace slot:
         /// the child sits under the parent in the tree, but the parent didn't make them with their blood.
