@@ -15,7 +15,7 @@
 	<ScenarioDef ParentName="ScenarioBase">
 		<defName>Bloodfiends_FirstKindred</defName>
 		<label>First Kindred</label>
-		<description>Something old woke in your veins on the voyage. Now your pod has crashed and the two survivors beside you have no idea what you've become. the Family begins with you.\n\nStarts with a First Kindred Bloodfiend founding a new Family, and two other colonists.</description>
+		<description>Diagnosed with a terminal illness, you signed up for a myriad of experimental treatments. One of them got back to you. All your remember is the sound of blaring sirens and blood rushing in veins and you dreamed of endless crimson. Now, you're barreling toward the surface of an unknown planet inside your pod. Two other poor souls landed with you, and they keep staring. Is there something in your eye? You are a first kindred. The Family begins with you.\n\nStarts with a First Kindred Bloodfiend founding a new Family, and two other colonists.</description>
 		<scenario>
 			<summary>A newly risen First Kindred and two unwitting survivors. Your Family starts here.</summary>
 			<parts>
@@ -130,7 +130,7 @@
 				<!-- Game start dialog -->
 				<li Class="ScenPart_GameStartDialog">
 					<def>GameStartDialog</def>
-					<text>The pod is a smoking wreck. The others are shaken but alive, and you can hear their hearts.\n\nYou are a First Kindred: the root of a new Family, bound to no elder. Every Kindred you embrace will answer to you.\n\nFeed carefully. Fire is your enemy, and so is water.</text>
+					<text>The pod is a smoking wreck. The others are shaken but alive. You can tell because you hear the beating of their hearts.\n\nYou are a First Kindred: the root of a new Family, bound to no elder. Every Kindred you embrace will answer to you.\n\nFeed carefully. Fire is your enemy, and so is water.</text>
 					<closeSound>GameStartSting</closeSound>
 				</li>
 
@@ -143,7 +143,7 @@
 	<ScenarioDef ParentName="ScenarioBase">
 		<defName>Bloodfiends_SeventhKindred</defName>
 		<label>Seventh Kindred</label>
-		<description>You were embraced at the very bottom of an old Family, six generations below an elder you have never met. Cast out to the rim, you are the weakest of your kind, but every elder that falls above you brings you closer to the top.\n\nStarts with a Seventh Kindred Bloodfiend beneath six unclaimed elders, and two other colonists.</description>
+		<description>Due to circumstances which now are but a faint memory, you were embraced by the bottom rung kindred of a family who's elders you've never even met. Two degrees removed from a Bloodbag, you were cast out to the rim as the weakest of your kind to squirm and starve like scum. You used to think of immortality as a curse, but it may well prove itself a boon. For every rank above you on the family that is wiped out, you rise. Will you accept your place on the totem pole or scheme against those who shunned you and inherit their blood?\n\nStarts with a Seventh Kindred Bloodfiend beneath six unclaimed elders, and two other colonists.</description>
 		<scenario>
 			<summary>The lowest of an old Family, with six elders above you and two unwitting survivors beside you.</summary>
 			<parts>
@@ -258,7 +258,7 @@
 				<!-- Game start dialog -->
 				<li Class="ScenPart_GameStartDialog">
 					<def>GameStartDialog</def>
-					<text>The pod is a smoking wreck. The others are shaken but alive, and you can hear their hearts.\n\nYou are a Seventh Kindred, the lowest rung of an old Family. Six generations of elders stand above you, somewhere out there. When they fall, you rise.\n\nFeed carefully. Fire is your enemy, and so is water.</text>
+					<text>The pod is a smoking wreck. The others are shaken but alive, you can tell because you can hear the beating of their hearts.\n\nYou are a Seventh Kindred, the lowest rung of an old Family. Six generations of elders stand above you, somewhere out there. When they fall, you rise.\n\nFeed carefully. Fire is your enemy, and so is water.</text>
 					<closeSound>GameStartSting</closeSound>
 				</li>
 
