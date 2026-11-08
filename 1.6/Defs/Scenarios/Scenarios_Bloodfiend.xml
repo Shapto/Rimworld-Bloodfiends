@@ -6,29 +6,32 @@
 		<label>bloodfiend starting tier</label>
 		<scenPartClass>Bloodfiends.Scenarios.ScenPart_BloodfiendStartingTier</scenPartClass>
 		<category>Fixed</category>
+		<selectionWeight>0</selectionWeight>
+		<summaryPriority>490</summaryPriority>
 	</ScenPartDef>
 
 	<!-- ========== First Kindred ========== -->
 
-	<ScenarioDef>
+	<ScenarioDef ParentName="ScenarioBase">
 		<defName>Bloodfiends_FirstKindred</defName>
 		<label>First Kindred</label>
-		<description>Something old woke in your veins on the voyage out. Now your pod has crashed, the thirst is sharp, and the two survivors beside you have no idea what you've become. the Family begins with you.\n\nStarts with a First Kindred Bloodfiend founding a new Family, and two baseliner colonists.</description>
+		<description>Something old woke in your veins on the voyage. Now your pod has crashed and the two survivors beside you have no idea what you've become. the Family begins with you.\n\nStarts with a First Kindred Bloodfiend founding a new Family, and two other colonists.</description>
 		<scenario>
 			<summary>A newly risen First Kindred and two unwitting survivors. Your Family starts here.</summary>
-			<playerFaction>
-				<def>PlayerFaction</def>
-				<factionDef>PlayerColony</factionDef>
-			</playerFaction>
 			<parts>
+
+				<!-- Config pages -->
 				<li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">
 					<def>ConfigurePawnsXenotypes</def>
 					<pawnChoiceCount>8</pawnChoiceCount>
+					<customSummary>Start with one adult or child Bloodfiend and two other colonists of any age.</customSummary>
 					<xenotypeCounts>
 						<li>
 							<xenotype>Bloodfiends_Bloodfiend</xenotype>
 							<count>1</count>
+							<description>non-baby bloodfiend</description>
 							<requiredAtStart>true</requiredAtStart>
+							<allowedDevelopmentalStages>Adult, Child</allowedDevelopmentalStages>
 						</li>
 						<li>
 							<xenotype>Baseliner</xenotype>
@@ -40,19 +43,26 @@
 					<def>Bloodfiends_StartingTier</def>
 					<generation>1</generation>
 				</li>
+
+				<!-- Player starting stuff spawn method -->
 				<li Class="ScenPart_PlayerPawnsArriveMethod">
 					<def>PlayerPawnsArriveMethod</def>
 					<method>DropPods</method>
 					<visible>false</visible>
 				</li>
+
+				<!-- Player pawns modifiers -->
 				<li Class="ScenPart_ForcedHediff">
 					<def>ForcedHediff</def>
 					<visible>false</visible>
 					<context>PlayerStarter</context>
 					<chance>0.5</chance>
 					<hediff>CryptosleepSickness</hediff>
+					<hideOffMap>true</hideOffMap>
 					<severityRange>1~1</severityRange>
 				</li>
+
+				<!-- Player starting things -->
 				<li Class="ScenPart_StartingThing_Defined">
 					<def>StartingThing_Defined</def>
 					<thingDef>Silver</thingDef>
@@ -91,6 +101,8 @@
 					<count>1</count>
 					<bondToRandomPlayerPawnChance>1.0</bondToRandomPlayerPawnChance>
 				</li>
+
+				<!-- Scatter some things near player start -->
 				<li Class="ScenPart_ScatterThingsNearPlayerStart">
 					<def>ScatterThingsNearPlayerStart</def>
 					<thingDef>Steel</thingDef>
@@ -101,6 +113,8 @@
 					<thingDef>WoodLog</thingDef>
 					<count>300</count>
 				</li>
+
+				<!-- Scatter some things anywhere -->
 				<li Class="ScenPart_ScatterThingsAnywhere">
 					<def>ScatterThingsAnywhere</def>
 					<thingDef>ShipChunk</thingDef>
@@ -112,36 +126,40 @@
 					<thingDef>Steel</thingDef>
 					<count>720</count>
 				</li>
+
+				<!-- Game start dialog -->
 				<li Class="ScenPart_GameStartDialog">
 					<def>GameStartDialog</def>
 					<text>The pod is a smoking wreck. The others are shaken but alive, and you can hear their hearts.\n\nYou are a First Kindred: the root of a new Family, bound to no elder. Every Kindred you embrace will answer to you.\n\nFeed carefully. Fire is your enemy, and so is water.</text>
 					<closeSound>GameStartSting</closeSound>
 				</li>
+
 			</parts>
 		</scenario>
 	</ScenarioDef>
 
 	<!-- ========== Seventh Kindred ========== -->
 
-	<ScenarioDef>
+	<ScenarioDef ParentName="ScenarioBase">
 		<defName>Bloodfiends_SeventhKindred</defName>
 		<label>Seventh Kindred</label>
-		<description>You were embraced at the very bottom of an old Family, six generations below an elder you have never met. Cast out to the rim, you are the weakest of your kind, but every elder that falls above you brings you closer to the top.\n\nStarts with a Seventh Kindred Bloodfiend beneath six unclaimed elders, and two baseliner colonists.</description>
+		<description>You were embraced at the very bottom of an old Family, six generations below an elder you have never met. Cast out to the rim, you are the weakest of your kind, but every elder that falls above you brings you closer to the top.\n\nStarts with a Seventh Kindred Bloodfiend beneath six unclaimed elders, and two other colonists.</description>
 		<scenario>
 			<summary>The lowest of an old Family, with six elders above you and two unwitting survivors beside you.</summary>
-			<playerFaction>
-				<def>PlayerFaction</def>
-				<factionDef>PlayerColony</factionDef>
-			</playerFaction>
 			<parts>
+
+				<!-- Config pages -->
 				<li Class="ScenPart_ConfigPage_ConfigureStartingPawns_Xenotypes">
 					<def>ConfigurePawnsXenotypes</def>
 					<pawnChoiceCount>8</pawnChoiceCount>
+					<customSummary>Start with one adult or child Bloodfiend and two other colonists of any age.</customSummary>
 					<xenotypeCounts>
 						<li>
 							<xenotype>Bloodfiends_Bloodfiend</xenotype>
 							<count>1</count>
+							<description>non-baby bloodfiend</description>
 							<requiredAtStart>true</requiredAtStart>
+							<allowedDevelopmentalStages>Adult, Child</allowedDevelopmentalStages>
 						</li>
 						<li>
 							<xenotype>Baseliner</xenotype>
@@ -153,19 +171,26 @@
 					<def>Bloodfiends_StartingTier</def>
 					<generation>7</generation>
 				</li>
+
+				<!-- Player starting stuff spawn method -->
 				<li Class="ScenPart_PlayerPawnsArriveMethod">
 					<def>PlayerPawnsArriveMethod</def>
 					<method>DropPods</method>
 					<visible>false</visible>
 				</li>
+
+				<!-- Player pawns modifiers -->
 				<li Class="ScenPart_ForcedHediff">
 					<def>ForcedHediff</def>
 					<visible>false</visible>
 					<context>PlayerStarter</context>
 					<chance>0.5</chance>
 					<hediff>CryptosleepSickness</hediff>
+					<hideOffMap>true</hideOffMap>
 					<severityRange>1~1</severityRange>
 				</li>
+
+				<!-- Player starting things -->
 				<li Class="ScenPart_StartingThing_Defined">
 					<def>StartingThing_Defined</def>
 					<thingDef>Silver</thingDef>
@@ -204,6 +229,8 @@
 					<count>1</count>
 					<bondToRandomPlayerPawnChance>1.0</bondToRandomPlayerPawnChance>
 				</li>
+
+				<!-- Scatter some things near player start -->
 				<li Class="ScenPart_ScatterThingsNearPlayerStart">
 					<def>ScatterThingsNearPlayerStart</def>
 					<thingDef>Steel</thingDef>
@@ -214,6 +241,8 @@
 					<thingDef>WoodLog</thingDef>
 					<count>300</count>
 				</li>
+
+				<!-- Scatter some things anywhere -->
 				<li Class="ScenPart_ScatterThingsAnywhere">
 					<def>ScatterThingsAnywhere</def>
 					<thingDef>ShipChunk</thingDef>
@@ -225,11 +254,14 @@
 					<thingDef>Steel</thingDef>
 					<count>720</count>
 				</li>
+
+				<!-- Game start dialog -->
 				<li Class="ScenPart_GameStartDialog">
 					<def>GameStartDialog</def>
 					<text>The pod is a smoking wreck. The others are shaken but alive, and you can hear their hearts.\n\nYou are a Seventh Kindred, the lowest rung of an old Family. Six generations of elders stand above you, somewhere out there. When they fall, you rise.\n\nFeed carefully. Fire is your enemy, and so is water.</text>
 					<closeSound>GameStartSting</closeSound>
 				</li>
+
 			</parts>
 		</scenario>
 	</ScenarioDef>
