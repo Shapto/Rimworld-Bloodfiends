@@ -15,7 +15,7 @@
 	<ScenarioDef ParentName="ScenarioBase">
 		<defName>Bloodfiends_FirstKindred</defName>
 		<label>First Kindred</label>
-		<description>Diagnosed with a terminal illness, you signed up for a myriad of experimental treatments. One of them got back to you. All your remember is the sound of blaring sirens and blood rushing in veins and you dreamed of endless crimson. Now, you're barreling toward the surface of an unknown planet inside your pod. Two other poor souls landed with you, and they keep staring. Is there something in your eye? You are a first kindred. The Family begins with you.\n\nStarts with a First Kindred Bloodfiend founding a new Family, and two other colonists.</description>
+		<description>Diagnosed with a terminal illness, you signed up for a myriad of experimental treatments. One of them got back to you. All you remember is the sound of blaring sirens and blood rushing in veins and you dreamed of endless crimson. Now, you're barreling toward the surface of an unknown planet inside your pod. Two other poor souls landed with you, and they keep staring. Is there something in your eye? You are a first kindred. The Family begins with you.\n\nStarts with a First Kindred Bloodfiend founding a new Family, and two other colonists.</description>
 		<scenario>
 			<summary>A newly risen First Kindred and two unwitting survivors. Your Family starts here.</summary>
 			<parts>
