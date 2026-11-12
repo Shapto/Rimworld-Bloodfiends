@@ -33,7 +33,12 @@
   <Bloodfiends_ManifestLance>Manifest La Sangre de {OWNER} ({COST} hemogen)</Bloodfiends_ManifestLance>
   <Bloodfiends_LanceLabel>La Sangre de {OWNER}</Bloodfiends_LanceLabel>
 
-  <Bloodfiends_CannotMimicSpecial>This weapon is too complex to mimic.</Bloodfiends_CannotMimicSpecial>
+  <Bloodfiends_CannotMimicTooComplex>too complex for hardblood to copy</Bloodfiends_CannotMimicTooComplex>
+  <Bloodfiends_CannotMimicBeyondTier>beyond {PAWN_nameDef}'s Kindred tier</Bloodfiends_CannotMimicBeyondTier>
+  <Bloodfiends_SettingFleeRain>Bloodfiends flee from rain</Bloodfiends_SettingFleeRain>
+  <Bloodfiends_SettingFleeRainTip>On: rain counts as strong water exposure so Bloodfiends caught outside in it can panic and run for cover. Off: rain only sours their mood.</Bloodfiends_SettingFleeRainTip>
+  <Bloodfiends_SettingBloodbagWork>Work Bloodbags can do:</Bloodfiends_SettingBloodbagWork>
+  <Bloodfiends_SettingBloodbagWorkTip>Bloodbags can always rest and be treated as patients. The defaults are basic work, cleaning and hauling.</Bloodfiends_SettingBloodbagWorkTip>
 
   <Bloodfiends_FeverBurnedOut>The flames have burned the crimson fever out of {PAWN_nameDef}'s blood.</Bloodfiends_FeverBurnedOut>
 

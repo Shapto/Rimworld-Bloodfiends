@@ -54,6 +54,74 @@ namespace Bloodfiends.Family
                 Log.Message($"[Bloodfiends] Filth at {cell}: {thing.def.defName} (from mod {thing.def.modContentPack?.PackageId})");
         }
 
+        [DebugAction("Bloodfiends", "Set tier (new Family)...", allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static List<DebugActionNode> SetTier()
+        {
+            List<DebugActionNode> tierOptions = new List<DebugActionNode>();
+            List<HediffStage> stages = BloodfiendsDefOf.Bloodfiends_Lineage.stages;
+            for (int generation = GameComponent_BloodfiendFamilies.ElderGeneration; generation <= stages.Count; generation++)
+            {
+                int chosenGeneration = generation;
+                string tierLabel = stages[generation - 1].label ?? generation.ToString();
+                tierOptions.Add(new DebugActionNode($"{chosenGeneration}: {tierLabel}", DebugActionType.ToolMapForPawns)
+                {
+                    pawnAction = pawn => MoveToNewFamily(pawn, chosenGeneration)
+                });
+            }
+            return tierOptions;
+        }
+
+        [DebugAction("Bloodfiends", "Make Kindred of...", actionType = DebugActionType.ToolMapForPawns, allowedGameStates = AllowedGameStates.PlayingOnMap)]
+        private static void MakeKindredOf(Pawn kindredPawn)
+        {
+            if (!IsBloodfiend(kindredPawn)) return;
+            DebugTools.curTool = new DebugTool("Pick the embracer of " + kindredPawn.LabelShort, () =>
+            {
+                Pawn embracerPawn = Find.CurrentMap.thingGrid.ThingsAt(UI.MouseCell()).OfType<Pawn>().FirstOrDefault();
+                GameComponent_BloodfiendFamilies registry = GameComponent_BloodfiendFamilies.Instance;
+                BloodfiendFamilyNode embracerNode = registry?.GetNodeForPawn(embracerPawn);
+                if (embracerPawn == null || embracerPawn == kindredPawn || embracerNode == null)
+                {
+                    Messages.Message("Pick a different Bloodfiend that's in a Family.", MessageTypeDefOf.RejectInput, false);
+                    return;
+                }
+                SetLineageNode(kindredPawn, registry.ForceKindredNode(embracerNode, kindredPawn));
+                DebugTools.curTool = null;
+            });
+        }
+
+        private static void MoveToNewFamily(Pawn pawn, int generation)
+        {
+            GameComponent_BloodfiendFamilies registry = GameComponent_BloodfiendFamilies.Instance;
+            if (registry == null || !IsBloodfiend(pawn)) return;
+
+            BloodfiendFamilyNode oldNode = registry.GetNodeForPawn(pawn);
+            List<BloodfiendFamilyNode> promotedNodes = registry.Notify_BloodfiendDied(oldNode);
+            GameComponent_BloodfiendFamilies.SyncPromotedPawns(promotedNodes);
+            SetLineageNode(pawn, registry.CreateFamilyFor(pawn, generation));
+        }
+
+        private static void SetLineageNode(Pawn pawn, BloodfiendFamilyNode node)
+        {
+            Hediff_BloodfiendLineage lineageHediff = pawn.health.hediffSet.GetFirstHediff<Hediff_BloodfiendLineage>();
+            if (lineageHediff == null)
+            {
+                lineageHediff = (Hediff_BloodfiendLineage)HediffMaker.MakeHediff(BloodfiendsDefOf.Bloodfiends_Lineage, pawn);
+                lineageHediff.nodeId = node.nodeId;
+                pawn.health.AddHediff(lineageHediff);
+                return;
+            }
+            lineageHediff.nodeId = node.nodeId;
+            lineageHediff.SyncFromNode();
+        }
+
+        private static bool IsBloodfiend(Pawn pawn)
+        {
+            if (pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>() != null) return true;
+            Messages.Message("Not a Bloodfiend (no Dipsia gene).", MessageTypeDefOf.RejectInput, false);
+            return false;
+        }
+
         private static void AppendNode(GameComponent_BloodfiendFamilies registry, BloodfiendFamilyNode node, int depth, StringBuilder builder)
         {
             string pawnLabel = node.bloodfiendPawn == null ? "(offscreen)" : node.bloodfiendPawn.LabelShort;

@@ -43,6 +43,7 @@ namespace Bloodfiends.Family
             base.TickInterval(delta);
             if (awaitingActivation && pawn.IsHashIntervalTick(ActivationCheckIntervalTicks, delta) && Active)
             {
+                if (LineageHediff?.Node == null) RegisterAsNewBloodfiend();
                 awaitingActivation = false;
                 RegisterAsNewBloodfiend();
             }

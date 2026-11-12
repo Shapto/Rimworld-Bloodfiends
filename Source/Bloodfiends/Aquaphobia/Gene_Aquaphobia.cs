@@ -63,9 +63,12 @@ namespace Bloodfiends.Aquaphobia
 
             Map map = pawn.Map;
             bool isOutdoors = !pawn.Position.Roofed(map);
-            if (isOutdoors && map.weatherManager.RainRate > 0f) return AquaphobiaExposure.Strong;
 
-            AquaphobiaExposure exposure = isOutdoors && map.weatherManager.SnowRate > 0f ? AquaphobiaExposure.Weak : AquaphobiaExposure.None;
+            bool isRainedOn = isOutdoors && map.weatherManager.RainRate > 0f;
+            if (isRainedOn && BloodfiendsMod.Settings.bloodfiendsFleeRain) return AquaphobiaExposure.Strong;
+
+            bool isSnowedOn = isOutdoors && map.weatherManager.SnowRate > 0f;
+            AquaphobiaExposure exposure = isRainedOn || isSnowedOn ? AquaphobiaExposure.Weak : AquaphobiaExposure.None;
 
             foreach (IntVec3 cell in GenRadial.RadialCellsAround(pawn.Position, Settings.sightRadius, true))
             {

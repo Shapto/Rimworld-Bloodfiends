@@ -1,4 +1,5 @@
-﻿using Verse;
+﻿using System.Collections.Generic;
+using Verse;
 
 namespace Bloodfiends
 {
@@ -14,6 +15,9 @@ namespace Bloodfiends
         public bool kindredSlotsFreeOnDeath = true;
         public bool laSangreHitsAllies = false;
         public float factionSpawnChance = 0.005f;
+        public bool bloodfiendsFleeRain = true;
+
+        public List<string> bloodbagWorkTypeNames;
 
         public void ResetToDefaults()
         {
@@ -24,6 +28,9 @@ namespace Bloodfiends
             fireHindersRegeneration = true;
             kindredSlotsFreeOnDeath = true;
             laSangreHitsAllies = false;
+            factionSpawnChance = 0.005f;
+            bloodfiendsFleeRain = true;
+            bloodbagWorkTypeNames = null;
         }
 
         public override void ExposeData()
@@ -36,6 +43,8 @@ namespace Bloodfiends
             Scribe_Values.Look(ref maximumKindredsPerBloodfiend, "maximumKindredsPerBloodfiend", DefaultMaximumKindredsPerBloodfiend);
             Scribe_Values.Look(ref firstKindredDropsPrimogenitorBlood, "firstKindredDropsPrimogenitorBlood", true);
             Scribe_Values.Look(ref fireHindersRegeneration, "fireHindersRegeneration", true);
+            Scribe_Values.Look(ref bloodfiendsFleeRain, "bloodfiendsFleeRain", true);
+            Scribe_Collections.Look(ref bloodbagWorkTypeNames, "bloodbagWorkTypeNames", LookMode.Value);
         }
     }
 }

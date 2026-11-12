@@ -67,17 +67,38 @@ namespace Bloodfiends.Hardblood
         }
 
         /// <summary>
-        /// True if this particular weapon can be mimicked; if not, the reason to show.
+        /// The first part on the weapon's def that hardblood can't copy, or null if every part is plain.
+        /// </summary>
+        public static Type FindUnmimicableCompClass(ThingDef weaponDef) => weaponDef?.comps?
+            .Select(comp => comp.compClass)
+            .FirstOrDefault(compClass => compClass == null || !AllowedCompClasses.Contains(compClass));
+
+        private static readonly HashSet<ThingDef> loggedUnmimicableDefs = new HashSet<ThingDef>();
+
+        /// <summary>
+        /// True if this particular weapon is simple enough for hardblood to copy; if not, the reason to show.
+        /// Whether the pawn's tier can afford it is checked separately by HardbloodWeaponry.
         /// </summary>
         public static bool CanMimic(Thing weapon, out string reason)
         {
             reason = null;
-            if (weapon.StyleSourcePrecept is Precept_Relic || !IsPlainWeaponDef(weapon.def))
-            {
-                reason = "Bloodfiends_CannotMimicSpecial".Translate();
-                return false;
-            }
-            return true;
+            if (IsPlainWeaponDef(weapon.def) && !(weapon.StyleSourcePrecept is Precept_Relic)) return true;
+
+            reason = "Bloodfiends_CannotMimicTooComplex".Translate();
+            Type blockingCompClass = FindUnmimicableCompClass(weapon.def);
+            if (blockingCompClass != null) LogBlockingPartOnce(weapon.def, blockingCompClass);
+            if (Prefs.DevMode && blockingCompClass != null) reason += ": " + blockingCompClass.Name;
+            return false;
+        }
+
+        /// <summary>
+        /// Says in the log which part blocked a weapon, so players reporting a weapon that won't copy can send it.
+        /// </summary>
+        private static void LogBlockingPartOnce(ThingDef weaponDef, Type blockingCompClass)
+        {
+            if (!loggedUnmimicableDefs.Add(weaponDef)) return;
+            string sourceMod = blockingCompClass.Assembly.GetName().Name;
+            Log.Message($"[Bloodfiends] Hardblood Mimicry can't copy {weaponDef.defName}: it has {blockingCompClass.FullName} (from {sourceMod}).");
         }
 
         // ----- replica guns -----

@@ -24,13 +24,65 @@ namespace Bloodfiends.Family
         public BloodfiendFamilyNode Node => GameComponent_BloodfiendFamilies.Instance?.GetNode(nodeId);
 
         private bool curseLost;
-        public override bool ShouldRemove => base.ShouldRemove || curseLost;
+        private bool superseded;
+        public override bool ShouldRemove => base.ShouldRemove || curseLost || superseded;
 
         public override void PostAdd(DamageInfo? dinfo)
         {
             base.PostAdd(dinfo);
+            if (nodeId < 0) AdoptAddedTier();
             SyncFromNode();
         }
+
+
+        private void AdoptAddedTier()
+        {
+            GameComponent_BloodfiendFamilies registry = GameComponent_BloodfiendFamilies.Instance;
+            if (registry == null || !HasActiveDipsia) return;
+
+            int chosenGeneration = Mathf.Max(GameComponent_BloodfiendFamilies.ElderGeneration, Mathf.RoundToInt(Severity));
+            Hediff_BloodfiendLineage existingHediff = pawn.health.hediffSet.hediffs.OfType<Hediff_BloodfiendLineage>().FirstOrDefault(other => other != this && other.Node != null);
+            if (existingHediff == null)
+            {
+                nodeId = registry.RefoundFamily(pawn, chosenGeneration).nodeId;
+                return;
+            }
+
+            RetireAsDuplicate();
+            if (existingHediff.Node.generationNumber == chosenGeneration) return;
+            existingHediff.nodeId = registry.RefoundFamily(pawn, chosenGeneration).nodeId;
+            existingHediff.SyncFromNode();
+        }
+
+        private void RepairMissingNode()
+        {
+            GameComponent_BloodfiendFamilies registry = GameComponent_BloodfiendFamilies.Instance;
+            if (registry == null || superseded || !HasActiveDipsia) return;
+
+            BloodfiendFamilyNode node = Node;
+            if (node != null && node.bloodfiendPawn == pawn) return;
+            if (node != null && node.bloodfiendPawn == null && registry.TryClaimNode(pawn, nodeId) != null) return;
+
+            bool anotherLineageIsValid = pawn.health.hediffSet.hediffs.OfType<Hediff_BloodfiendLineage>().Any(other => other != this && other.Node?.bloodfiendPawn == pawn);
+            if (anotherLineageIsValid)
+            {
+                RetireAsDuplicate();
+                return;
+            }
+
+            BloodfiendFamilyNode ownNode = registry.GetNodeForPawn(pawn);
+            nodeId = ownNode?.nodeId ?? registry.RefoundFamily(pawn, Mathf.Max(GameComponent_BloodfiendFamilies.ElderGeneration, Mathf.RoundToInt(Severity))).nodeId;
+            SyncFromNode();
+        }
+
+        private void RetireAsDuplicate()
+        {
+            if (appliedHemogenGene != null && appliedHemogenMaxOffset != 0f) appliedHemogenGene.SetMax(appliedHemogenGene.Max - appliedHemogenMaxOffset);
+            appliedHemogenMaxOffset = 0f;
+            superseded = true;
+        }
+
+        private bool HasActiveDipsia => pawn.genes?.GetFirstGeneOfType<Gene_Bloodfiend>()?.Active == true && !Bloodfiends.Bloodbags.BloodbagUtility.IsBloodbag(pawn);
 
         public void SyncFromNode()
         {
@@ -87,6 +139,7 @@ namespace Bloodfiends.Family
                 curseLost = true;
                 return;
             }
+            RepairMissingNode();
             BloodfiendFamilyNode node = Node;
             if (node != null) RefreshHemogenMax(node);
         }
@@ -94,7 +147,7 @@ namespace Bloodfiends.Family
         public override void PostRemoved()
         {
             base.PostRemoved();
-
+            if (superseded) return;
             Gene_Hemogen hemogenGene = pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>();
             if (hemogenGene != null && hemogenGene == appliedHemogenGene && appliedHemogenMaxOffset != 0f) hemogenGene.SetMax(hemogenGene.Max - appliedHemogenMaxOffset);
             appliedHemogenGene = null;
@@ -111,6 +164,7 @@ namespace Bloodfiends.Family
             Scribe_Values.Look(ref nodeId, "nodeId", -1);
             Scribe_Values.Look(ref appliedHemogenMaxOffset, "appliedHemogenMaxOffset");
             Scribe_References.Look(ref appliedHemogenGene, "appliedHemogenGene");
+            Scribe_Values.Look(ref superseded, "superseded");
         }
     }
 }

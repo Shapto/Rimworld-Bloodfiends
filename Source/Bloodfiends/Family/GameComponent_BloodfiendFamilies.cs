@@ -219,6 +219,12 @@ namespace Bloodfiends.Family
             return promotedNodes;
         }
 
+        public BloodfiendFamilyNode ForceKindredNode(BloodfiendFamilyNode embracerNode, Pawn kindredPawn)
+        {
+            SyncPromotedPawns(Notify_BloodfiendDied(GetNodeForPawn(kindredPawn)));
+            return CreateNodeUnder(embracerNode, embracerNode.familyId, embracerNode.generationNumber + 1, kindredPawn);
+        }
+
         public bool FamilyHasLivingBloodfiend(int familyId) => nodesById.Values.Any(node => node.familyId == familyId && node.HasLivingPawn);
 
         /// <summary>

@@ -146,6 +146,12 @@ namespace Bloodfiends.Hardblood
 
         private static float HemogenOf(Pawn pawn) => pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>()?.Value ?? 0f;
 
+        public static bool IsBeyondTier(Pawn pawn, Thing weapon)
+        {
+            float maximumHemogen = pawn.genes?.GetFirstGeneOfType<Gene_Hemogen>()?.Max ?? 0f;
+            return CostOf(pawn, new MimickedWeapon { weaponDef = weapon.def, stuff = weapon.Stuff }) > maximumHemogen;
+        }
+
         // ----- gizmo -----
 
         public Gizmo GetGizmo(Pawn pawn)
@@ -186,6 +192,7 @@ namespace Bloodfiends.Hardblood
             {
                 string label = "Bloodfiends_MimicWeapon".Translate(held.LabelShortCap);
                 if (!HardbloodGuns.CanMimic(held, out string cannotMimicReason)) options.Add(new FloatMenuOption(label + " (" + cannotMimicReason + ")", null));
+                else if (IsBeyondTier(pawn, held)) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_CannotMimicBeyondTier".Translate(pawn.Named("PAWN")) + ")", null));
                 else if (repertoire.Any(mimicked => mimicked.Matches(held))) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_AlreadyMimicked".Translate() + ")", null));
                 else if (repertoire.Count >= SlotsFor(pawn)) options.Add(new FloatMenuOption(label + " (" + "Bloodfiends_RepertoireFull".Translate() + ")", null));
                 else options.Add(new FloatMenuOption(label, () => Mimic(held)));
